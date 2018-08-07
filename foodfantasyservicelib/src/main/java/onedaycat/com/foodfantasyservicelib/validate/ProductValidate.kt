@@ -7,7 +7,7 @@ interface ProductValidate {
     fun hasProduct(product: Product?): Boolean
 }
 
-class ProductMomoryValidate: ProductValidate {
+class ProductMemoValidate: ProductValidate {
     override fun validateId(id: String): Boolean {
         if (id.isNotBlank() || id.isNotEmpty()) {
             return true

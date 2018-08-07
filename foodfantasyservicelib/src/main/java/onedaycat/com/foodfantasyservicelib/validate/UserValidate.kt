@@ -9,27 +9,43 @@ interface UserValidate {
 
 class UserMemoryValidate: UserValidate {
     override fun hasUser(user: User?): Boolean {
-        if (user != null) {
-            if ((user.id.isNotEmpty() || user.id.isNotBlank())
-                    && (user.firstName.isNotEmpty() || user.firstName.isNotBlank())
-                    && (user.lastName.isNotEmpty() || user.lastName.isNotBlank())
-                    && (user.email.isNotEmpty() || user.email.isNotBlank())
-                    && (user.password.isNotEmpty() || user.password.isNotBlank()))
-            {
-                return true
+        try{
+            if (user != null) {
+                return conditionUser(user)
             }else {
-                throw NullPointerException("Require some field in User")
+                throw Exception("Require user")
             }
+        }catch (e:Exception) {
+            e.printStackTrace()
+        }
+
+        return false
+    }
+
+    private fun conditionUser(user:User) :Boolean{
+        if ((user.id.isNotEmpty() || user.id.isNotBlank())
+                && (user.firstName.isNotEmpty() || user.firstName.isNotBlank())
+                && (user.lastName.isNotEmpty() || user.lastName.isNotBlank())
+                && (user.email.isNotEmpty() || user.email.isNotBlank())
+                && (user.password.isNotEmpty() || user.password.isNotBlank()))
+        {
+            return true
         }else {
-            throw NullPointerException("Require user")
+            throw Exception("Require some field in User")
         }
     }
 
     override fun checkId(id: String): Boolean {
-        if (id.isNotEmpty() || id.isNotBlank()) {
-            return true
-        }else {
-            throw NullPointerException("Require user id")
+        try {
+            if (id.isNotEmpty() || id.isNotBlank()) {
+                return true
+            }else {
+                throw Exception("Require user id")
+            }
+        }catch (e:Exception) {
+            e.printStackTrace()
         }
+
+        return false
     }
 }

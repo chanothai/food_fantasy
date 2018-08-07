@@ -2,17 +2,17 @@ package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.model.User
 import onedaycat.com.foodfantasyservicelib.repository.UserRepo
-import onedaycat.com.foodfantasyservicelib.validate.UserMemoryValidate
+import onedaycat.com.foodfantasyservicelib.validate.UserValidate
 
-class UserService(val userRepo: UserRepo, val check: UserMemoryValidate) {
+class UserService(val userRepo: UserRepo, val check: UserValidate) {
 
-    fun createUser(user: User) {
+    fun createUser(user: User?) {
         if (check.hasUser(user)) {
             userRepo.create(user)
         }
     }
 
-    fun updateUser(user: User) {
+    fun updateUser(user: User?) {
         if (check.hasUser(user)) {
             userRepo.update(user)
         }

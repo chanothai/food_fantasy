@@ -3,9 +3,9 @@ package onedaycat.com.foodfantasyservicelib.service
 import onedaycat.com.foodfantasyservicelib.model.Product
 import onedaycat.com.foodfantasyservicelib.model.ProductList
 import onedaycat.com.foodfantasyservicelib.repository.ProductRepo
-import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
+import onedaycat.com.foodfantasyservicelib.validate.ProductMemoValidate
 
-class ProductService(val productRepo: ProductRepo, val check: ProductValidate) {
+class ProductService(val productRepo: ProductRepo, val check: ProductMemoValidate) {
 
     fun createProduct(product: Product) {
         if (check.hasProduct(product)) {

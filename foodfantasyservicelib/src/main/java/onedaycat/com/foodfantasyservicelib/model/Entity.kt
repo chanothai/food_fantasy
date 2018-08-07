@@ -40,7 +40,6 @@ data class Cart(
 
 data class Order(
         val id: String,
-        val transactionId: String,
         val products: ProductList,
         val totalPrice: Int,
         val userId: String,
