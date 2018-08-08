@@ -12,7 +12,7 @@ data class User(
         val updateDate: String?)
 
 data class Product(
-        val id: String,
+        var id: String,
         val name:String,
         val description: String?,
         val price: Int,

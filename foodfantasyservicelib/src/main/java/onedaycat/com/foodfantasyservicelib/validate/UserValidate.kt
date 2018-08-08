@@ -23,8 +23,7 @@ class UserMemoryValidate: UserValidate {
     }
 
     private fun conditionUser(user:User) :Boolean{
-        if ((user.id.isNotEmpty() || user.id.isNotBlank())
-                && (user.firstName.isNotEmpty() || user.firstName.isNotBlank())
+        if ((user.firstName.isNotEmpty() || user.firstName.isNotBlank())
                 && (user.lastName.isNotEmpty() || user.lastName.isNotBlank())
                 && (user.email.isNotEmpty() || user.email.isNotBlank())
                 && (user.password.isNotEmpty() || user.password.isNotBlank()))

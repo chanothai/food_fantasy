@@ -4,6 +4,7 @@ import onedaycat.com.foodfantasyservicelib.model.User
 import onedaycat.com.foodfantasyservicelib.repository.UserMemo
 import onedaycat.com.foodfantasyservicelib.repository.UserRepo
 import onedaycat.com.foodfantasyservicelib.validate.UserMemoryValidate
+import onedaycat.com.foodfantasyservicelib.validate.UserValidate
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +26,7 @@ class UserServiceTest {
     @Before
     fun setup() {
         userValidate = mock(UserMemoryValidate::class.java)
-        userRepo = mock(UserMemo::class.java)
+        userRepo = mock(UserRepo::class.java)
         userService = UserService(userRepo, userValidate)
 
         userCompete = User(
@@ -70,22 +71,17 @@ class UserServiceTest {
 
     @Test(expected = Exception::class)
     fun `create user with email of user already`() {
-        val valueCapture = ArgumentCaptor.forClass(User::class.java)
-        `when`(userRepo.create(valueCapture.capture())).thenThrow(Exception::class.java)
         `when`(userValidate.hasUser(userCompete)).thenReturn(true)
+        `when`(userRepo.create(userCompete)).thenThrow(Exception("User exist"))
 
         userService.createUser(userCompete)
 
         verify(userRepo).create(userCompete)
         verify(userValidate).hasUser(userCompete)
-
-        val expected = userCompete
-        val result = valueCapture.value
-        Assert.assertEquals(expected, result)
     }
 
     @Test(expected = Exception::class)
-    fun `create user with user incorrect`() {
+    fun `create user with input user isNull`() {
         `when`(userValidate.hasUser(isNull())).thenThrow(Exception::class.java)
 
         userService.createUser(null)
@@ -94,7 +90,7 @@ class UserServiceTest {
     }
 
     @Test(expected = Exception::class)
-    fun `create user with user incomplete`() {
+    fun `create user with input user incomplete`() {
         `when`(userValidate.hasUser(userIncomplete)).thenThrow(Exception::class.java)
 
         userService.createUser(userIncomplete)
@@ -105,7 +101,7 @@ class UserServiceTest {
     @Test
     fun `update user with user complete`() {
         val valueCapture = ArgumentCaptor.forClass(User::class.java)
-        doCallRealMethod().`when`(userRepo).update(valueCapture.capture())
+        doNothing().`when`(userRepo).update(valueCapture.capture())
         `when`(userValidate.hasUser(userCompete)).thenReturn(true)
 
         userService.updateUser(userCompete)

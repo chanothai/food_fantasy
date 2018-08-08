@@ -4,8 +4,8 @@ import onedaycat.com.foodfantasyservicelib.model.Product
 import onedaycat.com.foodfantasyservicelib.model.ProductList
 
 interface ProductRepo {
-    fun create(product: Product)
-    fun update(product: Product)
+    fun create(product: Product?)
+    fun update(product: Product?)
     fun delete(productId: String)
     fun getAll(): ProductList?
     fun get(productId: String): Product?
@@ -14,11 +14,11 @@ interface ProductRepo {
 class ProductMemo: ProductRepo {
     private val product: Product? = null
 
-    override fun create(product: Product) {
+    override fun create(product: Product?) {
 
     }
 
-    override fun update(product: Product) {
+    override fun update(product: Product?) {
 
     }
 

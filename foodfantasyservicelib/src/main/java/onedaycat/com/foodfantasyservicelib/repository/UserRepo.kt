@@ -12,7 +12,13 @@ class UserMemo: UserRepo {
     private val user: User? = null
 
     override fun create(user: User?) {
-
+        try {
+            if (user!!.equals("ball.onedaycat@gmail.com")) {
+                throw Exception("User exist")
+            }
+        }catch (e:Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun update(user: User?) {
