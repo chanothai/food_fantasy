@@ -1,55 +1,75 @@
 package onedaycat.com.foodfantasyservicelib.service
 
-import onedaycat.com.foodfantasyservicelib.model.Product
-import onedaycat.com.foodfantasyservicelib.model.ProductList
-import onedaycat.com.foodfantasyservicelib.repository.ProductRepo
+import onedaycat.com.foodfantasyservicelib.entity.Product
+import onedaycat.com.foodfantasyservicelib.error.Error
+import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
+import onedaycat.com.foodfantasyservicelib.contract.repository.ProductRepo
+import onedaycat.com.foodfantasyservicelib.util.clock.Clock
+import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
 
-class ProductService(val productRepo: ProductRepo, val check: ProductValidate) {
+class ProductService(val productRepo: ProductRepo, val productValidate: ProductValidate) {
 
-    fun createProduct(product: Product?) {
-        try {
-            if (check.hasProduct(product)) {
-                productRepo.create(product)
-            }else {
-                throw IllegalStateException("Product require")
-            }
-        }catch (e: RuntimeException) {
-            throw RuntimeException(e)
-        }
-    }
+    fun createProduct(input: CreateProductInput): Pair<Product?, Error?> {
 
-    fun updateProduct(product: Product) {
-        try{
-            if (check.hasProduct(product)) {
-                productRepo.update(product)
-            }else {
-                throw RuntimeException("require id of product")
-            }
-        }catch (e: RuntimeException) {
-            throw RuntimeException(e)
-        }
-    }
+        var error = productValidate.inputProduct(input)
 
-    fun deleteProduct(productId: String) {
-        if (check.validateId(productId)) {
-            productRepo.delete(productId)
-        }else {
-            throw Exception("require id of product")
-        }
-    }
-
-    fun getAllProduct(): ProductList? {
-        return productRepo.getAll()
-    }
-
-    fun getProduct(productId: String): Product? {
-        if (check.validateId(productId)) {
-            val product = productRepo.get(productId)
-
-            if (check.hasProduct(product)) return product
+        if (error != null) {
+            return Pair(null, error)
         }
 
-        return null
+        val product = Product(
+                IdGen.NewId(),
+                input.name,
+                input.price,
+                input.desc,
+                input.image,
+                Clock.NowUTC(),
+                Clock.NowUTC()
+        )
+
+        error = productRepo.create(product)
+
+        if (error != null) {
+            return Pair(null, error)
+        }
+
+        return Pair(product, null)
+    }
+
+    fun removeProduct(input: RemoveProductInput): Error? {
+        val error = productValidate.inputId(input.id)
+
+        if (error != null) {
+            return error
+        }
+
+        return productRepo.remove(input.id)
+    }
+
+    fun getProduct(input: GetProductInput): Pair<Product?, Error?> {
+        val error = productValidate.inputId(input.productId)
+        if (error != null) {
+            return Pair(null, error)
+        }
+
+        return productRepo.get(input.productId)
+    }
+
+    fun getProducts(input: GetProductsInput): Pair<ProductPaging?, Error?> {
+
+        val error = productValidate.inputLimitPaging(input)
+
+        if (error != null) {
+            return Pair(null, error)
+        }
+
+        val (productPaging, err) = productRepo.getAllWithPaging(input.limit)
+
+        if (err != null) {
+            return Pair(null, err)
+        }
+
+        return Pair(productPaging, null)
     }
 }

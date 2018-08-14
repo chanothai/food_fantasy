@@ -1,48 +1,37 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.model.User
+import onedaycat.com.foodfantasyservicelib.entity.User
+import onedaycat.com.foodfantasyservicelib.service.CreateUserInput
 
 interface UserValidate {
-    fun hasUser(user: User?): Boolean
-    fun checkId(id: String): Boolean
+    fun inputUser(input: CreateUserInput?): Boolean
+    fun inputId(id: String): Boolean
 }
 
 class UserMemoryValidate: UserValidate {
-    override fun hasUser(user: User?): Boolean {
-        try{
-            if (user != null) {
-                return conditionUser(user)
-            }else {
-                throw Exception("Require user")
-            }
-        }catch (e:Exception) {
-            e.printStackTrace()
+    override fun inputUser(input: CreateUserInput?): Boolean {
+        if (input != null) {
+            val result = conditionUser(input)
+            return result
         }
 
         return false
     }
 
-    private fun conditionUser(user:User) :Boolean{
-        if ((user.firstName.isNotEmpty() || user.firstName.isNotBlank())
-                && (user.lastName.isNotEmpty() || user.lastName.isNotBlank())
-                && (user.email.isNotEmpty() || user.email.isNotBlank())
-                && (user.password.isNotEmpty() || user.password.isNotBlank()))
+    private fun conditionUser(input:CreateUserInput) :Boolean{
+        if ((input.name.isNotEmpty() || input.name.isNotBlank())
+                && (input.email.isNotEmpty() || input.email.isNotBlank())
+                && (input.password.isNotEmpty() || input.password.isNotBlank()))
         {
             return true
-        }else {
-            throw Exception("Require some field in User")
         }
+
+        return false
     }
 
-    override fun checkId(id: String): Boolean {
-        try {
-            if (id.isNotEmpty() || id.isNotBlank()) {
-                return true
-            }else {
-                throw Exception("Require user id")
-            }
-        }catch (e:Exception) {
-            e.printStackTrace()
+    override fun inputId(id: String): Boolean {
+        if (id.isNotEmpty() || id.isNotBlank()) {
+            return true
         }
 
         return false
