@@ -1,8 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.User
-import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.UserRepo
+import onedaycat.com.foodfantasyservicelib.error.*
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.UserMemoryValidate
@@ -55,14 +55,12 @@ class UserServiceTest {
 
     @Test
     fun `create user with user complete`() {
-        `when`(userValidate.inputUser(inputUser)).thenReturn(true)
-        `when`(userRepo.getByEmail(inputUser.email)).thenReturn(Pair(null, null))
-        `when`(userRepo.create(expUser)).thenReturn( null)
+        doNothing().`when`(userValidate).inputUser(inputUser)
+        `when`(userRepo.getByEmail(inputUser.email)).thenThrow(Errors.UserNotFound)
+        doNothing().`when`(userRepo).create(expUser)
 
-        val (user, error) = userService.createUser(inputUser)
+        val user = userService.createUser(inputUser)
 
-        //Expected result
-        Assert.assertNull(error)
         Assert.assertEquals(expUser.email, user!!.email)
 
         verify(userValidate).inputUser(inputUser)
@@ -70,17 +68,15 @@ class UserServiceTest {
         verify(userRepo).getByEmail(inputUser.email)
     }
 
-    @Test
+
+    @Test(expected = InternalError::class)
     fun `create user failed`() {
-        val expError = Errors.UnableCreateUser
+        doNothing().`when`(userValidate).inputUser(inputUser)
+        `when`(userRepo.getByEmail(inputUser.email)).thenThrow(Errors.UserNotFound)
+        `when`(userRepo.create(expUser)).thenThrow(Errors.UnableCreateUser)
 
-        `when`(userValidate.inputUser(inputUser)).thenReturn(true)
-        `when`(userRepo.getByEmail(inputUser.email)).thenReturn(Pair(null, null))
-        `when`(userRepo.create(expUser)).thenReturn(expError)
+        val user = userService.createUser(inputUser)
 
-        val (user, error) = userService.createUser(inputUser)
-
-        Assert.assertEquals(expError, error)
         Assert.assertNull(user)
 
         verify(userRepo).getByEmail(inputUser.email)
@@ -88,91 +84,64 @@ class UserServiceTest {
         verify(userValidate).inputUser(inputUser)
     }
 
-    @Test
+    @Test(expected = BadRequestException::class)
     fun `create user exist`() {
-        val expError = Errors.EmailExist
+        doNothing().`when`(userValidate).inputUser(inputUser)
+        `when`(userRepo.getByEmail(inputUser.email)).thenReturn(expUser)
 
-        `when`(userValidate.inputUser(inputUser)).thenReturn(true)
-        `when`(userRepo.getByEmail(inputUser.email)).thenReturn(Pair(expUser, null))
+        val user = userService.createUser(inputUser)
 
-        val (user, error) = userService.createUser(inputUser)
-
-        Assert.assertEquals(expError, error)
-        Assert.assertEquals(expUser, user)
+        Assert.assertNull(user)
 
         verify(userRepo).getByEmail(inputUser.email)
         verify(userValidate).inputUser(inputUser)
     }
 
-    @Test
-    fun `check email exist failed`() {
-        val expError = Errors.UserNotFound
+    @Test(expected = InvalidInputException::class)
+    fun `create user validate failed`() {
+        `when`(userValidate.inputUser(inputUser)).thenThrow(Errors.InvalidInput)
 
-        `when`(userValidate.inputUser(inputUser)).thenReturn(true)
-        `when`(userRepo.getByEmail(inputUser.email)).thenReturn(Pair(null, expError))
-
-        val (user, error) = userService.createUser(inputUser)
+        val user = userService.createUser(inputUser)
 
         Assert.assertNull(user)
-        Assert.assertEquals(expError, error)
-
-        verify(userValidate).inputUser(inputUser)
-        verify(userRepo).getByEmail(inputUser.email)
-    }
-
-    @Test
-    fun `validate failed`() {
-        val expError = Errors.InvalidInput
-        `when`(userValidate.inputUser(inputUser)).thenReturn(false)
-
-        val (user, error) = userService.createUser(inputUser)
-
-        Assert.assertNull(user)
-        Assert.assertEquals(expError, error)
 
         verify(userValidate).inputUser(inputUser)
     }
 
     @Test
     fun `get user complete`() {
-        `when`(userValidate.inputId(getUserInput.userId)).thenReturn(true)
-        `when`(userRepo.get(getUserInput.userId)).thenReturn(Pair(expUser, null))
+        doNothing().`when`(userValidate).inputId(getUserInput.userId)
+        `when`(userRepo.get(getUserInput.userId)).thenReturn(expUser)
 
-        val (user, error) = userService.getUser(getUserInput)
+        val user = userService.getUser(getUserInput)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expUser, user)
 
         verify(userRepo).get(getUserInput.userId)
         verify(userValidate).inputId(getUserInput.userId)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `get user then validate failed`() {
-        val expError = Errors.InvalidInput
         getUserInput = GetUserInput("   ")
-        `when`(userValidate.inputId(getUserInput.userId)).thenReturn(false)
+        `when`(userValidate.inputId(getUserInput.userId)).thenThrow(Errors.InvalidInput)
 
-        val (user, error) = userService.getUser(getUserInput)
+        val user = userService.getUser(getUserInput)
 
         Assert.assertNull(user)
-        Assert.assertEquals(expError, error)
 
         verify(userValidate).inputId(getUserInput.userId)
     }
 
-    @Test
+    @Test(expected = NotFoundException::class)
     fun `get user then not found`() {
         getUserInput = GetUserInput("10000")
 
-        val expError = Errors.UserNotFound
+        doNothing().`when`(userValidate).inputId(getUserInput.userId)
+        `when`(userRepo.get(getUserInput.userId)).thenThrow(Errors.UserNotFound)
 
-        `when`(userValidate.inputId(getUserInput.userId)).thenReturn(true)
-        `when`(userRepo.get(getUserInput.userId)).thenReturn(Pair(null, expError))
+        val user = userService.getUser(getUserInput)
 
-        val (user, error) = userService.getUser(getUserInput)
-
-        Assert.assertEquals(expError, error)
         Assert.assertNull(user)
 
         verify(userValidate).inputId(getUserInput.userId)

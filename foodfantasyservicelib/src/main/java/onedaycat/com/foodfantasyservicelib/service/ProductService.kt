@@ -10,66 +10,66 @@ import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
 
 class ProductService(val productRepo: ProductRepo, val productValidate: ProductValidate) {
 
-    fun createProduct(input: CreateProductInput): Pair<Product?, Error?> {
+    fun createProduct(input: CreateProductInput): Product? {
+        try {
+            productValidate.inputProduct(input)
 
-        var error = productValidate.inputProduct(input)
+            val product = Product(
+                    IdGen.NewId(),
+                    input.name,
+                    input.price,
+                    input.desc,
+                    input.image,
+                    Clock.NowUTC(),
+                    Clock.NowUTC()
+            )
 
-        if (error != null) {
-            return Pair(null, error)
+            productRepo.create(product)
+
+            return product
+        }catch (e:Error) {
+            e.printStackTrace()
         }
 
-        val product = Product(
-                IdGen.NewId(),
-                input.name,
-                input.price,
-                input.desc,
-                input.image,
-                Clock.NowUTC(),
-                Clock.NowUTC()
-        )
-
-        error = productRepo.create(product)
-
-        if (error != null) {
-            return Pair(null, error)
-        }
-
-        return Pair(product, null)
+        return null
     }
 
-    fun removeProduct(input: RemoveProductInput): Error? {
-        val error = productValidate.inputId(input.id)
+    fun removeProduct(input: RemoveProductInput): Boolean {
+        try {
+            productValidate.inputId(input.id)
 
-        if (error != null) {
-            return error
+            productRepo.remove(input.id)
+
+            return true
+        }catch (e:Error) {
+            e.printStackTrace()
         }
 
-        return productRepo.remove(input.id)
+        return false
     }
 
-    fun getProduct(input: GetProductInput): Pair<Product?, Error?> {
-        val error = productValidate.inputId(input.productId)
-        if (error != null) {
-            return Pair(null, error)
+    fun getProduct(input: GetProductInput): Product? {
+        try{
+            productValidate.inputId(input.productId)
+
+            return productRepo.get(input.productId)
+        }catch (e:Error) {
+            e.printStackTrace()
         }
 
-        return productRepo.get(input.productId)
+        return null
     }
 
-    fun getProducts(input: GetProductsInput): Pair<ProductPaging?, Error?> {
+    fun getProducts(input: GetProductsInput): ProductPaging? {
 
-        val error = productValidate.inputLimitPaging(input)
+        try {
+            productValidate.inputLimitPaging(input)
 
-        if (error != null) {
-            return Pair(null, error)
+            return productRepo.getAllWithPaging(input.limit)
+        }catch (e:Error) {
+            e.printStackTrace()
         }
 
-        val (productPaging, err) = productRepo.getAllWithPaging(input.limit)
-
-        if (err != null) {
-            return Pair(null, err)
-        }
-
-        return Pair(productPaging, null)
+        return null
     }
 }

@@ -7,43 +7,38 @@ import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.UserValidate
 
-class UserService(val userRepo: UserRepo, val userValidate: UserValidate) {
-    fun createUser(input: CreateUserInput): Pair<User?, Error?> {
-        if (!userValidate.inputUser(input)) {
-            return Pair(null, Errors.InvalidInput)
+class UserService(
+        private val userRepo: UserRepo,
+        private val userValidate: UserValidate) {
+
+    private var newUser: User? = null
+    fun createUser(input: CreateUserInput): User? {
+        try {
+            userValidate.inputUser(input)
+
+            val user = userRepo.getByEmail(input.email)
+
+            if (user != null) {
+                throw Errors.EmailExist
+            }
+
+        }catch (e:NotFoundException) {
+            newUser = User(
+                    IdGen.NewId(),
+                    input.email,
+                    input.name,
+                    input.password,
+                    Clock.NowUTC(),
+                    Clock.NowUTC())
+
+            userRepo.create(newUser)
         }
 
-        var (user , error) = userRepo.getByEmail(input.email)
-
-        if (error != null) {
-            return Pair(null, error)
-        }
-
-        if (user != null) {
-            return Pair(user, Errors.EmailExist)
-        }
-
-        user = User(
-                IdGen.NewId(),
-                input.email,
-                input.name,
-                input.password,
-                Clock.NowUTC(),
-                Clock.NowUTC())
-
-        error = userRepo.create(user)
-
-        if (error != null) {
-            return Pair(null, error)
-        }
-
-        return Pair(user, null)
+        return newUser
     }
 
-    fun getUser(input: GetUserInput): Pair<User?,Error?> {
-        if (!userValidate.inputId(input.userId)) {
-            return Pair(null, Errors.InvalidInput)
-        }
+    fun getUser(input: GetUserInput): User? {
+        userValidate.inputId(input.userId)
 
         return userRepo.get(input.userId)
     }

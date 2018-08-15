@@ -4,9 +4,16 @@ import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
 
 data class Cart(
-        var products: MutableList<ProductQTY?>)
+        var products: MutableList<ProductQTY?> = mutableListOf())
 {
     private var cart = this
+
+    fun newCart(): Cart {
+        return Cart(
+                mutableListOf()
+        )
+    }
+
     private fun checkStock(productQTY: ProductQTY, stock: ProductStock) {
         if (productQTY.productId != stock.productID) {
             throw Errors.ProductNotMatched
@@ -106,7 +113,11 @@ data class Cart(
     }
 
     fun toProductQTYList(): MutableList<ProductQTY?> {
-        return cart.toProductQTYList()
+        if (cart.products.size == 0) {
+            throw Errors.ProductNotFound
+        }
+
+        return cart.products
     }
 
     fun totalPrice(): Int {

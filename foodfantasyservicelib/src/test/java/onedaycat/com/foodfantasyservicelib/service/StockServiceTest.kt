@@ -51,13 +51,12 @@ class StockServiceTest {
     fun `Add product stock success`() {
         val psGet = expPStock.newProductStock("111", 10)
 
-        `when`(stockValidate.inputPStock(inputAddStock)).thenReturn(null)
-        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(Pair(psGet, null))
-        `when`(stockRepo.upsert(expPStock)).thenReturn(null)
+        doNothing().`when`(stockValidate).inputPStock(inputAddStock)
+        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
+        doNothing().`when`(stockRepo).upsert(expPStock)
 
-        val (pstock, error) = stockService.addProductStock(inputAddStock)
+        val pstock = stockService.addProductStock(inputAddStock)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expPStock, pstock)
 
         verify(stockValidate).inputPStock(inputAddStock)
@@ -66,43 +65,38 @@ class StockServiceTest {
     }
 
     @Test
-    fun `Add product stock but validate failed`() {
-        `when`(stockValidate.inputPStock(inputAddStock)).thenReturn(Errors.InvalidInputProductStock)
+    fun `Add product stock success but get not found pstock then create new pstock to stock`() {
+        val expPStock = stock!!.newProductStock("111", 10)!!
+        doNothing().`when`(stockValidate).inputPStock(inputAddStock)
+        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(null)
 
-        val (pstock, error) = stockService.addProductStock(inputAddStock)
+        val pstock = stockService.addProductStock(inputAddStock)
 
-        Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.InvalidInputProductStock, error)
-
-        verify(stockValidate).inputPStock(inputAddStock)
-    }
-
-    @Test
-    fun `Add product stock but get product stock failed`() {
-        `when`(stockValidate.inputPStock(inputAddStock)).thenReturn(null)
-        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(Pair(null, Errors.UnableGetProductStock))
-
-        val (pstock, error) = stockService.addProductStock(inputAddStock)
-
-        Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.UnableGetProductStock, error)
+        Assert.assertEquals(expPStock, pstock)
 
         verify(stockValidate).inputPStock(inputAddStock)
         verify(stockRepo).get(inputAddStock.productID)
     }
 
     @Test
+    fun `Add product stock but validate failed`() {
+        `when`(stockValidate.inputPStock(inputAddStock)).thenThrow(Errors.InvalidInputProductStock)
+
+        val pstock = stockService.addProductStock(inputAddStock)
+
+        Assert.assertNull(pstock)
+
+        verify(stockValidate).inputPStock(inputAddStock)
+    }
+
+    @Test
     fun `Add product stock but not found product stock`() {
-        val expPStock = expPStock.newProductStock("111", 10)
+        doNothing().`when`(stockValidate).inputPStock(inputAddStock)
+        `when`(stockRepo.get(inputAddStock.productID)).thenThrow(Errors.ProductStockNotFound)
 
-        `when`(stockValidate.inputPStock(inputAddStock)).thenReturn(null)
-        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(Pair(null, Errors.ProductStockNotFound))
-        `when`(stockRepo.upsert(expPStock)).thenReturn(null)
+        val pstock = stockService.addProductStock(inputAddStock)
 
-        val (pstock, error) = stockService.addProductStock(inputAddStock)
-
-        Assert.assertNull(error)
-        Assert.assertEquals(expPStock, pstock)
+        Assert.assertNull(pstock)
 
         verify(stockValidate).inputPStock(inputAddStock)
         verify(stockRepo).get(inputAddStock.productID)
@@ -112,14 +106,13 @@ class StockServiceTest {
     fun `Add product stock but save or update failed`() {
         val psGet = expPStock.newProductStock("111", 10)
 
-        `when`(stockValidate.inputPStock(inputAddStock)).thenReturn(null)
-        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(Pair(psGet, null))
-        `when`(stockRepo.upsert(expPStock)).thenReturn(Errors.UnableSaveProductStock)
+        doNothing().`when`(stockValidate).inputPStock(inputAddStock)
+        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
+        `when`(stockRepo.upsert(expPStock)).thenThrow(Errors.UnableSaveProductStock)
 
-        val (pstock, error) = stockService.addProductStock(inputAddStock)
+        val pstock = stockService.addProductStock(inputAddStock)
 
         Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.UnableSaveProductStock, error)
 
         verify(stockValidate).inputPStock(inputAddStock)
         verify(stockRepo).get(inputAddStock.productID)
@@ -135,13 +128,12 @@ class StockServiceTest {
                 5
         )
 
-        `when`(stockValidate.inputSubStock(inputSubStock)).thenReturn(null)
-        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(Pair(psGet, null))
-        `when`(stockRepo.upsert(expPStock)).thenReturn(null)
+        doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
+        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(psGet)
+        doNothing().`when`(stockRepo).upsert(expPStock)
 
-        val (pstock, error) = stockService.subProductStock(inputSubStock)
+        val pstock = stockService.subProductStock(inputSubStock)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expPStock, pstock)
 
         verify(stockValidate).inputSubStock(inputSubStock)
@@ -151,25 +143,23 @@ class StockServiceTest {
 
     @Test
     fun `Sub product stock but validate failed`() {
-        `when`(stockValidate.inputSubStock(inputSubStock)).thenReturn(Errors.InvalidInputProductStock)
+        `when`(stockValidate.inputSubStock(inputSubStock)).thenThrow(Errors.InvalidInputProductStock)
 
-        val (pstock, error) = stockService.subProductStock(inputSubStock)
+        val pstock = stockService.subProductStock(inputSubStock)
 
         Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.InvalidInputProductStock, error)
 
         verify(stockValidate).inputSubStock(inputSubStock)
     }
 
     @Test
     fun `Sub product stock but get stock failed`() {
-        `when`(stockValidate.inputSubStock(inputSubStock)).thenReturn(null)
-        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(Pair(null, Errors.UnableGetProductStock))
+        doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
+        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(null)
 
-        val (pstock, error) = stockService.subProductStock(inputSubStock)
+        val pstock = stockService.subProductStock(inputSubStock)
 
         Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.UnableGetProductStock, error)
 
         verify(stockValidate).inputSubStock(inputSubStock)
         verify(stockRepo).get(inputSubStock.productID)
@@ -178,14 +168,13 @@ class StockServiceTest {
     @Test
     fun `Sub product stock but save or update failed`() {
         val psGet = expPStock.newProductStock("111", 10)
-        `when`(stockValidate.inputSubStock(inputSubStock)).thenReturn(null)
-        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(Pair(psGet,null))
-        `when`(stockRepo.upsert(psGet)).thenReturn(Errors.UnableSaveProductStock)
+        doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
+        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(psGet)
+        `when`(stockRepo.upsert(psGet)).thenThrow(Errors.UnableSaveProductStock)
 
-        val (pstock, error) = stockService.subProductStock(inputSubStock)
+        val pstock = stockService.subProductStock(inputSubStock)
 
         Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.UnableSaveProductStock, error)
 
         verify(stockValidate).inputSubStock(inputSubStock)
         verify(stockRepo).get(inputSubStock.productID)
@@ -196,13 +185,13 @@ class StockServiceTest {
     fun `Sub product stock failed`() {
         val psGet = expPStock.newProductStock("111", 2)
 
-        `when`(stockValidate.inputSubStock(inputSubStock)).thenReturn(null)
-        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(Pair(psGet,null))
+        doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
+        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(psGet)
+        doNothing().`when`(stockRepo).upsert(expPStock)
 
-        val (pstock, error) = stockService.subProductStock(inputSubStock)
+        val pstock = stockService.subProductStock(inputSubStock)
 
         Assert.assertNull(pstock)
-        Assert.assertEquals(Errors.ProductOutOfStock, error)
 
         verify(stockValidate).inputSubStock(inputSubStock)
         verify(stockRepo).get(inputSubStock.productID)

@@ -2,8 +2,8 @@ package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.contract.repository.ProductMemo
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
+import onedaycat.com.foodfantasyservicelib.contract.repository.ProductRepo
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
@@ -16,7 +16,7 @@ import org.mockito.Mockito.*
 class ProductServiceTest {
     @Mock
     private lateinit var productService: ProductService
-    private lateinit var productRepo: ProductMemo
+    private lateinit var productRepo: ProductRepo
     private lateinit var productValidate: ProductValidate
     private lateinit var productPaging: ProductPaging
 
@@ -30,7 +30,7 @@ class ProductServiceTest {
 
     @Before
     fun setup() {
-        productRepo = mock(ProductMemo::class.java)
+        productRepo = mock(ProductRepo::class.java)
         productValidate = mock(ProductValidate::class.java)
         productService = ProductService(productRepo, productValidate)
 
@@ -68,12 +68,11 @@ class ProductServiceTest {
 
     @Test
     fun `create product success`() {
-        `when`(productValidate.inputProduct(input = input)).thenReturn(null)
-        `when`(productRepo.create(expProduct)).thenReturn(null)
+        doNothing().`when`(productValidate).inputProduct(input)
+        doNothing().`when`(productRepo).create(expProduct)
 
-        val (product, error) = productService.createProduct(input)
+        val product = productService.createProduct(input)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expProduct.id, product!!.id)
 
         verify(productValidate).inputProduct(input)
@@ -82,13 +81,11 @@ class ProductServiceTest {
 
     @Test
     fun `create product fail`() {
-        val expError = Errors.UnableCreateProduct
-        `when`(productValidate.inputProduct(input)).thenReturn(null)
-        `when`(productRepo.create(expProduct)).thenReturn(expError)
+        doNothing().`when`(productValidate).inputProduct(input)
+        `when`(productRepo.create(expProduct)).thenThrow(Errors.UnableCreateProduct)
 
-        val (product, error) = productService.createProduct(input)
+        val product = productService.createProduct(input)
 
-        Assert.assertEquals(expError, error)
         Assert.assertNull(product)
 
         verify(productValidate).inputProduct(input)
@@ -97,12 +94,10 @@ class ProductServiceTest {
 
     @Test
     fun `create product then validate fail`() {
-        val expError = Errors.InvalidInputProduct
-        `when`(productValidate.inputProduct(inputIncorrect)).thenReturn(expError)
+        `when`(productValidate.inputProduct(inputIncorrect)).thenThrow(Errors.InvalidInputProduct)
 
-        val (product, error) = productService.createProduct(inputIncorrect)
+        val product = productService.createProduct(inputIncorrect)
 
-        Assert.assertEquals(expError, error)
         Assert.assertNull(product)
 
         verify(productValidate).inputProduct(inputIncorrect)
@@ -114,12 +109,12 @@ class ProductServiceTest {
                 id = "xxxx"
         )
 
-        `when`(productValidate.inputId(input.id)).thenReturn(null)
-        `when`(productRepo.remove(input.id)).thenReturn(null)
+        doNothing().`when`(productValidate).inputId(input.id)
+        doNothing().`when`(productRepo).remove(input.id)
 
-        val error = productService.removeProduct(input)
+        val expRemove = productService.removeProduct(input)
 
-        Assert.assertNull(error)
+        Assert.assertTrue(expRemove)
 
         verify(productValidate).inputId(input.id)
         verify(productRepo).remove(input.id)
@@ -131,14 +126,12 @@ class ProductServiceTest {
                 id = "xxxx"
         )
 
-        val expError = Errors.UnableRemoveProduct
+        doNothing().`when`(productValidate).inputId(input.id)
+        `when`(productRepo.remove(input.id)).thenThrow(Errors.UnableRemoveProduct)
 
-        `when`(productValidate.inputId(input.id)).thenReturn(null)
-        `when`(productRepo.remove(input.id)).thenReturn(expError)
+        val expRemove = productService.removeProduct(input)
 
-        val error = productService.removeProduct(input)
-
-        Assert.assertEquals(expError, error)
+        Assert.assertFalse(expRemove)
 
         verify(productValidate).inputId(input.id)
         verify(productRepo).remove(input.id)
@@ -149,13 +142,12 @@ class ProductServiceTest {
         val input = RemoveProductInput(
                 id = "   "
         )
-        val expError = Errors.InvalidInput
 
-        `when`(productValidate.inputId(input.id)).thenReturn(expError)
+        `when`(productValidate.inputId(input.id)).thenThrow(Errors.InvalidInput)
 
-        val error = productService.removeProduct(input)
+        val expRemove = productService.removeProduct(input)
 
-        Assert.assertEquals(expError, error)
+        Assert.assertFalse(expRemove)
 
         verify(productValidate).inputId(input.id)
     }
@@ -163,12 +155,11 @@ class ProductServiceTest {
     @Test
     fun `get product success`() {
         val id = getProductInput.productId
-        `when`(productValidate.inputId(id)).thenReturn(null)
-        `when`(productRepo.get(id)).thenReturn(Pair(expProduct, null))
+        doNothing().`when`(productValidate).inputId(id)
+        `when`(productRepo.get(id)).thenReturn(expProduct)
 
-        val (product, error) = productService.getProduct(getProductInput)
+        val product = productService.getProduct(getProductInput)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expProduct, product)
 
         verify(productValidate).inputId(id)
@@ -178,14 +169,13 @@ class ProductServiceTest {
     @Test
     fun `get product not found`() {
         val id = getProductInput.productId
-        val expError = Errors.ProductNotFound
-        `when`(productValidate.inputId(id)).thenReturn(null)
-        `when`(productRepo.get(id)).thenReturn(Pair(null, expError))
 
-        val (product, error) = productService.getProduct(getProductInput)
+        doNothing().`when`(productValidate).inputId(id)
+        `when`(productRepo.get(id)).thenThrow(Errors.ProductNotFound)
+
+        val product = productService.getProduct(getProductInput)
 
         Assert.assertNull(product)
-        Assert.assertEquals(expError, error)
 
         verify(productValidate).inputId(id)
         verify(productRepo).get(id)
@@ -194,13 +184,12 @@ class ProductServiceTest {
     @Test
     fun `get product then validate fail`() {
         val id = getProductInput.productId
-        val expError = Errors.InvalidInput
-        `when`(productValidate.inputId(id)).thenReturn(expError)
 
-        val (product, error) = productService.getProduct(getProductInput)
+        `when`(productValidate.inputId(id)).thenThrow(Errors.InvalidInput)
+
+        val product = productService.getProduct(getProductInput)
 
         Assert.assertNull(product)
-        Assert.assertEquals(expError, error)
 
         verify(productValidate).inputId(id)
     }
@@ -223,12 +212,11 @@ class ProductServiceTest {
 
         val expProductPaging = productPaging
 
-        `when`(productValidate.inputLimitPaging(input)).thenReturn(null)
-        `when`(productRepo.getAllWithPaging(input.limit)).thenReturn(Pair(expProductPaging, null))
+        doNothing().`when`(productValidate).inputLimitPaging(input)
+        `when`(productRepo.getAllWithPaging(input.limit)).thenReturn(expProductPaging)
 
-        val (productPaging, error) = productService.getProducts(input)
+        val productPaging= productService.getProducts(input)
 
-        Assert.assertNull(error)
         Assert.assertEquals(expProductPaging, productPaging)
 
         verify(productValidate).inputLimitPaging(input)
@@ -241,15 +229,12 @@ class ProductServiceTest {
                 limit = 10
         )
 
-        val expError = Errors.UnableGetProduct
+        doNothing().`when`(productValidate).inputLimitPaging(input)
+        `when`(productRepo.getAllWithPaging(input.limit)).thenThrow(Errors.UnableGetProduct)
 
-        `when`(productValidate.inputLimitPaging(input)).thenReturn(null)
-        `when`(productRepo.getAllWithPaging(input.limit)).thenReturn(Pair(null, expError))
-
-        val (productPaging, error) = productService.getProducts(input)
+        val productPaging = productService.getProducts(input)
 
         Assert.assertNull(productPaging)
-        Assert.assertEquals(expError, error)
 
         verify(productValidate).inputLimitPaging(input)
         verify(productRepo).getAllWithPaging(input.limit)
@@ -261,14 +246,11 @@ class ProductServiceTest {
                 limit = -1
         )
 
-        val expError = Errors.InvalidInputLimitPaging
+        `when`(productValidate.inputLimitPaging(input)).thenThrow(Errors.InvalidInputLimitPaging)
 
-        `when`(productValidate.inputLimitPaging(input)).thenReturn(expError)
-
-        val (productPaging, error) = productService.getProducts(input)
+        val productPaging = productService.getProducts(input)
 
         Assert.assertNull(productPaging)
-        Assert.assertEquals(expError, error)
 
         verify(productValidate).inputLimitPaging(input)
     }

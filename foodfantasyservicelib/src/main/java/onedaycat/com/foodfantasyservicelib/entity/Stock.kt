@@ -8,17 +8,17 @@ data class ProductStockWithPrice(
         var productStock: ProductStock,
         var price: Int
 ){
-    private var pstockPrice = this
-
-    fun newProductStockWithPrice(productID: String, price: Int, qty: Int): ProductStockWithPrice {
-        return ProductStockWithPrice(
-                ProductStock().newProductStock(
-                        productID,
-                        qty
-                )!!,
-                price
-        )
-    }
+//    private var pstockPrice = this
+//
+//    fun newProductStockWithPrice(productID: String, price: Int, qty: Int): ProductStockWithPrice {
+//        return ProductStockWithPrice(
+//                ProductStock().newProductStock(
+//                        productID,
+//                        qty
+//                )!!,
+//                price
+//        )
+//    }
 }
 
 data class ProductStock(
@@ -50,18 +50,17 @@ data class ProductStock(
         productStock!!.qty += qty
     }
 
-    fun withDraw(qty: Int): Pair<ProductStock?, Error?> {
+    fun withDraw(qty: Int): ProductStock? {
         if ((productStock!!.qty - qty) < 0) {
-            return Pair(null, Errors.ProductOutOfStock)
+            throw Errors.ProductOutOfStock
         }
 
         productStock!!.qty -= qty
 
-        return Pair(
-                ProductStock(
-                        productStock!!.productID,
-                        qty
-                ), null)
+        return ProductStock(
+                productStock!!.productID,
+                productStock!!.qty
+        )
     }
 
     fun has(qty: Int): Boolean {

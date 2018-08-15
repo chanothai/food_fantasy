@@ -6,26 +6,25 @@ import onedaycat.com.foodfantasyservicelib.service.AddProductStockInput
 import onedaycat.com.foodfantasyservicelib.service.SubProductStockInput
 
 interface StockValidate {
-    fun inputPStock(input: AddProductStockInput): Error?
-    fun inputSubStock(input: SubProductStockInput): Error?
+    fun inputPStock(input: AddProductStockInput)
+    fun inputSubStock(input: SubProductStockInput)
 }
 
 class StockMemoValidate: StockValidate {
-    override fun inputPStock(input: AddProductStockInput): Error? {
-        if ((input.productID.isNotEmpty() && input.qty >= 0)
-                || (input.productID.isNotBlank() && input.qty >= 0)) {
-            return null
-        }
+    override fun inputPStock(input: AddProductStockInput) {
+        if (input.productID.isEmpty()
+                || input.qty < 0
+                || input.productID.isBlank()) {
 
-        return Errors.InvalidInputProductStock
+            throw Errors.InvalidInputProductStock
+        }
     }
 
-    override fun inputSubStock(input: SubProductStockInput): Error? {
-        if ((input.productID.isNotEmpty() && input.qty >= 0)
-                || (input.productID.isNotBlank() && input.qty >= 0)) {
-            return null
+    override fun inputSubStock(input: SubProductStockInput) {
+        if (input.productID.isEmpty()
+                || input.qty < 0
+                || input.productID.isBlank()) {
+            throw Errors.InvalidInputProductStock
         }
-
-        return Errors.InvalidInputProductStock
     }
 }

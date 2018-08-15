@@ -13,19 +13,19 @@ import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.PaymentValidate
 
-class PaymentService(val orderRepo: OrderRepo,
-                     val ccPayment: CreditCardPayment,
-                     val stockRepo: StockRepo,
-                     val cartReop: CartRepo,
-                     val paymentRepo: PaymentRepo,
-                     val paymentValidate: PaymentValidate) {
+class PaymentService(private val orderRepo: OrderRepo,
+                     private val ccPayment: CreditCardPayment,
+                     private val stockRepo: StockRepo,
+                     private val cartRepo: CartRepo,
+                     private val paymentRepo: PaymentRepo,
+                     private val paymentValidate: PaymentValidate) {
 
     fun charge(input: ChargeInput): Order? {
         try {
             paymentValidate.inputCharge(input)
 
             //get cart of user
-            val cart = cartReop.getByUserID(input.userID)
+            val cart = cartRepo.getByUserID(input.userID)
 
             //get all product stock
             val pstocks = stockRepo.getByIDs(cart!!.productIDs())
@@ -58,6 +58,8 @@ class PaymentService(val orderRepo: OrderRepo,
 
             //create order into repository
             paymentRepo.savePayment(order, tx, pstocks)
+
+            return order
         }catch (e: Error) {
             e.printStackTrace()
         }

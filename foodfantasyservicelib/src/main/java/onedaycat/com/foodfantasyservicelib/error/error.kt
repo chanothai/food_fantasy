@@ -17,6 +17,8 @@ class Errors {
         var UnableCreateUser = InternalError(1004, "Unable create user")
         var UnableCreateProduct = InternalError(1999, "Unable create product")
         var UnableGetUser = InternalError(1005, "Unable get user")
+        var UnableSavePayment = InternalError(1323, "Unable save payment")
+        var UnableChargeCreditCard = InternalError(2233, "Unable to charge credit card")
         var UnableGetProduct = InternalError(1010, "Unable get product")
         var UnableRemoveProduct = InternalError(1011, "Unable remove product")
         var UnableGetCart = InternalError(111, "Unable get cart")

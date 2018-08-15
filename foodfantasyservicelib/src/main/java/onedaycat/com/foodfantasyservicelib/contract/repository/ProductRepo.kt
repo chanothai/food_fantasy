@@ -10,31 +10,8 @@ data class ProductPaging(
 )
 
 interface ProductRepo {
-    fun create(product: Product?): Error?
-    fun remove(id: String): Error?
-    fun getAllWithPaging(limit: Int): Pair<ProductPaging?, Error?>
-    fun get(id: String): Pair<Product?, Error?>
-}
-
-class ProductMemo: ProductRepo {
-    private val error: Error? = null
-    private val product: Product? = null
-    private val productPaging: ProductPaging? = null
-
-    override fun create(product: Product?): Error? {
-        return error
-    }
-
-    override fun remove(id: String): Error? {
-        return error
-    }
-
-    override fun getAllWithPaging(limit: Int): Pair<ProductPaging?, Error?> {
-        return Pair(productPaging, error)
-    }
-
-    override fun get(id: String): Pair<Product?, Error?> {
-        return Pair(product, error)
-    }
-
+    fun create(product: Product?)
+    fun remove(id: String)
+    fun getAllWithPaging(limit: Int): ProductPaging?
+    fun get(id: String): Product?
 }

@@ -8,40 +8,34 @@ import onedaycat.com.foodfantasyservicelib.service.GetProductInput
 import onedaycat.com.foodfantasyservicelib.service.GetProductsInput
 
 interface ProductValidate {
-    fun inputId(id: String): Error?
-    fun inputProduct(input: CreateProductInput?): Error?
-    fun inputLimitPaging(input: GetProductsInput): Error?
+    fun inputId(id: String)
+    fun inputProduct(input: CreateProductInput?)
+    fun inputLimitPaging(input: GetProductsInput)
 }
 
 class ProductMemoValidate: ProductValidate {
+    override fun inputId(id: String) {
+        if (id.isBlank() || id.isEmpty()) {
 
-    override fun inputId(id: String): Error? {
-        if (id.isNotBlank() || id.isNotEmpty()) {
-            return null
+            throw Errors.InvalidInput
         }
-
-        return Errors.InvalidInput
     }
 
-    override fun inputProduct(input: CreateProductInput?): Error? {
+    override fun inputProduct(input: CreateProductInput?) {
         if (input != null) {
-            if (input.price >= 0
-                    && (input.name.isNotEmpty() || input.name.isNotBlank()))
+            if (input.price < 0
+                    || (input.name.isEmpty() || input.name.isBlank()))
             {
-                return null
+                throw Errors.InvalidInputProduct
             }
-
-            return Errors.InvalidInputProduct
         }
 
-        return Errors.InvalidInput
+        throw Errors.InvalidInput
     }
 
-    override fun inputLimitPaging(input: GetProductsInput): Error? {
-        if (input.limit >= 1) {
-            return null
+    override fun inputLimitPaging(input: GetProductsInput) {
+        if (input.limit < 1) {
+            throw Errors.InvalidInputLimitPaging
         }
-
-        return Errors.InvalidInputLimitPaging
     }
 }

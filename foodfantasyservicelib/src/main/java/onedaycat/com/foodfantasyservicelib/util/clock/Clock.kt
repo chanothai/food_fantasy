@@ -22,12 +22,8 @@ class Clock {
             freezeTime = Date()
         }
 
-        fun getFreezeTimes(): Date {
-            return freezeTime
-        }
-
         fun NowUTC(): String {
-            if (freezeTime.time.toInt() != 0) {
+            if (freezeTime.time.toInt() == 0) {
                 return createTimeStamp(convertDate(Calendar.getInstance().time))
             }
 
