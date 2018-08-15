@@ -177,11 +177,7 @@ class PaymentServiceTest {
     fun `payment then validate failed`() {
         `when`(paymentValidate.inputCharge(input)).thenThrow(Errors.InvalidInput)
 
-        val order = paymentService.charge(input)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputCharge(input)
+        paymentService.charge(input)
     }
 
     @Test(expected = NotFoundException::class)
@@ -189,12 +185,7 @@ class PaymentServiceTest {
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenThrow(Errors.CartNotFound)
 
-        val order = paymentService.charge(input)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputCharge(input)
-        verify(cartRepo).getByUserID(input.userID)
+        paymentService.charge(input)
     }
 
     @Test(expected = BadRequestException::class)
@@ -208,13 +199,7 @@ class PaymentServiceTest {
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)
         `when`(pstockRepo.getByIDs(expCart.productIDs())).thenReturn(pstocks)
 
-        val order = paymentService.charge(input)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputCharge(input)
-        verify(cartRepo).getByUserID(input.userID)
-        verify(pstockRepo).getByIDs(expCart.productIDs())
+        paymentService.charge(input)
     }
 
     @Test(expected = InternalError::class)
@@ -224,14 +209,7 @@ class PaymentServiceTest {
         `when`(pstockRepo.getByIDs(expCart.productIDs())).thenReturn(pstocks)
         `when`(ccPayment.charge(orderForCharge, input.creditCard)).thenThrow(Errors.UnableChargeCreditCard)
 
-        val order = paymentService.charge(input)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputCharge(input)
-        verify(cartRepo).getByUserID(input.userID)
-        verify(pstockRepo).getByIDs(expCart.productIDs())
-        verify(ccPayment).charge(orderForCharge, input.creditCard)
+        paymentService.charge(input)
     }
 
     @Test(expected = InternalError::class)
@@ -242,14 +220,7 @@ class PaymentServiceTest {
         `when`(ccPayment.charge(orderForCharge, input.creditCard)).thenReturn(tx)
         `when`(paymentRepo.savePayment(expOrder, tx, pstocks)).thenThrow(Errors.UnableSavePayment)
 
-        val order = paymentService.charge(input)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputCharge(input)
-        verify(cartRepo).getByUserID(input.userID)
-        verify(pstockRepo).getByIDs(expCart.productIDs())
-        verify(ccPayment).charge(expOrder, input.creditCard)
+        paymentService.charge(input)
     }
 
     @Test
@@ -272,27 +243,18 @@ class PaymentServiceTest {
     }
 
     @Test(expected = InvalidInputException::class)
-    fun `refun validate failed`() {
+    fun `refund validate failed`() {
         `when`(paymentValidate.inputRefund(inputRefund)).thenThrow(Errors.InvalidInput)
 
-        val order = paymentService.refund(inputRefund)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputRefund(inputRefund)
+        paymentService.refund(inputRefund)
     }
 
     @Test(expected = InternalError::class)
-    fun `refun get order failed`() {
+    fun `refund get order failed`() {
         doNothing().`when`(paymentValidate).inputRefund(inputRefund)
         `when`(orderRepo.get(inputRefund.orderID)).thenThrow(Errors.UnableGetOrder)
 
-        val order = paymentService.refund(inputRefund)
-
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputRefund(inputRefund)
-        verify(orderRepo).get(inputRefund.orderID)
+        paymentService.refund(inputRefund)
     }
 
     @Test(expected = BadRequestException::class)
@@ -316,10 +278,6 @@ class PaymentServiceTest {
         doNothing().`when`(paymentValidate).inputRefund(input)
         `when`(orderRepo.get(inputRefund.orderID)).thenReturn(orderForRefund)
 
-        val order = paymentService.refund(inputRefund)
-        Assert.assertNull(order)
-
-        verify(paymentValidate).inputRefund(inputRefund)
-        verify(orderRepo).get(inputRefund.orderID)
+        paymentService.refund(inputRefund)
     }
 }

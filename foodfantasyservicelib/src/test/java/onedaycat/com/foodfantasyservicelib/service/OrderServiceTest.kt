@@ -69,11 +69,7 @@ class OrderServiceTest {
     fun `validate failed`() {
         `when`(orderValidate.inputGetOrder(input)).thenThrow(Errors.InvalidInput)
 
-        val order = orderService.getOrder(input)
-
-        Assert.assertNull(order)
-
-        verify(orderValidate).inputGetOrder(input)
+        orderService.getOrder(input)
     }
 
     @Test(expected = InternalError::class)
@@ -81,11 +77,6 @@ class OrderServiceTest {
         doNothing().`when`(orderValidate).inputGetOrder(input)
         `when`(orderRepo.get(input.id)).thenThrow(Errors.UnableGetOrder)
 
-        val order = orderService.getOrder(input)
-
-        Assert.assertNull(order)
-
-        verify(orderValidate).inputGetOrder(input)
-        verify(orderRepo).get(input.id)
+        orderService.getOrder(input)
     }
 }

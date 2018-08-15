@@ -87,23 +87,14 @@ class ProductServiceTest {
         doNothing().`when`(productValidate).inputProduct(input)
         `when`(productRepo.create(expProduct)).thenThrow(Errors.UnableCreateProduct)
 
-        val product = productService.createProduct(input)
-
-        Assert.assertNull(product)
-
-        verify(productValidate).inputProduct(input)
-        verify(productRepo).create(expProduct)
+        productService.createProduct(input)
     }
 
     @Test(expected = InvalidInputException::class)
     fun `create product then validate fail`() {
         `when`(productValidate.inputProduct(inputIncorrect)).thenThrow(Errors.InvalidInputProduct)
 
-        val product = productService.createProduct(inputIncorrect)
-
-        Assert.assertNull(product)
-
-        verify(productValidate).inputProduct(inputIncorrect)
+        productService.createProduct(inputIncorrect)
     }
 
     @Test
@@ -131,9 +122,6 @@ class ProductServiceTest {
         `when`(productRepo.remove(input.id)).thenThrow(Errors.UnableRemoveProduct)
 
         productService.removeProduct(input)
-
-        verify(productValidate).inputId(input.id)
-        verify(productRepo).remove(input.id)
     }
 
     @Test(expected = InvalidInputException::class)
@@ -145,8 +133,6 @@ class ProductServiceTest {
         `when`(productValidate.inputId(input.id)).thenThrow(Errors.InvalidInput)
 
         productService.removeProduct(input)
-
-        verify(productValidate).inputId(input.id)
     }
 
     @Test
@@ -170,12 +156,7 @@ class ProductServiceTest {
         doNothing().`when`(productValidate).inputId(id)
         `when`(productRepo.get(id)).thenThrow(Errors.ProductNotFound)
 
-        val product = productService.getProduct(getProductInput)
-
-        Assert.assertNull(product)
-
-        verify(productValidate).inputId(id)
-        verify(productRepo).get(id)
+        productService.getProduct(getProductInput)
     }
 
     @Test(expected = InvalidInputException::class)
@@ -184,11 +165,7 @@ class ProductServiceTest {
 
         `when`(productValidate.inputId(id)).thenThrow(Errors.InvalidInput)
 
-        val product = productService.getProduct(getProductInput)
-
-        Assert.assertNull(product)
-
-        verify(productValidate).inputId(id)
+        productService.getProduct(getProductInput)
     }
 
     @Test
@@ -229,12 +206,7 @@ class ProductServiceTest {
         doNothing().`when`(productValidate).inputLimitPaging(input)
         `when`(productRepo.getAllWithPaging(input.limit)).thenThrow(Errors.UnableGetProduct)
 
-        val productPaging = productService.getProducts(input)
-
-        Assert.assertNull(productPaging)
-
-        verify(productValidate).inputLimitPaging(input)
-        verify(productRepo).getAllWithPaging(input.limit)
+        productService.getProducts(input)
     }
 
     @Test(expected = InvalidInputException::class)
@@ -244,11 +216,7 @@ class ProductServiceTest {
         )
 
         `when`(productValidate.inputLimitPaging(input)).thenThrow(Errors.InvalidInputLimitPaging)
-
-        val productPaging = productService.getProducts(input)
-
-        Assert.assertNull(productPaging)
-
-        verify(productValidate).inputLimitPaging(input)
+        
+        productService.getProducts(input)
     }
 }

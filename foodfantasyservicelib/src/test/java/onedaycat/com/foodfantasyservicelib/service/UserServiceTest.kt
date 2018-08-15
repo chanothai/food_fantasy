@@ -75,13 +75,7 @@ class UserServiceTest {
         `when`(userRepo.getByEmail(inputUser.email)).thenThrow(Errors.UserNotFound)
         `when`(userRepo.create(expUser)).thenThrow(Errors.UnableCreateUser)
 
-        val user = userService.createUser(inputUser)
-
-        Assert.assertNull(user)
-
-        verify(userRepo).getByEmail(inputUser.email)
-        verify(userRepo).create(expUser)
-        verify(userValidate).inputUser(inputUser)
+        userService.createUser(inputUser)
     }
 
     @Test(expected = BadRequestException::class)
@@ -89,23 +83,14 @@ class UserServiceTest {
         doNothing().`when`(userValidate).inputUser(inputUser)
         `when`(userRepo.getByEmail(inputUser.email)).thenReturn(expUser)
 
-        val user = userService.createUser(inputUser)
-
-        Assert.assertNull(user)
-
-        verify(userRepo).getByEmail(inputUser.email)
-        verify(userValidate).inputUser(inputUser)
+        userService.createUser(inputUser)
     }
 
     @Test(expected = InvalidInputException::class)
     fun `create user validate failed`() {
         `when`(userValidate.inputUser(inputUser)).thenThrow(Errors.InvalidInput)
 
-        val user = userService.createUser(inputUser)
-
-        Assert.assertNull(user)
-
-        verify(userValidate).inputUser(inputUser)
+        userService.createUser(inputUser)
     }
 
     @Test
@@ -126,11 +111,7 @@ class UserServiceTest {
         getUserInput = GetUserInput("   ")
         `when`(userValidate.inputId(getUserInput.userId)).thenThrow(Errors.InvalidInput)
 
-        val user = userService.getUser(getUserInput)
-
-        Assert.assertNull(user)
-
-        verify(userValidate).inputId(getUserInput.userId)
+        userService.getUser(getUserInput)
     }
 
     @Test(expected = NotFoundException::class)
@@ -140,11 +121,6 @@ class UserServiceTest {
         doNothing().`when`(userValidate).inputId(getUserInput.userId)
         `when`(userRepo.get(getUserInput.userId)).thenThrow(Errors.UserNotFound)
 
-        val user = userService.getUser(getUserInput)
-
-        Assert.assertNull(user)
-
-        verify(userValidate).inputId(getUserInput.userId)
-        verify(userRepo).get(getUserInput.userId)
+        userService.getUser(getUserInput)
     }
 }
