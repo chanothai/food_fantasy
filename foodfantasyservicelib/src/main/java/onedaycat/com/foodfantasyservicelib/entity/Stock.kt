@@ -8,17 +8,17 @@ data class ProductStockWithPrice(
         var productStock: ProductStock,
         var price: Int
 ){
-//    private var pstockPrice = this
-//
-//    fun newProductStockWithPrice(productID: String, price: Int, qty: Int): ProductStockWithPrice {
-//        return ProductStockWithPrice(
-//                ProductStock().newProductStock(
-//                        productID,
-//                        qty
-//                )!!,
-//                price
-//        )
-//    }
+    private var pstockPrice = this
+
+    fun newProductStockWithPrice(productID: String, price: Int, qty: Int): ProductStockWithPrice {
+        return ProductStockWithPrice(
+                ProductStock().newProductStock(
+                        productID,
+                        qty
+                )!!,
+                price
+        )
+    }
 }
 
 data class ProductStock(

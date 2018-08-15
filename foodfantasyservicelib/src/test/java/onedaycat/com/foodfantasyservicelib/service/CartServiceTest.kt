@@ -1,9 +1,9 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.*
-import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
+import onedaycat.com.foodfantasyservicelib.error.*
 import onedaycat.com.foodfantasyservicelib.validate.CartValidate
 import org.junit.Assert
 import org.junit.Before
@@ -84,7 +84,7 @@ class CartServiceTest {
         verify(cartRepo).upsert(expCart)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `Add cart but validate failed`() {
         `when`(cartValidate.inputCart(input)).thenThrow(Errors.InvalidInput)
 
@@ -95,7 +95,7 @@ class CartServiceTest {
         verify(cartValidate).inputCart(input)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `Add cart but get cart failed`() {
         doNothing().`when`(cartValidate).inputCart(input)
         `when`(cartRepo.getByUserID(input.userID)).thenThrow(Errors.UnableGetCart)
@@ -108,7 +108,7 @@ class CartServiceTest {
         verify(cartRepo).getByUserID(input.userID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `get stock failed`() {
         val newCart = Cart(mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
@@ -126,7 +126,7 @@ class CartServiceTest {
         verify(stockRepo).getWithPrice(input.productID)
     }
 
-    @Test
+    @Test(expected = BadRequestException::class)
     fun `Add cart failed`() {
         val stock = stock.newProductStock("111", 10)!!
         val stockWithPrice = ProductStockWithPrice(stock, 100)
@@ -147,7 +147,7 @@ class CartServiceTest {
         verify(stockRepo).getWithPrice(input.productID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `Save cart failed`() {
         val newCart = Cart(mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
@@ -192,7 +192,7 @@ class CartServiceTest {
         verify(cartRepo).upsert(expCart)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `remove cart but validate failed`() {
         `when`(cartValidate.inputRemoveCart(inputRemove)).thenThrow(Errors.InvalidInput)
 
@@ -203,7 +203,7 @@ class CartServiceTest {
         verify(cartValidate).inputRemoveCart(inputRemove)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `remove cart but get cart failed`() {
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
         `when`(cartRepo.getByUserID(inputRemove.userID)).thenThrow(Errors.UnableGetCart)
@@ -216,7 +216,7 @@ class CartServiceTest {
         verify(cartRepo).getByUserID(inputRemove.userID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `remove cart but get stock failed`() {
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
         `when`(cartRepo.getByUserID(inputRemove.userID)).thenReturn(expCart)
@@ -231,7 +231,7 @@ class CartServiceTest {
         verify(stockRepo).getWithPrice(inputRemove.productID)
     }
 
-    @Test
+    @Test(expected = NotFoundException::class)
     fun `remove cart failed`() {
         val newCart = Cart(mutableListOf())
 
@@ -248,7 +248,7 @@ class CartServiceTest {
         verify(stockRepo).getWithPrice(inputRemove.productID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `remove cart but save or upadte failed`() {
         val newCart = Cart(mutableListOf())
         newCart.addPQTY(newProductQTY("111", 100, 5), stock)
@@ -289,7 +289,7 @@ class CartServiceTest {
         verify(cartRepo).getByUserID(input.userID)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `get cart but validate failed`() {
         `when`(cartValidate.inputGetCart(inputCart)).thenThrow(Errors.InvalidInput)
 
@@ -300,7 +300,7 @@ class CartServiceTest {
         verify(cartValidate).inputGetCart(inputCart)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `get cart failed`() {
         doNothing().`when`(cartValidate).inputGetCart(inputCart)
         `when`(cartRepo.getByUserID(input.userID)).thenThrow(Errors.UnableGetCart)

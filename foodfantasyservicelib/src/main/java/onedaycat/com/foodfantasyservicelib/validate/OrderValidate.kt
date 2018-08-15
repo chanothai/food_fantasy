@@ -5,19 +5,13 @@ import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.service.GetOrderInput
 
 interface OrderValidate {
-    fun inputGetOrder(input: GetOrderInput): Boolean
+    fun inputGetOrder(input: GetOrderInput)
 }
 
 class OrderMemoValidate: OrderValidate {
-    override fun inputGetOrder(input: GetOrderInput):Boolean {
-        try {
-            if (input.id.isEmpty() && input.id.isBlank()) {
-                throw Errors.InvalidInput
-            }
-        }catch (e: Error) {
-            return false
+    override fun inputGetOrder(input: GetOrderInput) {
+        if (input.id.isEmpty() || input.id.isBlank()) {
+            throw Errors.InvalidInput
         }
-
-        return true
     }
 }

@@ -1,8 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
-import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
+import onedaycat.com.foodfantasyservicelib.error.*
 import onedaycat.com.foodfantasyservicelib.validate.StockValidate
 import org.junit.Assert
 import org.junit.Before
@@ -64,21 +64,7 @@ class StockServiceTest {
         verify(stockRepo).upsert(expPStock)
     }
 
-    @Test
-    fun `Add product stock success but get not found pstock then create new pstock to stock`() {
-        val expPStock = stock!!.newProductStock("111", 10)!!
-        doNothing().`when`(stockValidate).inputPStock(inputAddStock)
-        `when`(stockRepo.get(inputAddStock.productID)).thenReturn(null)
-
-        val pstock = stockService.addProductStock(inputAddStock)
-
-        Assert.assertEquals(expPStock, pstock)
-
-        verify(stockValidate).inputPStock(inputAddStock)
-        verify(stockRepo).get(inputAddStock.productID)
-    }
-
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `Add product stock but validate failed`() {
         `when`(stockValidate.inputPStock(inputAddStock)).thenThrow(Errors.InvalidInputProductStock)
 
@@ -96,13 +82,13 @@ class StockServiceTest {
 
         val pstock = stockService.addProductStock(inputAddStock)
 
-        Assert.assertNull(pstock)
+        Assert.assertEquals(stock, pstock)
 
         verify(stockValidate).inputPStock(inputAddStock)
         verify(stockRepo).get(inputAddStock.productID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `Add product stock but save or update failed`() {
         val psGet = expPStock.newProductStock("111", 10)
 
@@ -141,7 +127,7 @@ class StockServiceTest {
         verify(stockRepo).upsert(expPStock)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `Sub product stock but validate failed`() {
         `when`(stockValidate.inputSubStock(inputSubStock)).thenThrow(Errors.InvalidInputProductStock)
 
@@ -152,10 +138,10 @@ class StockServiceTest {
         verify(stockValidate).inputSubStock(inputSubStock)
     }
 
-    @Test
+    @Test(expected = NotFoundException::class)
     fun `Sub product stock but get stock failed`() {
         doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
-        `when`(stockRepo.get(inputSubStock.productID)).thenReturn(null)
+        `when`(stockRepo.get(inputSubStock.productID)).thenThrow(Errors.ProductStockNotFound)
 
         val pstock = stockService.subProductStock(inputSubStock)
 
@@ -165,7 +151,7 @@ class StockServiceTest {
         verify(stockRepo).get(inputSubStock.productID)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `Sub product stock but save or update failed`() {
         val psGet = expPStock.newProductStock("111", 10)
         doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
@@ -181,7 +167,7 @@ class StockServiceTest {
         verify(stockRepo).upsert(psGet)
     }
 
-    @Test
+    @Test(expected = BadRequestException::class)
     fun `Sub product stock failed`() {
         val psGet = expPStock.newProductStock("111", 2)
 

@@ -4,6 +4,9 @@ import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductRepo
+import onedaycat.com.foodfantasyservicelib.error.InternalError
+import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
+import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
@@ -79,7 +82,7 @@ class ProductServiceTest {
         verify(productRepo).create(expProduct)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `create product fail`() {
         doNothing().`when`(productValidate).inputProduct(input)
         `when`(productRepo.create(expProduct)).thenThrow(Errors.UnableCreateProduct)
@@ -92,7 +95,7 @@ class ProductServiceTest {
         verify(productRepo).create(expProduct)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `create product then validate fail`() {
         `when`(productValidate.inputProduct(inputIncorrect)).thenThrow(Errors.InvalidInputProduct)
 
@@ -112,15 +115,13 @@ class ProductServiceTest {
         doNothing().`when`(productValidate).inputId(input.id)
         doNothing().`when`(productRepo).remove(input.id)
 
-        val expRemove = productService.removeProduct(input)
-
-        Assert.assertTrue(expRemove)
+        productService.removeProduct(input)
 
         verify(productValidate).inputId(input.id)
         verify(productRepo).remove(input.id)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `remove product fail`() {
         val input = RemoveProductInput(
                 id = "xxxx"
@@ -129,15 +130,13 @@ class ProductServiceTest {
         doNothing().`when`(productValidate).inputId(input.id)
         `when`(productRepo.remove(input.id)).thenThrow(Errors.UnableRemoveProduct)
 
-        val expRemove = productService.removeProduct(input)
-
-        Assert.assertFalse(expRemove)
+        productService.removeProduct(input)
 
         verify(productValidate).inputId(input.id)
         verify(productRepo).remove(input.id)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `remove product but validate failed`() {
         val input = RemoveProductInput(
                 id = "   "
@@ -145,9 +144,7 @@ class ProductServiceTest {
 
         `when`(productValidate.inputId(input.id)).thenThrow(Errors.InvalidInput)
 
-        val expRemove = productService.removeProduct(input)
-
-        Assert.assertFalse(expRemove)
+        productService.removeProduct(input)
 
         verify(productValidate).inputId(input.id)
     }
@@ -166,7 +163,7 @@ class ProductServiceTest {
         verify(productRepo).get(id)
     }
 
-    @Test
+    @Test(expected = NotFoundException::class)
     fun `get product not found`() {
         val id = getProductInput.productId
 
@@ -181,7 +178,7 @@ class ProductServiceTest {
         verify(productRepo).get(id)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `get product then validate fail`() {
         val id = getProductInput.productId
 
@@ -223,7 +220,7 @@ class ProductServiceTest {
         verify(productRepo).getAllWithPaging(input.limit)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `get product all failed`() {
         val input = GetProductsInput(
                 limit = 10
@@ -240,7 +237,7 @@ class ProductServiceTest {
         verify(productRepo).getAllWithPaging(input.limit)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `get product all but validate failed`() {
         val input = GetProductsInput(
                 limit = -1

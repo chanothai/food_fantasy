@@ -7,7 +7,9 @@ import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.validate.StockValidate
 
-class StockService(val stockRepo: StockRepo, val stockValidate: StockValidate) {
+class StockService(
+        private val stockRepo: StockRepo,
+        private val stockValidate: StockValidate) {
 
     private var productStock:ProductStock? = null
 
@@ -16,44 +18,26 @@ class StockService(val stockRepo: StockRepo, val stockValidate: StockValidate) {
             stockValidate.inputPStock(input)
 
             productStock = stockRepo.get(input.productID)
-
-            if (productStock == null) {
-                productStock = ProductStock().createProductStock(input.productID, 0)
-            }
-
             productStock!!.deposit(input.qty)
 
-            //create or update product stock into stock repo
-            stockRepo.upsert(productStock)
-
-            return productStock
-        }catch (e: Error) {
-            e.printStackTrace()
+        }catch (e: NotFoundException) {
+            productStock = ProductStock().createProductStock(input.productID, 0)
         }
 
-        return null
+        stockRepo.upsert(productStock)
+
+        return productStock
     }
 
     fun subProductStock(input: SubProductStockInput): ProductStock? {
-        try {
-            stockValidate.inputSubStock(input)
+        stockValidate.inputSubStock(input)
 
-            productStock= stockRepo.get(input.productID)
+        productStock= stockRepo.get(input.productID)
 
-            if (productStock == null) {
-                throw Errors.ProductStockNotFound
-            }
+        val pStock = productStock!!.withDraw(input.qty)
 
-            //Withdraw qty from product stock
-            val pStock = productStock!!.withDraw(input.qty)
+        stockRepo.upsert(pStock)
 
-            stockRepo.upsert(pStock)
-
-            return pStock
-        }catch (e: Error) {
-            e.printStackTrace()
-        }
-
-        return null
+        return pStock
     }
 }

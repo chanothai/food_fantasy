@@ -11,65 +11,39 @@ import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
 class ProductService(val productRepo: ProductRepo, val productValidate: ProductValidate) {
 
     fun createProduct(input: CreateProductInput): Product? {
-        try {
-            productValidate.inputProduct(input)
+        productValidate.inputProduct(input)
 
-            val product = Product(
-                    IdGen.NewId(),
-                    input.name,
-                    input.price,
-                    input.desc,
-                    input.image,
-                    Clock.NowUTC(),
-                    Clock.NowUTC()
-            )
+        val product = Product(
+                IdGen.NewId(),
+                input.name,
+                input.price,
+                input.desc,
+                input.image,
+                Clock.NowUTC(),
+                Clock.NowUTC()
+        )
 
-            productRepo.create(product)
+        productRepo.create(product)
 
-            return product
-        }catch (e:Error) {
-            e.printStackTrace()
-        }
-
-        return null
+        return product
     }
 
-    fun removeProduct(input: RemoveProductInput): Boolean {
-        try {
-            productValidate.inputId(input.id)
+    fun removeProduct(input: RemoveProductInput) {
+        productValidate.inputId(input.id)
 
-            productRepo.remove(input.id)
-
-            return true
-        }catch (e:Error) {
-            e.printStackTrace()
-        }
-
-        return false
+        productRepo.remove(input.id)
     }
 
     fun getProduct(input: GetProductInput): Product? {
-        try{
-            productValidate.inputId(input.productId)
+        productValidate.inputId(input.productId)
 
-            return productRepo.get(input.productId)
-        }catch (e:Error) {
-            e.printStackTrace()
-        }
-
-        return null
+        return productRepo.get(input.productId)
     }
 
     fun getProducts(input: GetProductsInput): ProductPaging? {
 
-        try {
-            productValidate.inputLimitPaging(input)
+        productValidate.inputLimitPaging(input)
 
-            return productRepo.getAllWithPaging(input.limit)
-        }catch (e:Error) {
-            e.printStackTrace()
-        }
-
-        return null
+        return productRepo.getAllWithPaging(input.limit)
     }
 }

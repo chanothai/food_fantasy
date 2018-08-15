@@ -21,83 +21,71 @@ class PaymentService(private val orderRepo: OrderRepo,
                      private val paymentValidate: PaymentValidate) {
 
     fun charge(input: ChargeInput): Order? {
-        try {
-            paymentValidate.inputCharge(input)
+        paymentValidate.inputCharge(input)
 
-            //get cart of user
-            val cart = cartRepo.getByUserID(input.userID)
+        //get cart of user
+        val cart = cartRepo.getByUserID(input.userID)
 
-            //get all product stock
-            val pstocks = stockRepo.getByIDs(cart!!.productIDs())
+        //get all product stock
+        val pstocks = stockRepo.getByIDs(cart!!.productIDs())
 
-            //withdraw product stock into stock
-            for (pstock in pstocks) {
-                //get product qty every product in cart
-                val pQTY = cart.getPQTY(pstock!!.productID)
+        //withdraw product stock into stock
+        for (pstock in pstocks) {
+            //get product qty every product in cart
+            val pQTY = cart.getPQTY(pstock!!.productID)
 
-                if (pQTY != null) {
-                    pstock.withDraw(pQTY.qty)
-                }
+            if (pQTY != null) {
+                pstock.withDraw(pQTY.qty)
             }
-
-            //create pending order with product from cart
-            val order = Order(
-                    id = IdGen.NewId(),
-                    userId = input.userID,
-                    products = cart.toProductQTYList(),
-                    totalPrice = cart.totalPrice(),
-                    createDate = Clock.NowUTC(),
-                    status = OrderStatus.OrderStatusPending
-            )
-
-            //charge credit card
-            val tx = ccPayment.charge(order, input.creditCard)
-
-            //update order status to paid
-            order.paid(tx!!)
-
-            //create order into repository
-            paymentRepo.savePayment(order, tx, pstocks)
-
-            return order
-        }catch (e: Error) {
-            e.printStackTrace()
         }
 
-        return null
+        //create pending order with product from cart
+        val order = Order(
+                id = IdGen.NewId(),
+                userId = input.userID,
+                products = cart.toProductQTYList(),
+                totalPrice = cart.totalPrice(),
+                createDate = Clock.NowUTC(),
+                status = OrderStatus.OrderStatusPending
+        )
+
+        //charge credit card
+        val tx = ccPayment.charge(order, input.creditCard)
+
+        //update order status to paid
+        order.paid(tx!!)
+
+        //create order into repository
+        paymentRepo.savePayment(order, tx, pstocks)
+
+        return order
     }
 
     fun refund(input: RefundInput): Order? {
-        try {
-            paymentValidate.inputRefund(input)
+        paymentValidate.inputRefund(input)
 
-            val order = orderRepo.get(input.orderID)
+        val order = orderRepo.get(input.orderID)
 
-            if (order.userId != input.userID) {
-                throw Errors.NotOrderOwner
-            }
-
-            val pstocks = stockRepo.getByIDs(order.productIDs())
-
-            //deposit product stock
-            for ( pstock in pstocks) {
-                pstock!!.deposit(order.getProduct(pstock.productID)!!.qty)
-            }
-
-            //refund no payment
-            val tx = ccPayment.refund(order)
-
-            //make order status to be refunded
-            order.refund(tx!!)
-
-            //update order
-            paymentRepo.savePayment(order, tx, pstocks)
-
-            return order
-        }catch (e: Error) {
-            e.printStackTrace()
+        if (order.userId != input.userID) {
+            throw Errors.NotOrderOwner
         }
 
-        return null
+        val pstocks = stockRepo.getByIDs(order.productIDs())
+
+        //deposit product stock
+        for ( pstock in pstocks) {
+            pstock!!.deposit(order.getProduct(pstock.productID)!!.qty)
+        }
+
+        //refund no payment
+        val tx = ccPayment.refund(order)
+
+        //make order status to be refunded
+        order.refund(tx!!)
+
+        //update order
+        paymentRepo.savePayment(order, tx, pstocks)
+
+        return order
     }
 }

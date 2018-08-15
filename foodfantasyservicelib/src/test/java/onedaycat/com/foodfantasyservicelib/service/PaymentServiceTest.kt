@@ -8,7 +8,11 @@ import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.PaymentRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.entity.*
+import onedaycat.com.foodfantasyservicelib.error.BadRequestException
 import onedaycat.com.foodfantasyservicelib.error.Errors
+import onedaycat.com.foodfantasyservicelib.error.InternalError
+import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
+import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.PaymentValidate
@@ -169,7 +173,7 @@ class PaymentServiceTest {
         verify(paymentRepo).savePayment(expOrder, tx, pstocks)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `payment then validate failed`() {
         `when`(paymentValidate.inputCharge(input)).thenThrow(Errors.InvalidInput)
 
@@ -180,7 +184,7 @@ class PaymentServiceTest {
         verify(paymentValidate).inputCharge(input)
     }
 
-    @Test
+    @Test(expected = NotFoundException::class)
     fun `payment but get cart failed`() {
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenThrow(Errors.CartNotFound)
@@ -193,7 +197,7 @@ class PaymentServiceTest {
         verify(cartRepo).getByUserID(input.userID)
     }
 
-    @Test
+    @Test(expected = BadRequestException::class)
     fun `payment get product stock but out of stock`() {
         val pstocks:MutableList<ProductStock?> = mutableListOf(
                 ProductStock("111", 0),
@@ -213,7 +217,7 @@ class PaymentServiceTest {
         verify(pstockRepo).getByIDs(expCart.productIDs())
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `payment but credit card failed`() {
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)
@@ -230,7 +234,7 @@ class PaymentServiceTest {
         verify(ccPayment).charge(orderForCharge, input.creditCard)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `payment but save failed`(){
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)
@@ -267,7 +271,7 @@ class PaymentServiceTest {
         verify(paymentRepo).savePayment(expOrderRefund, txRefund, pstocks)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `refun validate failed`() {
         `when`(paymentValidate.inputRefund(inputRefund)).thenThrow(Errors.InvalidInput)
 
@@ -278,7 +282,7 @@ class PaymentServiceTest {
         verify(paymentValidate).inputRefund(inputRefund)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `refun get order failed`() {
         doNothing().`when`(paymentValidate).inputRefund(inputRefund)
         `when`(orderRepo.get(inputRefund.orderID)).thenThrow(Errors.UnableGetOrder)
@@ -291,7 +295,7 @@ class PaymentServiceTest {
         verify(orderRepo).get(inputRefund.orderID)
     }
 
-    @Test
+    @Test(expected = BadRequestException::class)
     fun `order owner mismatch`() {
         val now = Clock.NowUTC()
         val input = RefundInput(
@@ -318,9 +322,4 @@ class PaymentServiceTest {
         verify(paymentValidate).inputRefund(inputRefund)
         verify(orderRepo).get(inputRefund.orderID)
     }
-
-//    @Test
-//    fun `refun get get stock failed`() {
-//
-//    }
 }

@@ -5,6 +5,8 @@ import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.entity.newProductQTY
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
+import onedaycat.com.foodfantasyservicelib.error.InternalError
+import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.validate.OrderValidate
 import org.junit.Assert
@@ -52,7 +54,7 @@ class OrderServiceTest {
         expOrder.addProduct(newProductQTY(products[0].id!!, 100, 1), products[0])
         expOrder.addProduct(newProductQTY(products[1].id!!, 200, 2), products[1])
 
-        `when`(orderValidate.inputGetOrder(input)).thenReturn(true)
+        doNothing().`when`(orderValidate).inputGetOrder(input)
         `when`(orderRepo.get(input.id)).thenReturn(expOrder)
 
         val order = orderService.getOrder(input)
@@ -63,9 +65,9 @@ class OrderServiceTest {
         verify(orderRepo).get(input.id)
     }
 
-    @Test
+    @Test(expected = InvalidInputException::class)
     fun `validate failed`() {
-        `when`(orderValidate.inputGetOrder(input)).thenReturn(false)
+        `when`(orderValidate.inputGetOrder(input)).thenThrow(Errors.InvalidInput)
 
         val order = orderService.getOrder(input)
 
@@ -74,9 +76,9 @@ class OrderServiceTest {
         verify(orderValidate).inputGetOrder(input)
     }
 
-    @Test
+    @Test(expected = InternalError::class)
     fun `get order failed`() {
-        `when`(orderValidate.inputGetOrder(input)).thenReturn(true)
+        doNothing().`when`(orderValidate).inputGetOrder(input)
         `when`(orderRepo.get(input.id)).thenThrow(Errors.UnableGetOrder)
 
         val order = orderService.getOrder(input)

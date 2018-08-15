@@ -8,16 +8,8 @@ import onedaycat.com.foodfantasyservicelib.validate.OrderValidate
 
 class OrderService(val orderRepo: OrderRepo, val orderValidate: OrderValidate) {
     fun getOrder(input: GetOrderInput): Order? {
-        try {
-            if (!orderValidate.inputGetOrder(input)) {
-                throw Errors.InvalidInput
-            }
+        orderValidate.inputGetOrder(input)
 
-            return orderRepo.get(input.id)
-        }catch (e: Error) {
-            e.printStackTrace()
-        }
-
-        return null
+        return orderRepo.get(input.id)
     }
 }
