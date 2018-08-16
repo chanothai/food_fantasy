@@ -38,7 +38,6 @@ class StockServiceTest {
                 5
         )
 
-
         stock = ProductStock(
                 "111",
                 0
