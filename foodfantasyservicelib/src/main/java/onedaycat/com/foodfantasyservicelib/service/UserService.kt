@@ -31,7 +31,7 @@ class UserService(
                     Clock.NowUTC(),
                     Clock.NowUTC())
 
-            userRepo.create(newUser)
+            userRepo.create(newUser!!)
         }
 
         return newUser

@@ -1,6 +1,6 @@
 package onedaycat.com.foodfantasyservicelib.service
 
-import onedaycat.com.foodfantasyservicelib.contract.creditcart_payment.CreditCard
+import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
 
 enum class CreditCardType {
     CreditCardVisa {

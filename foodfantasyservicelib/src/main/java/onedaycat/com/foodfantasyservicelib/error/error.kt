@@ -34,6 +34,7 @@ class Errors {
         var OrderStatusNotPending = BadRequestException(123, "Cannot Paid: Order is not pending")
         var OrderStatusNotPaid = BadRequestException(324, "Cannot Refund: Order is not paid")
         var NotOrderOwner = BadRequestException(5436, "You are not the owner of order")
+        var UnKnownError = onedaycat.com.foodfantasyservicelib.error.UnKnownError(123, "")
 
         fun isNotFound(err: Error?): Boolean {
             if (err == UserNotFound

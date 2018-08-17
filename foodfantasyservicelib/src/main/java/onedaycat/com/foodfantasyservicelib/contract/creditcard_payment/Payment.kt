@@ -1,4 +1,4 @@
-package onedaycat.com.foodfantasyservicelib.contract.creditcart_payment
+package onedaycat.com.foodfantasyservicelib.contract.creditcard_payment
 
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.Transaction

@@ -61,7 +61,7 @@ class UserServiceTest {
 
         val user = userService.createUser(inputUser)
 
-        Assert.assertEquals(expUser.email, user!!.email)
+        Assert.assertEquals(expUser, user)
 
         verify(userValidate).inputUser(inputUser)
         verify(userRepo).create(expUser)

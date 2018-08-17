@@ -1,8 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import junit.framework.Assert
-import onedaycat.com.foodfantasyservicelib.contract.creditcart_payment.CreditCard
-import onedaycat.com.foodfantasyservicelib.contract.creditcart_payment.CreditCardPayment
+import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
+import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCardPayment
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.PaymentRepo
