@@ -4,24 +4,38 @@ import onedaycat.com.foodfantasyservicelib.entity.*
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
+import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.validate.CartValidate
 
-class CartService(val stockRepo: StockRepo,val cartRepo: CartRepo, val cartValidate: CartValidate) {
+class CartService(private val stockRepo: StockRepo,
+                  private val cartRepo: CartRepo,
+                  private val cartValidate: CartValidate) {
 
     fun addProductCart(input: AddToCartInput): Cart? {
-        cartValidate.inputCart(input)
+        var cart: Cart?
 
-        //get cart if not found cart will create new cart
-        val cart = cartRepo.getByUserID(input.userID)
+        try {
+            cartValidate.inputCart(input)
+
+            //get cart if not found cart will create new cart
+            cart = cartRepo.getByUserID(input.userID)
+            cart!!.userId = input.userID
+
+        }catch (e:NotFoundException) {
+            cart = Cart(
+                    input.userID,
+                    mutableListOf()
+            )
+        }
 
         //get stock
-        val pstock = stockRepo.getWithPrice(input.productID)!!
+        val pStock = stockRepo.getWithPrice(input.productID)!!
 
         //create new productQTY
-        val newProductQTY = newProductQTY(pstock.productStock.productID, pstock.price, input.qty)
+        val newProductQTY = newProductQTY(pStock.productStock!!.productID, pStock.price, input.qty)
 
-        //add product to cart
-        cart!!.addPQTY(newProductQTY, pstock.productStock)
+        //add product qty to cart
+        cart!!.addPQTY(newProductQTY, pStock.productStock!!)
 
         //Save or Update Cart
         cartRepo.upsert(cart)
@@ -36,7 +50,7 @@ class CartService(val stockRepo: StockRepo,val cartRepo: CartRepo, val cartValid
 
         val pstock = stockRepo.getWithPrice(input.productID)
 
-        cart!!.remove(newProductQTY(pstock!!.productStock.productID, pstock.price, input.qty), pstock.productStock)
+        cart!!.remove(newProductQTY(pstock!!.productStock!!.productID, pstock.price, input.qty), pstock.productStock!!)
 
         cartRepo.upsert(cart)
 

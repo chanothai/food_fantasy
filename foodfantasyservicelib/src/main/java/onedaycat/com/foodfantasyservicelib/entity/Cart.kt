@@ -4,13 +4,15 @@ import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
 
 data class Cart(
+        var userId: String? = null,
         var products: MutableList<ProductQTY?> = mutableListOf())
 {
     private var cart = this
 
-    fun newCart(): Cart {
+    fun newCart(id:String): Cart {
         return Cart(
-                mutableListOf()
+                userId = id,
+                products = mutableListOf()
         )
     }
 

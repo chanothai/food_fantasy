@@ -13,14 +13,15 @@ class ProductService(val productRepo: ProductRepo, val productValidate: ProductV
     fun createProduct(input: CreateProductInput): Product? {
         productValidate.inputProduct(input)
 
+        val now = Clock.NowUTC()
         val product = Product(
                 IdGen.NewId(),
                 input.name,
                 input.price,
                 input.desc,
                 input.image,
-                Clock.NowUTC(),
-                Clock.NowUTC()
+                now,
+                now
         )
 
         productRepo.create(product)

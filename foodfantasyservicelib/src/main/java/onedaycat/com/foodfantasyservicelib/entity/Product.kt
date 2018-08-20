@@ -11,9 +11,9 @@ data class Product(
 
 //ProductQTY Product and qty
 data class ProductQTY(
-        var productId: String?,
-        var price: Int?,
-        var qty: Int) {
+        var productId: String? = null,
+        var price: Int? = 0,
+        var qty: Int = 0) {
 }
 
 fun newProductQTYWithProduct(product: Product, qty: Int): ProductQTY {

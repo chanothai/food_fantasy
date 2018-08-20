@@ -5,21 +5,9 @@ import onedaycat.com.foodfantasyservicelib.error.Errors
 
 
 data class ProductStockWithPrice(
-        var productStock: ProductStock,
-        var price: Int
-){
-    private var pstockPrice = this
-
-    fun newProductStockWithPrice(productID: String, price: Int, qty: Int): ProductStockWithPrice {
-        return ProductStockWithPrice(
-                ProductStock().newProductStock(
-                        productID,
-                        qty
-                )!!,
-                price
-        )
-    }
-}
+        var productStock: ProductStock? = null,
+        var price: Int = 0
+)
 
 data class ProductStock(
         var productID: String = "",

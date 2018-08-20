@@ -2,11 +2,11 @@ package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCardPayment
 import onedaycat.com.foodfantasyservicelib.entity.Order
-import onedaycat.com.foodfantasyservicelib.entity.OrderStatus
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.PaymentRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
+import onedaycat.com.foodfantasyservicelib.entity.State
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
@@ -45,7 +45,7 @@ class PaymentService(private val orderRepo: OrderRepo,
                 products = cart.toProductQTYList(),
                 totalPrice = cart.totalPrice(),
                 createDate = Clock.NowUTC(),
-                status = OrderStatus.OrderStatusPending
+                status = State.OrderStatus.PENDING
         )
 
         //charge credit card

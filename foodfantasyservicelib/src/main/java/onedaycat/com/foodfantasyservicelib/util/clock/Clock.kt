@@ -14,8 +14,15 @@ class Clock {
         var freezeTime: Date = Date()
 
         fun setFreezeTimes(time:String) {
-            val date = SimpleDateFormat("yyyy-mm-dd HH:mm:ss").parse(time)
+            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time)
             freezeTime = date
+        }
+
+        fun getFreezeTimes(): String {
+            val dateTime = convertDate(freezeTime)
+
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return formatter.format(dateTime)
         }
 
         fun resetFreeze() {
@@ -35,7 +42,7 @@ class Clock {
         }
 
         fun createTimeStamp(dateTime: LocalDateTime):String {
-            val formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd HH:mm:ss")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             return formatter.format(dateTime)
         }
     }

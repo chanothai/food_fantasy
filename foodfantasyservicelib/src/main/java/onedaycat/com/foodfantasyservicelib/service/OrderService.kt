@@ -6,7 +6,9 @@ import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
 import onedaycat.com.foodfantasyservicelib.validate.OrderValidate
 
-class OrderService(val orderRepo: OrderRepo, val orderValidate: OrderValidate) {
+class OrderService(private val orderRepo: OrderRepo,
+                   private val orderValidate: OrderValidate) {
+
     fun getOrder(input: GetOrderInput): Order? {
         orderValidate.inputGetOrder(input)
 

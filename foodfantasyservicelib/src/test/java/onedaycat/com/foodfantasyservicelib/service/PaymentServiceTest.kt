@@ -83,7 +83,7 @@ class PaymentServiceTest {
                 id
         )
 
-        expCart = cart.newCart()
+        expCart = cart.newCart(input.userID)
         expCart.addPQTY(newProductQTY("111", 100, 1), stock.newProductStock("111", 50)!!)
         expCart.addPQTY(newProductQTY("222", 200, 2), stock.newProductStock("222", 50)!!)
 
@@ -100,7 +100,7 @@ class PaymentServiceTest {
                         ProductQTY("222", 200,2)),
                 300,
                 now,
-                OrderStatus.OrderStatusPending
+                State.OrderStatus.PENDING
         )
 
         orderForRefund = Order(
@@ -111,7 +111,7 @@ class PaymentServiceTest {
                         ProductQTY("222", 200,2)),
                 300,
                 now,
-                OrderStatus.OrderStatusPaid)
+                State.OrderStatus.PAID)
 
 
         expOrder = Order(
@@ -122,7 +122,7 @@ class PaymentServiceTest {
                         ProductQTY("222", 200,2)),
                 300,
                 now,
-                OrderStatus.OrderStatusPaid
+                State.OrderStatus.PAID
         )
 
         expOrderRefund = Order(
@@ -133,7 +133,7 @@ class PaymentServiceTest {
                         ProductQTY("222", 200,2)),
                 300,
                 now,
-                OrderStatus.OrderStatusRefunded)
+                State.OrderStatus.REFUNDED)
 
         tx = Transaction(
                 "tx1",
@@ -273,7 +273,7 @@ class PaymentServiceTest {
                         ProductQTY("222", 200,2)),
                 300,
                 now,
-                OrderStatus.OrderStatusPaid)
+                State.OrderStatus.PAID)
 
         doNothing().`when`(paymentValidate).inputRefund(input)
         `when`(orderRepo.get(inputRefund.orderID)).thenReturn(orderForRefund)

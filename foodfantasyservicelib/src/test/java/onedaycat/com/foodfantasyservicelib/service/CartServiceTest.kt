@@ -58,7 +58,8 @@ class CartServiceTest {
         )
 
         expCart = Cart(
-                mutableListOf(
+                userId = input.userID,
+                products = mutableListOf(
                         ProductQTY("111", 100, 15)
                 )
         )
@@ -66,7 +67,7 @@ class CartServiceTest {
 
     @Test
     fun `Add to cart success`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(input.userID,mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100,5), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
@@ -101,7 +102,7 @@ class CartServiceTest {
 
     @Test(expected = InternalError::class)
     fun `get stock failed`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(input.userID,mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
@@ -116,7 +117,7 @@ class CartServiceTest {
         val stock = stock.newProductStock("111", 10)!!
         val stockWithPrice = ProductStockWithPrice(stock, 100)
 
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(input.userID,mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100, 5), stockWithPrice.productStock)
 
         doNothing().`when`(cartValidate).inputCart(input)
@@ -128,7 +129,7 @@ class CartServiceTest {
 
     @Test(expected = InternalError::class)
     fun `Save cart failed`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(input.userID,mutableListOf())
         newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
@@ -142,11 +143,11 @@ class CartServiceTest {
 
     @Test
     fun `remove cart success`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(inputRemove.userID,mutableListOf())
         newCart.addPQTY(newProductQTY("111", 100, 5), stock)
         newCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
 
-        val expCart = Cart(mutableListOf())
+        val expCart = Cart(inputRemove.userID,mutableListOf())
         expCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
 
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
@@ -190,7 +191,7 @@ class CartServiceTest {
 
     @Test(expected = NotFoundException::class)
     fun `remove cart failed`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(inputRemove.userID,mutableListOf())
 
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
         `when`(cartRepo.getByUserID(inputRemove.userID)).thenReturn(newCart)
@@ -201,11 +202,11 @@ class CartServiceTest {
 
     @Test(expected = InternalError::class)
     fun `remove cart but save or upadte failed`() {
-        val newCart = Cart(mutableListOf())
+        val newCart = Cart(inputRemove.userID, mutableListOf())
         newCart.addPQTY(newProductQTY("111", 100, 5), stock)
         newCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
 
-        expCart = Cart(mutableListOf())
+        expCart = Cart(inputRemove.userID, mutableListOf())
         expCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
 
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
@@ -219,7 +220,7 @@ class CartServiceTest {
 
     @Test
     fun `get cart success`() {
-        expCart = Cart(mutableListOf())
+        expCart = Cart(inputRemove.userID, mutableListOf())
         expCart.addPQTY(newProductQTY("111", 100,5), stock)
 
         doNothing().`when`(cartValidate).inputGetCart(inputCart)

@@ -24,18 +24,14 @@ class UserFireStore : UserRepo {
     private val db = FirebaseFirestore.getInstance()
 
     override fun create(user: User) {
-        val docRef = db.collection(collectionUser).document(user.email)
-
-        val taskCreate = docRef
-                .set(user)
-                .addOnSuccessListener {
-                    Log.d("CreateUser", "create user success")
-                }
-                .addOnFailureListener {
-                    throw Errors.UnableCreateUser
-                }
-
-        Tasks.await(taskCreate)
+        try {
+            val docRef = db.collection(collectionUser).document(user.email)
+            Tasks.await(docRef.set(user))
+        }catch (e: Exception) {
+            throw Errors.UnableCreateUser
+        }catch (e: FirebaseFirestoreException) {
+            throw Errors.UnKnownError
+        }
     }
 
     override fun getByEmail(email: String): User? {

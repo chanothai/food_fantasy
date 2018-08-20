@@ -4,15 +4,9 @@ import onedaycat.com.foodfantasyservicelib.error.BadRequestException
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
 
-enum class OrderStatus {
-    OrderStatusPaid {
-        val orderStatus = "PAID"
-    },
-    OrderStatusPending {
-        val orderStatus = "PENDING"
-    },
-    OrderStatusRefunded {
-        val orderStatus = "REFUNDED"
+object State {
+    enum class OrderStatus() {
+        PAID,PENDING,REFUNDED
     }
 }
 
@@ -22,7 +16,7 @@ data class Order(
         var products: MutableList<ProductQTY?> = mutableListOf(),
         var totalPrice: Int = 0,
         var createDate: String? = null,
-        var status: OrderStatus? = null)
+        var status: State.OrderStatus? = null)
 {
     var order: Order = this
     private fun validateChangeStatus(tx: Transaction) {
@@ -37,9 +31,9 @@ data class Order(
         order.validateChangeStatus(tx)
 
         if (tx.status != TransactionState.CHANGE) throw Errors.TxStatusNotCharged
-        if (order.status != OrderStatus.OrderStatusPending) throw Errors.OrderStatusNotPending
+        if (order.status != State.OrderStatus.PENDING) throw Errors.OrderStatusNotPending
 
-        order.status = OrderStatus.OrderStatusPaid
+        order.status = State.OrderStatus.PAID
     }
 
     //Refund update order status to refund
@@ -47,9 +41,9 @@ data class Order(
         order.validateChangeStatus(tx)
 
         if (tx.status != TransactionState.REFUNDED) throw Errors.OrderStatusNotPaid
-        if (order.status != OrderStatus.OrderStatusPaid) throw Errors.OrderStatusNotPaid
+        if (order.status != State.OrderStatus.PAID) throw Errors.OrderStatusNotPaid
 
-        order.status = OrderStatus.OrderStatusRefunded
+        order.status = State.OrderStatus.REFUNDED
     }
 
     //AddProduct add product into order and set new total price
