@@ -1,4 +1,4 @@
-package onedaycat.com.foodfantasyservicelib.service
+package onedaycat.com.foodfantasyservicelib.input
 
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
 
@@ -11,70 +11,70 @@ enum class CreditCardType {
     }
 }
 
-data class CreateUserInput(
+class CreateUserInput(
         var email: String,
         var name: String,
         var password: String)
 
-data class GetUserInput(
+class GetUserInput(
         var userId: String
 )
 
-data class CreateProductInput(
+class CreateProductInput(
         var name: String,
         var desc: String,
         var price: Int,
         var image: String
 )
 
-data class RemoveProductInput(
+class RemoveProductInput(
         var id: String
 )
 
-data class GetProductInput(
+class GetProductInput(
         var productId: String
 )
 
-data class GetProductsInput(
+class GetProductsInput(
         var limit: Int
 )
 
-data class AddToCartInput(
+class AddToCartInput(
         var userID: String,
         var productID: String,
         var qty: Int
 )
 
-data class AddProductStockInput(
+class AddProductStockInput(
         var productID: String,
         var qty: Int
 )
 
-data class SubProductStockInput(
+class SubProductStockInput(
         var productID: String,
         var qty: Int
 )
 
-data class RemoveFromCartInput(
+class RemoveFromCartInput(
         var userID: String,
         var productID: String,
         var qty: Int
 )
 
-data class GetCartInput(
+class GetCartInput(
         var userID: String
 )
 
-data class GetOrderInput(
+class GetOrderInput(
         var id: String
 )
 
-data class ChargeInput(
+class ChargeInput(
         var userID: String,
         var creditCard: CreditCard
 )
 
-data class RefundInput(
+class RefundInput(
         var userID: String,
         var orderID: String
 )

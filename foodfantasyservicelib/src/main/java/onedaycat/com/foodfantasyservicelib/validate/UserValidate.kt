@@ -1,8 +1,7 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.entity.User
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.service.CreateUserInput
+import onedaycat.com.foodfantasyservicelib.input.CreateUserInput
 
 interface UserValidate {
     fun inputUser(input: CreateUserInput)
@@ -10,7 +9,7 @@ interface UserValidate {
 }
 
 class UserMemoryValidate: UserValidate {
-    override fun inputUser(input:CreateUserInput){
+    override fun inputUser(input: CreateUserInput){
         if ((input.name.isEmpty() || input.name.isBlank())
                 || (input.email.isEmpty() || input.email.isBlank())
                 || (input.password.isEmpty() || input.password.isBlank()))

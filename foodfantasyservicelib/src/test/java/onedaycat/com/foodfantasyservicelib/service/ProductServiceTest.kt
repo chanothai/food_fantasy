@@ -7,6 +7,10 @@ import onedaycat.com.foodfantasyservicelib.contract.repository.ProductRepo
 import onedaycat.com.foodfantasyservicelib.error.InternalError
 import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
+import onedaycat.com.foodfantasyservicelib.input.CreateProductInput
+import onedaycat.com.foodfantasyservicelib.input.GetProductInput
+import onedaycat.com.foodfantasyservicelib.input.GetProductsInput
+import onedaycat.com.foodfantasyservicelib.input.RemoveProductInput
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.ProductValidate

@@ -3,6 +3,8 @@ package onedaycat.com.foodfantasyservicelib.service
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.*
+import onedaycat.com.foodfantasyservicelib.input.AddProductStockInput
+import onedaycat.com.foodfantasyservicelib.input.SubProductStockInput
 import onedaycat.com.foodfantasyservicelib.validate.StockValidate
 import org.junit.Assert
 import org.junit.Before

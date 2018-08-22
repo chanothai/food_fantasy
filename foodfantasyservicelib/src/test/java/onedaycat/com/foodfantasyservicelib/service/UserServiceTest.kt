@@ -3,6 +3,8 @@ package onedaycat.com.foodfantasyservicelib.service
 import onedaycat.com.foodfantasyservicelib.entity.User
 import onedaycat.com.foodfantasyservicelib.contract.repository.UserRepo
 import onedaycat.com.foodfantasyservicelib.error.*
+import onedaycat.com.foodfantasyservicelib.input.CreateUserInput
+import onedaycat.com.foodfantasyservicelib.input.GetUserInput
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.UserMemoryValidate

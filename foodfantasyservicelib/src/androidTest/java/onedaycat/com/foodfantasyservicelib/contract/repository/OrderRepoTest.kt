@@ -1,5 +1,6 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.runner.AndroidJUnit4
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.State
 import onedaycat.com.foodfantasyservicelib.entity.newProductQTY
@@ -10,7 +11,9 @@ import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class OrderRepoTest {
     private lateinit var orderRepo: OrderRepo
     private lateinit var expOrder: Order

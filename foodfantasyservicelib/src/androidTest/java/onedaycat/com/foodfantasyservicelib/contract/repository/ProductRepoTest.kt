@@ -1,13 +1,16 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
-import junit.framework.Assert
+import android.support.test.runner.AndroidJUnit4
+import junit.framework.Assert.assertEquals
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class ProductRepoTest {
     private lateinit var productRepo:ProductRepo
     private lateinit var expProduct: Product
@@ -55,7 +58,7 @@ class ProductRepoTest {
         val product = productRepo.get(id)
 
         expProduct.id = id
-        Assert.assertEquals(expProduct.name, product!!.name)
+        assertEquals(expProduct.name, product!!.name)
     }
 
     @Test(expected = NotFoundException::class)
@@ -67,6 +70,6 @@ class ProductRepoTest {
     @Test
     fun getProductAllWithPagingSuccess() {
         val products = productRepo.getAllWithPaging(3)
-        Assert.assertEquals(3, products!!.products.size)
+        assertEquals(3, products!!.products.size)
     }
 }

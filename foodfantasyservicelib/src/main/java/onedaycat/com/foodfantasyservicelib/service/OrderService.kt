@@ -1,9 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.Order
-import onedaycat.com.foodfantasyservicelib.error.Error
-import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
+import onedaycat.com.foodfantasyservicelib.input.GetOrderInput
 import onedaycat.com.foodfantasyservicelib.validate.OrderValidate
 
 class OrderService(private val orderRepo: OrderRepo,

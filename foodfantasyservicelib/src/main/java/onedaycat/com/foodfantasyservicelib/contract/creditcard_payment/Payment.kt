@@ -3,7 +3,7 @@ package onedaycat.com.foodfantasyservicelib.contract.creditcard_payment
 import com.google.firebase.firestore.FirebaseFirestore
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.Transaction
-import onedaycat.com.foodfantasyservicelib.service.CreditCardType
+import onedaycat.com.foodfantasyservicelib.input.CreditCardType
 
 
 data class CreditCard(

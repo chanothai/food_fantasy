@@ -1,11 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.entity.Product
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.service.CreateProductInput
-import onedaycat.com.foodfantasyservicelib.service.GetProductInput
-import onedaycat.com.foodfantasyservicelib.service.GetProductsInput
+import onedaycat.com.foodfantasyservicelib.input.CreateProductInput
+import onedaycat.com.foodfantasyservicelib.input.GetProductsInput
 
 interface ProductValidate {
     fun inputId(id: String)

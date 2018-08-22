@@ -1,8 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.service.ChargeInput
-import onedaycat.com.foodfantasyservicelib.service.RefundInput
+import onedaycat.com.foodfantasyservicelib.input.ChargeInput
+import onedaycat.com.foodfantasyservicelib.input.RefundInput
 
 interface PaymentValidate {
     fun inputCharge(input: ChargeInput)

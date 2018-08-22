@@ -4,6 +4,9 @@ import onedaycat.com.foodfantasyservicelib.entity.*
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.*
+import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.GetCartInput
+import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.validate.CartValidate
 import org.junit.Assert
 import org.junit.Before
@@ -50,7 +53,7 @@ class CartServiceTest {
         inputRemove = RemoveFromCartInput(
                 "u1",
                 "111",
-                 5
+                5
         )
 
         inputCart = GetCartInput(
@@ -118,7 +121,7 @@ class CartServiceTest {
         val stockWithPrice = ProductStockWithPrice(stock, 100)
 
         val newCart = Cart(input.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY(input.productID, 100, 5), stockWithPrice.productStock)
+        newCart.addPQTY(newProductQTY(input.productID, 100, 5), stockWithPrice.productStock!!)
 
         doNothing().`when`(cartValidate).inputCart(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(newCart)

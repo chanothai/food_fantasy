@@ -1,9 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.service.AddProductStockInput
-import onedaycat.com.foodfantasyservicelib.service.SubProductStockInput
+import onedaycat.com.foodfantasyservicelib.input.AddProductStockInput
+import onedaycat.com.foodfantasyservicelib.input.SubProductStockInput
 
 interface StockValidate {
     fun inputPStock(input: AddProductStockInput)

@@ -1,12 +1,17 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.runner.AndroidJUnit4
 import junit.framework.Assert
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.entity.ProductStockWithPrice
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class StockRepoTest {
 
     private lateinit var expPStockPrice: ProductStockWithPrice
@@ -40,7 +45,7 @@ class StockRepoTest {
     fun getStockProduct() {
         val id = "1111"
         val pstock = stockRepo.get(id)
-        Assert.assertEquals(expPStock, pstock)
+        assertEquals(expPStock, pstock)
     }
 
     @Test(expected = NotFoundException::class)
@@ -53,7 +58,7 @@ class StockRepoTest {
     fun getStockProductWithPrice() {
         val id = "1111"
         val pstock = stockRepo.getWithPrice(id)
-        Assert.assertEquals(expPStockPrice, pstock)
+        assertEquals(expPStockPrice, pstock)
     }
 
     @Test(expected = NotFoundException::class)
@@ -67,7 +72,7 @@ class StockRepoTest {
         val ids = mutableListOf("1111", "1112")
         val pStocks = stockRepo.getByIDs(ids)
 
-        Assert.assertNotNull(pStocks)
+        assertNotNull(pStocks)
     }
 
     @Test(expected = NotFoundException::class)

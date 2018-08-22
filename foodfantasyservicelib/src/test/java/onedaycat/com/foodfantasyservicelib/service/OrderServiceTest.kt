@@ -7,6 +7,7 @@ import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.OrderRepo
 import onedaycat.com.foodfantasyservicelib.error.InternalError
 import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
+import onedaycat.com.foodfantasyservicelib.input.GetOrderInput
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.validate.OrderValidate
 import org.junit.Assert

@@ -1,10 +1,10 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
-import onedaycat.com.foodfantasyservicelib.error.Error
-import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
+import onedaycat.com.foodfantasyservicelib.input.AddProductStockInput
+import onedaycat.com.foodfantasyservicelib.input.SubProductStockInput
 import onedaycat.com.foodfantasyservicelib.validate.StockValidate
 
 class StockService(

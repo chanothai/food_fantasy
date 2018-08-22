@@ -1,11 +1,9 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.error.InvalidInputException
-import onedaycat.com.foodfantasyservicelib.service.AddToCartInput
-import onedaycat.com.foodfantasyservicelib.service.GetCartInput
-import onedaycat.com.foodfantasyservicelib.service.RemoveFromCartInput
+import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.GetCartInput
+import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 
 interface CartValidate{
     fun inputCart(input: AddToCartInput)

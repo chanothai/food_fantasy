@@ -1,8 +1,7 @@
 package onedaycat.com.foodfantasyservicelib.validate
 
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
-import onedaycat.com.foodfantasyservicelib.service.GetOrderInput
+import onedaycat.com.foodfantasyservicelib.input.GetOrderInput
 
 interface OrderValidate {
     fun inputGetOrder(input: GetOrderInput)

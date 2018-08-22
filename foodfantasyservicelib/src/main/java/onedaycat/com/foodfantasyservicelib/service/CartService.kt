@@ -1,10 +1,12 @@
 package onedaycat.com.foodfantasyservicelib.service
 
 import onedaycat.com.foodfantasyservicelib.entity.*
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
+import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.GetCartInput
+import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.validate.CartValidate
 
 class CartService(private val stockRepo: StockRepo,
@@ -57,7 +59,7 @@ class CartService(private val stockRepo: StockRepo,
         return cart
     }
 
-    fun getCartWithUserID(input:GetCartInput): Cart? {
+    fun getCartWithUserID(input: GetCartInput): Cart? {
         cartValidate.inputGetCart(input)
 
         return cartRepo.getByUserID(input.userID)
