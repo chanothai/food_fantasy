@@ -52,6 +52,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions.includeCompileClasspath = true
         }
+        multiDexEnabled true
     }
 
     sourceSets {
@@ -66,13 +67,12 @@ android {
         }
 
         release{
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     testOptions {
-
         unitTests {
             includeAndroidResources true
         }
@@ -89,13 +89,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.7'
 
     implementation( 'com.google.firebase:firebase-firestore:17.1.0',{
         exclude group: 'com.android.support'
     })
 
-
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.25.0'
 }
 repositories {
     mavenCentral()

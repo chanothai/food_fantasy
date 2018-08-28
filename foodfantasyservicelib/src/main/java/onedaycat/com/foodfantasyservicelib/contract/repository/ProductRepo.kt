@@ -9,10 +9,6 @@ import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import kotlin.coroutines.experimental.CoroutineContext
 
-interface Defferred<out T>: ProductRepo {
-    suspend fun await(): T
-}
-
 data class ProductPaging(
         var products: MutableList<Product>
 )
@@ -20,7 +16,7 @@ data class ProductPaging(
 interface ProductRepo {
     fun create(product: Product?)
     fun remove(id: String)
-    fun getAllWithPaging(limit: Int): ProductPaging?
+    fun getAllWithPaging(limit: Int):ProductPaging?
     fun get(id: String): Product?
 }
 

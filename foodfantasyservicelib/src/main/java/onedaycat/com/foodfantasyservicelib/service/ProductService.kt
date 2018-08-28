@@ -1,5 +1,9 @@
 package onedaycat.com.foodfantasyservicelib.service
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductRepo
@@ -11,7 +15,8 @@ import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.ProductValidate
 
-class ProductService(val productRepo: ProductRepo, val productValidate: ProductValidate) {
+class ProductService(
+        private val productRepo: ProductRepo, private val productValidate: ProductValidate) {
 
     fun createProduct(input: CreateProductInput): Product? {
         productValidate.inputProduct(input)
@@ -45,9 +50,12 @@ class ProductService(val productRepo: ProductRepo, val productValidate: ProductV
     }
 
     fun getProducts(input: GetProductsInput): ProductPaging? {
-
         productValidate.inputLimitPaging(input)
 
-        return productRepo.getAllWithPaging(input.limit)
+        var products: ProductPaging? = null
+
+        products = productRepo.getAllWithPaging(input.limit)
+
+        return products
     }
 }

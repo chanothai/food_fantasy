@@ -20,13 +20,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        foodViewModel = ViewModelProviders.of(this).get(FoodViewModel::class.java)
-        foodViewModel.foodData.observe(this, Observer { data ->
-            rv_food_list.layoutManager = LinearLayoutManager(this)
-            rv_food_list.adapter = FoodAdapter(data!!, this)
-        })
+        if (savedInstanceState == null) {
+            foodViewModel = ViewModelProviders.of(this).get(FoodViewModel::class.java)
+            foodViewModel.foodData.observe(this, Observer { data ->
+                rv_food_list.layoutManager = LinearLayoutManager(this)
+                rv_food_list.adapter = FoodAdapter(data!!, this)
+            })
 
-        val input = GetProductsInput(1)
-        foodViewModel.loadProducts(input)
+            val input = GetProductsInput(4)
+            foodViewModel.loadProducts(input)
+        }
     }
 }
