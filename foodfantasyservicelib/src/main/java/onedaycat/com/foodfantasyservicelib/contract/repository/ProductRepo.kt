@@ -7,11 +7,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
+import kotlin.coroutines.experimental.CoroutineContext
+
+interface Defferred<out T>: ProductRepo {
+    suspend fun await(): T
+}
 
 data class ProductPaging(
-        var products: MutableList<Product>,
-        var next: String,
-        var prev: String
+        var products: MutableList<Product>
 )
 
 interface ProductRepo {
@@ -44,8 +47,8 @@ class ProductFireStore: ProductRepo {
             val document = queryProduct(id)
             val product:Product = document.toObjects(Product::class.java)[0]
             val docRemove = db.collection(colProduct).document(product.id!!)
-            Tasks.await(docRemove.delete())
 
+            Tasks.await(docRemove.delete())
         }catch (e: Exception) {
             throw Errors.ProductNotFound
 
@@ -58,15 +61,14 @@ class ProductFireStore: ProductRepo {
     override fun getAllWithPaging(limit: Int): ProductPaging? {
         try {
             val documents = queryProduct(limit = limit)
+
             val products = documents.toObjects(Product::class.java)
 
             return ProductPaging(
-                    products,
-                    "Next",
-                    "Prev"
+                    products
             )
         }catch (e:Exception) {
-            throw Errors.UserNotFound
+            throw Errors.ProductNotFound
         }catch (e:FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
@@ -93,6 +95,7 @@ class ProductFireStore: ProductRepo {
 
         if (id == null) {
             query = docRef.orderBy("updateDate").limit(limit.toLong())
+
             return Tasks.await(query.get())
         }
 

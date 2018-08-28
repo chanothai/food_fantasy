@@ -4,6 +4,7 @@ import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.*
 import onedaycat.com.foodfantasyservicelib.input.AddProductStockInput
+import onedaycat.com.foodfantasyservicelib.input.GetProductStocksInput
 import onedaycat.com.foodfantasyservicelib.input.SubProductStockInput
 import onedaycat.com.foodfantasyservicelib.validate.StockValidate
 import org.junit.Assert
@@ -21,6 +22,7 @@ class StockServiceTest {
     @Mock
     private lateinit var inputAddStock: AddProductStockInput
     private lateinit var inputSubStock: SubProductStockInput
+    private lateinit var inputGetProductString: GetProductStocksInput
     private lateinit var expPStock: ProductStock
 
     private var stock: ProductStock? = null

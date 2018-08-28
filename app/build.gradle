@@ -37,6 +37,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation project(":foodfantasyservicelib")
+
+    implementation "com.android.support:recyclerview-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
+
+    // LiveData + ViewModel
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

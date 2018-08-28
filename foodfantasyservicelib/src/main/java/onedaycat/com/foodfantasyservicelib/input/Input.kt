@@ -36,7 +36,11 @@ class GetProductInput(
 )
 
 class GetProductsInput(
-        var limit: Int
+        var limit: Int = 1
+)
+
+class GetProductStocksInput(
+        var productIds: ArrayList<String>
 )
 
 class AddToCartInput(

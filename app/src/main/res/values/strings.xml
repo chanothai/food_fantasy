@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Food_Fantasy</string>
+    <string name="app_name">Food Fantasy</string>
+    <string name="detail_app_name">This restaurant gives you some food amazing.</string>
+    <string name="name_food_test">Smoked Beef Ribs</string>
+    <string name="detail_food_test">Seafood is always so appetizing</string>
+    <string name="price_food_test">100</string>
+
+    <string name="currency_dollar">฿</string>
 </resources>
