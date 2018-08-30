@@ -3,6 +3,10 @@ package onedaycat.com.foodfantasyservicelib.error
 
 class Errors {
     companion object {
+        //Error View
+        val UnableIntentActivity = InternalError(2222, "Unable intent because not found destination of class")
+        val BundleNotFound = BadRequestException(2221, "Bundle Not Found")
+        //Error interactor
         var UserNotFound = NotFoundException(1001, "User Not Found")
         var ProductNotFound = NotFoundException(1002, "Product Not Found")
         var CartNotFound = NotFoundException(1222, "Cart Not Found")
