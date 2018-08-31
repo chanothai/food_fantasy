@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mainfood.MainActivity">
+    tools:context=".mainfood.activity.MainActivity">
 
-    <include layout="@layout/appbar_layout"/>
+    <include layout="@layout/appbar_main_food"/>
 </android.support.constraint.ConstraintLayout>

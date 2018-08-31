@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/appbar_collapsing"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <android.support.design.widget.CollapsingToolbarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:toolbarId="@+id/toolbar"
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+        app:contentScrim="?android:attr/colorPrimary">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_width="match_parent"
+            app:contentInsetStart="0dp"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <onedaycat.com.food_fantasy.customview.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/title_cart"
+                android:textColor="@color/color_font_dark"
+                android:layout_gravity="start"
+                android:gravity="center"
+                android:textSize="@dimen/medium_font"/>
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.CollapsingToolbarLayout>
+</android.support.design.widget.AppBarLayout>

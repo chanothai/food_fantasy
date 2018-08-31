@@ -2,6 +2,7 @@ package onedaycat.com.food_fantasy.mainfood
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -49,4 +50,6 @@ class FoodViewModel: ViewModel() {
             _foodData.value = FoodListModel(foodList)
         }
     }
+
+
 }

@@ -8,4 +8,7 @@
     <color name="color_bg_white">#ffffff</color>
     <color name="color_font_soft">#5D5D5D</color>
     <color name="color_font_dark">#212121</color>
+
+    <color name="color_btn_normal">#9E9E9E</color>
+    <color name="color_btn_press">#424242</color>
 </resources>

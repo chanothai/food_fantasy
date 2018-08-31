@@ -1,5 +1,9 @@
 package onedaycat.com.food_fantasy.common
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -47,4 +51,14 @@ abstract class BaseActivity: AppCompatActivity() {
     private fun createFragmentDialog(dialogFragment: DialogFragment) {
         dialogFragment.show(supportFragmentManager, tagDialogFragment)
     }
+
+    fun Drawable.setIconColor(color: Int) {
+        mutate()
+        setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+    }
+
+    protected inline fun <VM: ViewModel> viewModelFactory(crossinline f: () -> VM) =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T = f() as T
+            }
 }

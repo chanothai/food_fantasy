@@ -19,18 +19,10 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <onedaycat.com.food_fantasy.customview.CustomButtonView
-            android:id="@+id/btn_add"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/large_font"
-            android:text="@string/txt_btn_add"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/large_padding_layout">
+            android:orientation="horizontal">
 
             <onedaycat.com.food_fantasy.customview.CustomTextView
                 android:layout_width="match_parent"
@@ -48,6 +40,14 @@
                 android:text="@string/price_food_test"/>
 
         </LinearLayout>
+
+        <onedaycat.com.food_fantasy.customview.CustomButtonView
+            android:id="@+id/btn_add"
+            android:layout_width="@dimen/float_button_min_size"
+            android:layout_height="@dimen/float_button_min_size"
+            android:layout_gravity="center"
+            android:background="@drawable/selector_btn_add_cart"
+            android:layout_marginTop="@dimen/large_padding_layout"/>
     </LinearLayout>
 
 </LinearLayout>

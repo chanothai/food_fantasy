@@ -1,10 +1,8 @@
-package onedaycat.com.food_fantasy.mainfood
+package onedaycat.com.food_fantasy.mainfood.activity
 
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.Toolbar
@@ -13,9 +11,10 @@ import android.view.MenuItem
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_food_detail_body.*
 import kotlinx.android.synthetic.main.activity_food_detail_header.*
-import kotlinx.android.synthetic.main.appbar_widget.*
+import kotlinx.android.synthetic.main.appbar_normal.*
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
+import onedaycat.com.food_fantasy.mainfood.FoodModel
 
 fun Context.foodDetailActivity(foodModel: FoodModel): Intent {
     return Intent(this, FoodDetailActivity::class.java).apply {
@@ -87,11 +86,6 @@ class FoodDetailActivity : BaseActivity() {
         }else {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun Drawable.setIconColor(color: Int) {
-        mutate()
-        setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
     }
 
     private fun MenuItem.getShowAsAction(): Int {

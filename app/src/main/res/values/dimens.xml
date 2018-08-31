@@ -14,4 +14,7 @@
 
     <dimen name="dialog_loading_circle_progress_size">64dp</dimen>
 
+    <dimen name="float_button_default_size">56dp</dimen>
+    <dimen name="float_button_min_size">40dp</dimen>
+
 </resources>

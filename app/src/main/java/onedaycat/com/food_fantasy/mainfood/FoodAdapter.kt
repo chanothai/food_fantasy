@@ -2,6 +2,9 @@ package onedaycat.com.food_fantasy.mainfood
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -50,7 +53,6 @@ class FoodAdapter(
         holder.price.text = items.foodList[position].foodPrice.toString()
 
         holder.bind(items.foodList[position], clickListener)
-        holder.setButtonCircle(context)
 
         Glide.with(context)
                 .load(items.foodList[position].foodIMG)
@@ -77,6 +79,8 @@ class FoodViewHolder(itemView:View): RecyclerView.ViewHolder(itemView) {
         val btnCircle = BitmapFactory.decodeResource(context.resources, R.id.btn_add)
 
         val round = RoundedBitmapDrawableFactory.create(context.resources, btnCircle)
+        round.mutate()
+        round.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
         round.isCircular = true
 
         btnAdd.background = round

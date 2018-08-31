@@ -20,11 +20,25 @@
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
             app:contentScrim="@color/colorPrimary">
 
-            <include layout="@layout/appbar_header"/>
+            <include layout="@layout/appbar_header_main_food"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/rs_list_food"/>
+        layout="@layout/recyclerview_and_swipe_refresh_layout"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fb_shop_to_cart"
+        android:layout_width="@dimen/float_button_default_size"
+        android:layout_height="@dimen/float_button_default_size"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:tint="@color/color_bg_white"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginEnd="@dimen/small_padding_layout"
+        android:src="@drawable/ic_shopping_cart"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="right|bottom" />
+
 </android.support.design.widget.CoordinatorLayout>
