@@ -4,6 +4,10 @@
     <string name="name_food_test">Smoked Beef Ribs</string>
     <string name="detail_food_test">Seafood is always so appetizing</string>
     <string name="price_food_test">100</string>
+    <string name="title_total_price">Your total</string>
+    <string name="msg_btn_payment">Confirm</string>
+
+    <string name="qty_food_test">5</string>
 
     <string name="currency_dollar">฿</string>
     <string name="txt_btn_add">ADD</string>

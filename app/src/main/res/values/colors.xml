@@ -11,4 +11,6 @@
 
     <color name="color_btn_normal">#9E9E9E</color>
     <color name="color_btn_press">#424242</color>
+
+    <color name="color_bg_solf_gray">#ececec</color>
 </resources>

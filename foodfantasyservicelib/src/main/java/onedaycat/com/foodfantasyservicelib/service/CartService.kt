@@ -52,7 +52,7 @@ class CartService(private val stockRepo: StockRepo,
 
         val pstock = stockRepo.getWithPrice(input.productID)
 
-        cart!!.remove(newProductQTY(pstock!!.productStock!!.productID, pstock.price, input.qty), pstock.productStock!!)
+        cart!!.remove(newProductQTY(pstock?.productStock!!.productID, pstock.price, input.qty), pstock.productStock!!)
 
         cartRepo.upsert(cart)
 

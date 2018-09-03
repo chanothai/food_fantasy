@@ -21,13 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".mainfood.activity.FoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".cart.CartActivity">
-
-        </activity>
+        <activity android:name=".feature.cart.CartActivity"></activity>
+        <activity android:name=".feature.payment.PaymentActivity"></activity>
     </application>
 
 </manifest>

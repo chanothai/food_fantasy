@@ -21,7 +21,7 @@ import onedaycat.com.food_fantasy.R
 class FoodAdapter(
         private val items: FoodListModel,
         private val context: Context,
-        private val clickListener:(FoodModel) -> Unit): RecyclerView.Adapter<FoodViewHolder>() {
+        private val clickListener:(FoodModel, View?) -> Unit): RecyclerView.Adapter<FoodViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.food_list_item, parent, false)
@@ -34,7 +34,7 @@ class FoodAdapter(
         return items.foodList.size
     }
 
-    fun addFood(foodModel: FoodModel) {
+    fun updateFood(foodModel: FoodModel) {
         items.foodList.add(foodModel)
         notifyDataSetChanged()
     }
@@ -52,37 +52,46 @@ class FoodAdapter(
         holder.nameFood.text = items.foodList[position].foodName
         holder.price.text = items.foodList[position].foodPrice.toString()
 
-        holder.bind(items.foodList[position], clickListener)
+        holder.bind(items.foodList[position], null, clickListener)
+
+        holder.setBtnClick(items.foodList[position], holder.btnAdd , clickListener)
 
         Glide.with(context)
                 .load(items.foodList[position].foodIMG)
                 .into(holder.foodImg)
 
-    }
+        if (!items.foodList[position].isAddToCart) {
+            holder.btnAdd.setBackgroundResource(R.drawable.selector_btn_add_cart)
+        }else {
+            holder.btnAdd.setBackgroundResource(R.drawable.selector_btn_remove_cart)
+        }
 
+    }
 }
 
 class FoodViewHolder(itemView:View): RecyclerView.ViewHolder(itemView) {
-    var foodImg = itemView.food_img_item
-    var nameFood = itemView.txt_item_name
-    var descFood = itemView.txt_item_describe
-    var price = itemView.txt_item_price
-    var btnAdd = itemView.btn_add
+    var foodImg = itemView.food_img_item!!
+    var nameFood = itemView.txt_item_name!!
+    var descFood = itemView.txt_item_describe!!
+    var price = itemView.txt_item_price!!
+    var btnAdd = itemView.btn_add!!
 
-    fun bind(foodModel: FoodModel, clickListener: (FoodModel) -> Unit) {
+    fun bind(foodModel: FoodModel, view: View? , clickListener: (FoodModel, View?) -> Unit) {
         itemView.setOnClickListener {
-            clickListener(foodModel)
+            clickListener(foodModel, view)
         }
     }
 
-    fun setButtonCircle(context: Context) {
-        val btnCircle = BitmapFactory.decodeResource(context.resources, R.id.btn_add)
-
-        val round = RoundedBitmapDrawableFactory.create(context.resources, btnCircle)
-        round.mutate()
-        round.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
-        round.isCircular = true
-
-        btnAdd.background = round
+    fun setBtnClick(foodModel: FoodModel, view: View? , clickListener: (FoodModel, View?) -> Unit) {
+        btnAdd.setOnClickListener {
+            if (!foodModel.isAddToCart) {
+                foodModel.isAddToCart = true
+                btnAdd.setBackgroundResource(R.drawable.selector_btn_remove_cart)
+            }else {
+                foodModel.isAddToCart = false
+                btnAdd.setBackgroundResource(R.drawable.selector_btn_add_cart)
+            }
+            clickListener(foodModel, view)
+        }
     }
 }

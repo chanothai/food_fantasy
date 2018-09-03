@@ -43,4 +43,14 @@ class StockService(
 
         return pStock
     }
+
+    fun getProductStock(input: GetProductStocksInput): ArrayList<ProductStock?> {
+        if (input.productIds.size == 0) {
+            throw Errors.ProductStockNotFound
+        }
+
+        val listProductStock = stockRepo.getByIDs(input.productIds)
+
+        return listProductStock as ArrayList<ProductStock?>
+    }
 }

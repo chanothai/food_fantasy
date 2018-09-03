@@ -8,6 +8,7 @@ import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_food_detail_body.*
 import kotlinx.android.synthetic.main.activity_food_detail_header.*
@@ -23,6 +24,7 @@ fun Context.foodDetailActivity(foodModel: FoodModel): Intent {
         putExtra(FOOD_NAME, foodModel.foodName)
         putExtra(FOOD_PRICE, foodModel.foodPrice)
         putExtra(FOOD_IMG, foodModel.foodIMG)
+        putExtra(FOOD_STATUS, foodModel.isAddToCart)
     }
 }
 
@@ -30,7 +32,7 @@ private const val FOOD_NAME = "food_name"
 private const val FOOD_DESC = "food_desc"
 private const val FOOD_PRICE = "food_price"
 private const val FOOD_IMG = "food_IMG"
-
+private const val FOOD_STATUS = "food_status"
 
 
 class FoodDetailActivity : BaseActivity() {
@@ -38,8 +40,11 @@ class FoodDetailActivity : BaseActivity() {
     private var foodDesc: String? = null
     private var foodPrice: Int = 0
     private var foodImg: String? = null
+    private var foodStatus: Boolean = false
 
     override fun getToolbarInstance(): Toolbar? = toolbar
+    override fun isDisplayHomeEnable(): Boolean? = true
+    override fun title(): String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +61,7 @@ class FoodDetailActivity : BaseActivity() {
         foodDesc = intent.getStringExtra(FOOD_DESC)
         foodPrice = intent.getIntExtra(FOOD_PRICE, 0)
         foodImg = intent.getStringExtra(FOOD_IMG)
+        foodStatus = intent.getBooleanExtra(FOOD_STATUS, false)
 
         requireNotNull(foodName) {"No food_name provided in Intent extras"}
         requireNotNull(foodDesc) {"No food_desc provided in intent extras"}
@@ -72,11 +78,6 @@ class FoodDetailActivity : BaseActivity() {
         Glide.with(this)
                 .load(foodImg)
                 .into(detail_img)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.food_detail_menu, menu)
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

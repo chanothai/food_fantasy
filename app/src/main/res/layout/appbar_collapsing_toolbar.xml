@@ -9,17 +9,15 @@
     <android.support.design.widget.CollapsingToolbarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:toolbarId="@+id/toolbar"
-        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
+        app:layout_scrollFlags="scroll|enterAlways"
         app:contentScrim="?android:attr/colorPrimary">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_height="?android:attr/actionBarSize"
-            android:layout_width="match_parent"
-            app:contentInsetStart="0dp"
+            android:layout_width="wrap_content"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <onedaycat.com.food_fantasy.customview.CustomTextView
                 android:layout_width="wrap_content"
