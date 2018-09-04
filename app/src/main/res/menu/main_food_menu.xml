@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/order_history"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_receipt_black"
+        android:title="Order"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/show_badge_food"
         android:orderInCategory="100"
         android:title="Cart"

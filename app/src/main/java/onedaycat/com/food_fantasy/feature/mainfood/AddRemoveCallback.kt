@@ -1,6 +1,7 @@
 package onedaycat.com.food_fantasy.mainfood
 
 interface AddRemoveCallback {
-    fun addItem()
-    fun removeItem()
+    fun addItem(foodModel: FoodModel)
+    fun removeItem(foodModel: FoodModel)
+    fun goCart(foodModel: FoodModel)
 }

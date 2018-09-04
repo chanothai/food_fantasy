@@ -24,8 +24,9 @@
         <activity
             android:name=".mainfood.activity.FoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.cart.CartActivity"></activity>
-        <activity android:name=".feature.payment.PaymentActivity"></activity>
+        <activity android:name=".feature.cart.CartActivity" />
+        <activity android:name=".feature.payment.PaymentActivity" />
+        <activity android:name=".feature.order.OrderActivity"></activity>
     </application>
 
 </manifest>

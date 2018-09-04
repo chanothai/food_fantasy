@@ -10,7 +10,7 @@ data class ProductStockWithPrice(
 )
 
 data class ProductStock(
-        var productID: String = "",
+        var productID: String? = null,
         var qty: Int = 0) {
 
     private var productStock: ProductStock? = this
@@ -26,7 +26,8 @@ data class ProductStock(
 
     fun newProductStock(productID: String, qty: Int): ProductStock? {
         productStock = ProductStock(
-                productID
+                productID,
+                qty
         )
 
         deposit(qty)

@@ -71,7 +71,7 @@ class PaymentFireStore: PaymentRepo {
         val arrPStock = mutableListOf<HashMap<String, Any>>()
         for (product in productStocks) {
             val docPStock = HashMap<String, Any>()
-            docPStock["productId"] = product!!.productID
+            docPStock["productId"] = product!!.productID!!
             docPStock["qty"] = product.qty
 
             arrPStock.add(docPStock)

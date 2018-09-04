@@ -33,10 +33,11 @@ class PaymentService(private val orderRepo: OrderRepo,
         //withdraw product stock into stock
         for (pstock in pstocks) {
             //get product qty every product in cart
-            val pQTY = cart.getPQTY(pstock!!.productID)
+            val pQTY = cart.getPQTY(pstock!!.productID!!)
 
             if (pQTY != null) {
                 pstock.withDraw(pQTY.qty)
+                stockRepo.upsert(pstock)
             }
         }
 
@@ -55,6 +56,7 @@ class PaymentService(private val orderRepo: OrderRepo,
 
         //update order status to paid
         order.paid(tx!!)
+        orderRepo.upsert(order)
 
         //create order into repository
         paymentRepo.savePayment(order, tx, pstocks)
@@ -75,7 +77,7 @@ class PaymentService(private val orderRepo: OrderRepo,
 
         //deposit product stock
         for ( pstock in pstocks) {
-            pstock!!.deposit(order.getProduct(pstock.productID)!!.qty)
+            pstock!!.deposit(order.getProductQTY(pstock.productID!!)!!.qty)
         }
 
         //refund no payment

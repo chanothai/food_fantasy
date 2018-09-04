@@ -3,6 +3,7 @@ package onedaycat.com.food_fantasy.feature.cart
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.widget.Toast
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -13,21 +14,22 @@ import onedaycat.com.food_fantasy.store.FoodCartStore
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.DeleteCartInput
 import onedaycat.com.foodfantasyservicelib.input.GetProductStocksInput
 import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.service.CartService
+import onedaycat.com.foodfantasyservicelib.service.EcomService
 import onedaycat.com.foodfantasyservicelib.service.StockService
 import java.util.*
 
 class CartViewModel(
         private val foodCartLiveStore: FoodCartLiveStore,
-        private val stockService: StockService,
-        private val cartService: CartService): ViewModel() {
+        private val eComService: EcomService): ViewModel() {
+
     private var foodCartStore: FoodCartStore? = null
 
     private var _cart = MutableLiveData<CartModel>()
     private var _foodCart = MutableLiveData<FoodCartStore>()
-    private var _cartSize = MutableLiveData<Int>()
 
     val foodCart: LiveData<FoodCartStore>
     get() = _foodCart
@@ -35,17 +37,17 @@ class CartViewModel(
     val cart: LiveData<CartModel>
     get() = _cart
 
-    val cartSize: LiveData<Int>
-    get() = _cartSize
-
-    fun mapCart() {
+    fun mapPStockToCart() {
         if (foodCartLiveStore.liveData.value != null) {
             launch(UI) {
                 async(CommonPool) {
                     foodCartStore = getNeedFoodCart(foodCartStore = foodCartLiveStore.liveData.value!!)
+                    return@async
                 }.await()
 
                 _foodCart.value = foodCartStore
+
+                return@launch
             }
         }
     }
@@ -63,7 +65,7 @@ class CartViewModel(
     private fun loadProductStock(input: GetProductStocksInput, foodCartStore: FoodCartStore): FoodCartStore? {
         val newFoodCart: FoodCartStore?
         try {
-            val listProductStock = stockService.getProductStock(input)
+            val listProductStock = eComService.stockService.getProductStock(input)
 
             if (foodCartStore.cartList!!.size > 0) {
                 for ((i, pStock) in listProductStock.withIndex()) {
@@ -82,15 +84,18 @@ class CartViewModel(
 
     fun addProductToCart(input: AddToCartInput, cartItem: CartModel) {
         try {
-
             var cartEntity: Cart? = null
             launch(UI) {
                 async(CommonPool) {
-                    cartEntity = cartService.addProductCart(input)
+                    cartEntity = eComService.cartService.addProductCart(input)
+                    return@async
                 }.await()
 
+                //must update code
                 CartStore.counter = cartEntity?.products!!.size
                 _cart.value = cartItem
+
+                return@launch
             }
         }catch (e: Error) {
             _cart.value = CartModel()
@@ -102,18 +107,24 @@ class CartViewModel(
             var cartEntity: Cart? = null
             launch(UI) {
                 async(CommonPool) {
-                    cartEntity = cartService.removeFromeCart(input)
+                    cartEntity = eComService.cartService.removeFromeCart(input)
+                    return@async
                 }.await()
 
-                cartItem.status = false
-
                 CartStore.counter = cartEntity?.products!!.size
-                _cart.value = cartItem
+
+                val carts = _foodCart.value?.cartList
+                carts?.remove(cartItem)
+
+                _foodCart.value = FoodCartStore(input.userID, carts)
             }
         }catch (e: Error) {
-            _cart.value = CartModel()
+            throw e
         }
     }
 
-
+    fun clearProductCart() {
+        _foodCart.value?.cartList = arrayListOf()
+        CartStore.counter = 0
+    }
 }

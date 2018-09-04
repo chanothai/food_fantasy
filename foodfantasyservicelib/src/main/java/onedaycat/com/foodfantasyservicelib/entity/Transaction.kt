@@ -1,7 +1,7 @@
 package onedaycat.com.foodfantasyservicelib.entity
 
 enum class TransactionState {
-    CHANGE, REFUNDED
+    CHARGE, REFUNDED
 }
 
 data class Transaction(

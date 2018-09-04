@@ -125,7 +125,7 @@ data class Cart(
     fun totalPrice(): Int {
         var sumTotalPrice = 0
         for (product in cart.products) {
-            sumTotalPrice += product!!.price!!
+            sumTotalPrice += (product!!.price!! * product.qty)
         }
 
         return sumTotalPrice

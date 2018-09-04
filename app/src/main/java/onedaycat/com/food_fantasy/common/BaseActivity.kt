@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import kotlinx.android.synthetic.main.appbar_normal.view.*
 import kotlinx.android.synthetic.main.badge_icon_layout.*
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.dialog.LoadingDialogFragment
@@ -36,13 +37,14 @@ abstract class BaseActivity: AppCompatActivity() {
     }
 
     private fun initView(toolbar: Toolbar) {
-        toolbar.title = title()
+        if (title() != null) toolbar.title_toolbar.text = title()
+
         setSupportActionBar(toolbar)
 
         supportActionBar?.let {
             supportActionBar?.setDisplayHomeAsUpEnabled(isDisplayHomeEnable()!!)
 
-            if (title() == null) it.setDisplayShowTitleEnabled(false)
+            it.setDisplayShowTitleEnabled(false)
         }
     }
 

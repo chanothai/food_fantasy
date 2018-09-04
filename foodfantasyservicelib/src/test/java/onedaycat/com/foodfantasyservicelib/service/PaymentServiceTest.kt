@@ -141,7 +141,7 @@ class PaymentServiceTest {
         tx = Transaction(
                 "tx1",
                 id,
-                TransactionState.CHANGE,
+                TransactionState.CHARGE,
                 500,
                 now
         )

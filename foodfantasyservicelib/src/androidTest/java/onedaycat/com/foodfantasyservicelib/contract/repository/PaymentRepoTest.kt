@@ -32,7 +32,7 @@ class PaymentRepoTest {
         expTransaction = Transaction(
                 "tx1",
                 "r1",
-                TransactionState.CHANGE,
+                TransactionState.CHARGE,
                 500,
                 now
         )

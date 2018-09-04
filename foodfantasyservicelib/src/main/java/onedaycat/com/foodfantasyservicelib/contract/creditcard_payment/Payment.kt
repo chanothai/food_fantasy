@@ -1,9 +1,11 @@
 package onedaycat.com.foodfantasyservicelib.contract.creditcard_payment
 
-import com.google.firebase.firestore.FirebaseFirestore
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.Transaction
+import onedaycat.com.foodfantasyservicelib.entity.TransactionState
 import onedaycat.com.foodfantasyservicelib.input.CreditCardType
+import onedaycat.com.foodfantasyservicelib.util.clock.Clock
+import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 
 
 data class CreditCard(
@@ -19,16 +21,23 @@ interface CreditCardPayment {
     fun refund(order: Order): Transaction?
 }
 
-class CreditCardPaymentFireStore: CreditCardPayment {
-    private val colCCPayment = "CreditCardPayments"
-    private val db = FirebaseFirestore.getInstance()
-
+class CreditCardMemoPayment: CreditCardPayment {
     override fun charge(order: Order, creditCard: CreditCard): Transaction? {
-        return null
+        return Transaction(
+                IdGen.NewId(),
+                order.id!!,
+                TransactionState.CHARGE,
+                order.totalPrice,
+                Clock.NowUTC())
     }
 
     override fun refund(order: Order): Transaction? {
-        return null
+        return Transaction(
+                IdGen.NewId(),
+                order.id!!,
+                TransactionState.REFUNDED,
+                order.totalPrice,
+                Clock.NowUTC())
     }
 
 }

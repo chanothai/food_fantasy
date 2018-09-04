@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,6 +21,7 @@ import onedaycat.com.food_fantasy.feature.cart.CartActivity
 import onedaycat.com.food_fantasy.feature.cart.CartModel
 import onedaycat.com.food_fantasy.feature.cart.CartViewModel
 import onedaycat.com.food_fantasy.common.BaseActivity
+import onedaycat.com.food_fantasy.feature.order.OrderActivity
 import onedaycat.com.food_fantasy.mainfood.*
 import onedaycat.com.food_fantasy.store.CartStore
 import onedaycat.com.food_fantasy.store.FoodCartLiveStore
@@ -30,17 +32,14 @@ import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
 import onedaycat.com.foodfantasyservicelib.input.GetProductsInput
 import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.service.CartService
+import onedaycat.com.foodfantasyservicelib.service.EcomService
 import onedaycat.com.foodfantasyservicelib.service.StockService
 import onedaycat.com.foodfantasyservicelib.validate.CartMemoValidate
 import onedaycat.com.foodfantasyservicelib.validate.StockMemoValidate
 
-class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, AddRemoveCallback {
     private lateinit var foodViewModel: FoodViewModel
     private lateinit var cartViewModel: CartViewModel
-
-    //service
-    private val stockService = StockService(StockFireStore(), StockMemoValidate())
-    private val cartService = CartService(StockFireStore(),CartFireStore(), CartMemoValidate())
 
     private var foodAdapter: FoodAdapter? = null
 
@@ -58,8 +57,8 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
 
         prepareSwipeRefreshLayout()
         fb_shop_to_cart.setOnClickListener(this)
+        loadBanner()
         initViewModel()
-        loadTitleIMG()
 
         if (savedInstanceState == null) {
             firstFetchDataFood(limit)
@@ -71,11 +70,11 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         CartStore.foodCart?.userId = userId
 
         foodViewModel = ViewModelProviders.of(this,
-                viewModelFactory { FoodViewModel(FoodCartLiveStore(CartStore.foodCart)) })
+                viewModelFactory { FoodViewModel(FoodCartLiveStore(CartStore.foodCart), EcomService) })
                 .get(FoodViewModel::class.java)
 
         cartViewModel = ViewModelProviders.of(this,
-                viewModelFactory { CartViewModel(FoodCartLiveStore(CartStore.foodCart), stockService, cartService) })
+                viewModelFactory { CartViewModel(FoodCartLiveStore(CartStore.foodCart), EcomService) })
                 .get(CartViewModel::class.java)
 
         initCartObserver()
@@ -84,16 +83,29 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
     private fun initCartObserver(){
         cartViewModel.cart.observe(this, Observer { data ->
             if (data != null) {
-                if (data.status) {
-                    addFoodCart(data)
-                }else {
-                    removeFoodCart(data)
-                }
+                updateFoodCart(data)
             }
 
             invalidateOptionsMenu()
             dismissDialog()
         })
+    }
+
+    private fun updateFoodCart(data: CartModel) {
+        if (data.status) {
+            CartStore.foodCart?.cartList?.add(data)
+        }else {
+            removeFoodCart(data)
+        }
+    }
+
+    private fun removeFoodCart(data: CartModel) {
+        for ((i, food) in CartStore.foodCart?.cartList!!.withIndex()) {
+            if (food.cartPId == data.cartPId) {
+                CartStore.foodCart?.cartList?.removeAt(i)
+                return
+            }
+        }
     }
 
     private fun prepareSwipeRefreshLayout() {
@@ -107,7 +119,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         foodViewModel.loadProducts(input)
     }
 
-    private fun loadTitleIMG() {
+    private fun loadBanner() {
         val titleIMG = "https://healthyhappysmart.com/blog/wp-content/uploads/2016/03/clean-eating.png"
 
         val option = RequestOptions().apply {
@@ -123,7 +135,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
     override fun onResume() {
         super.onResume()
 
-        foodViewModel.updateFoodCart()
+        foodViewModel.updateFoodStatus()
         foodDataObserver()
         invalidateOptionsMenu()
     }
@@ -132,8 +144,7 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         foodViewModel.foodData.observe(this, Observer { data ->
 
             if (foodAdapter == null) {
-                val itemClicked = { foodItem: FoodModel, view: View? -> foodItemClicked(foodItem, view) }
-                foodAdapter = FoodAdapter(data!!, this, itemClicked)
+                foodAdapter = FoodAdapter(data!!, this, this)
 
                 rv_food_list.layoutManager = LinearLayoutManager(this)
                 rv_food_list.hasFixedSize()
@@ -157,34 +168,30 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         foodViewModel.loadProducts(input)
     }
 
-    private fun foodItemClicked(foodItem: FoodModel, view: View?) {
-        if (view?.id == R.id.btn_add) {
-            if (foodItem.isAddToCart) {
+    override fun addItem(foodModel: FoodModel) {
+        showLoadingDialog()
+        val input = AddToCartInput(
+                userId,
+                foodModel.foodId,
+                beginQTY
+        )
 
-                showLoadingDialog()
-                val input = AddToCartInput(
-                        userId,
-                        foodItem.foodId,
-                        beginQTY
-                )
+        cartViewModel.addProductToCart(input, mapToCart(foodModel))
+    }
 
-                cartViewModel.addProductToCart(input, mapToCart(foodItem))
-            }else {
+    override fun removeItem(foodModel: FoodModel) {
+        showLoadingDialog()
+        val input = RemoveFromCartInput(
+                userId,
+                foodModel.foodId,
+                beginQTY
+        )
 
-                showLoadingDialog()
-                val input = RemoveFromCartInput(
-                        userId,
-                        foodItem.foodId,
-                        beginQTY
-                )
+        cartViewModel.removeProductToCart(input, mapToCart(foodModel))
+    }
 
-                cartViewModel.removeProductToCart(input, mapToCart(foodItem))
-            }
-        }
-
-        if (view == null) {
-            startActivity(foodDetailActivity(foodItem))
-        }
+    override fun goCart(foodModel: FoodModel) {
+        startActivity(foodDetailActivity(foodModel))
     }
 
     private fun mapToCart(food: FoodModel): CartModel {
@@ -200,19 +207,6 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         return cartModel
     }
 
-    private fun addFoodCart(data: CartModel) {
-        CartStore.foodCart?.cartList?.add(data)
-    }
-
-    private fun removeFoodCart(data: CartModel) {
-        for ((i, food) in CartStore.foodCart?.cartList!!.withIndex()) {
-            if (food.cartPId == data.cartPId) {
-                CartStore.foodCart?.cartList?.removeAt(i)
-                return
-            }
-        }
-    }
-
     override fun onClick(view: View?) {
         if (view?.id == R.id.fb_shop_to_cart) {
             startActivity(Intent(this, CartActivity::class.java))
@@ -225,6 +219,21 @@ class MainActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, View.
         menuItem?.icon = convertLayoutToImage(CartStore.counter, R.drawable.ic_shopping_cart)
 
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when {
+            item?.itemId == R.id.order_history -> {
+                startActivity(OrderActivity(userId))
+                true
+            }
+
+            item?.itemId == R.id.show_badge_food -> {
+                startActivity(Intent(this, CartActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onBackPressed() {

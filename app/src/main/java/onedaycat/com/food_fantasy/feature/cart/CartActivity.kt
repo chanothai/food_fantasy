@@ -7,19 +7,23 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout.VERTICAL
 import kotlinx.android.synthetic.main.activity_cart.*
 import kotlinx.android.synthetic.main.appbar_collapsing_toolbar.*
 import kotlinx.android.synthetic.main.recyclerview_layout.*
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
+import onedaycat.com.food_fantasy.feature.payment.PaymentActivity
 import onedaycat.com.food_fantasy.store.CartStore
 import onedaycat.com.food_fantasy.store.FoodCartLiveStore
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartFireStore
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockFireStore
 import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.DeleteCartInput
 import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.service.CartService
+import onedaycat.com.foodfantasyservicelib.service.EcomService
 import onedaycat.com.foodfantasyservicelib.service.StockService
 import onedaycat.com.foodfantasyservicelib.validate.CartMemoValidate
 import onedaycat.com.foodfantasyservicelib.validate.StockMemoValidate
@@ -28,9 +32,6 @@ class CartActivity : BaseActivity(), OnActionCartListener{
 
     private lateinit var cartVM: CartViewModel
     private var cartAdapter: CartAdapter? = null
-
-    private val stockService = StockService(StockFireStore(), StockMemoValidate())
-    private val cartService = CartService(StockFireStore(),CartFireStore(), CartMemoValidate())
 
     override fun getToolbarInstance(): Toolbar? = toolbar
     override fun isDisplayHomeEnable(): Boolean? = true
@@ -44,57 +45,46 @@ class CartActivity : BaseActivity(), OnActionCartListener{
         initViewModel()
 
         if (savedInstanceState == null) {
-            showLoadingDialog()
-            cartVM.mapCart()
+            cartVM.mapPStockToCart()
         }
+
+        btnClickedConfirm()
     }
 
     private fun initViewModel() {
         cartVM = ViewModelProviders.of(this,
-                viewModelFactory { CartViewModel(FoodCartLiveStore(CartStore.foodCart),
-                        stockService,
-                        cartService)
-        }).get(CartViewModel::class.java)
+                viewModelFactory {
+                    CartViewModel(FoodCartLiveStore(CartStore.foodCart), EcomService)}).get(CartViewModel::class.java)
 
-        initDataFoodObserver()
-        initCartObserver()
+        foodCartObserver()
     }
 
-    private fun initCartObserver() {
-        cartVM.cart.observe(this, Observer { data ->
-            if (data != null) {
+    private fun foodCartObserver() {
+        cartVM.foodCart.observe(this, Observer { data ->
+            if (data?.cartList == null) {
+                return@Observer
+            }
 
-                if (!data.status) {
-                    cartAdapter?.removeItem(data)
-                }
+            if (cartAdapter == null) {
+                cartAdapter = CartAdapter(data.cartList!!, this, this)
+
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                recyclerView.hasFixedSize()
+
+                val divider = DividerItemDecoration(this, VERTICAL)
+                recyclerView.addItemDecoration(divider)
+                recyclerView.adapter = cartAdapter
+
 
                 cart_total_price.text = cartAdapter?.sumTotalPrice()
+
+                userId = data.userId
+
+                return@Observer
             }
 
-            dismissDialog()
-        })
-    }
-
-    private fun initDataFoodObserver() {
-        cartVM.foodCart.observe(this, Observer { data ->
-            if (data?.cartList != null) {
-
-                if (cartAdapter == null) {
-                    cartAdapter = CartAdapter(data.cartList!!, this, this)
-
-                    recyclerView.layoutManager = LinearLayoutManager(this)
-                    recyclerView.hasFixedSize()
-
-                    val divider = DividerItemDecoration(this, VERTICAL)
-                    recyclerView.addItemDecoration(divider)
-                    recyclerView.adapter = cartAdapter
-
-
-                    cart_total_price.text = cartAdapter?.sumTotalPrice()
-
-                    userId = data.userId
-                }
-            }
+            cart_total_price.text = cartAdapter?.sumTotalPrice()
+            cartAdapter?.notifyDataSetChanged()
 
             dismissDialog()
         })
@@ -125,7 +115,7 @@ class CartActivity : BaseActivity(), OnActionCartListener{
         cart_total_price.text = result
     }
 
-    override fun onActionIME(cartModel: CartModel) {
+    override fun onDoneAction(cartModel: CartModel) {
         showLoadingDialog()
         val input = AddToCartInput(
                 userId!!,
@@ -134,5 +124,17 @@ class CartActivity : BaseActivity(), OnActionCartListener{
         )
 
         cartVM.addProductToCart(input, cartModel)
+    }
+
+    private fun btnClickedConfirm() {
+        btn_confirm.setOnClickListener{
+            if (CartStore.foodCart?.cartList!!.size == 0) {
+                return@setOnClickListener
+            }
+
+            cartVM.clearProductCart()
+            startActivity(PaymentActivity(userId!!))
+            finish()
+        }
     }
 }

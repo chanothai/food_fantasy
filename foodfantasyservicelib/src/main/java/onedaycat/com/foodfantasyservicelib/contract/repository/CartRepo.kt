@@ -13,6 +13,7 @@ import kotlin.collections.HashMap
 interface CartRepo {
     fun upsert(cart: Cart?)
     fun getByUserID(userId: String): Cart?
+    fun delete(userId: String)
 }
 
 class CartFireStore: CartRepo {
@@ -35,6 +36,15 @@ class CartFireStore: CartRepo {
             val document = Tasks.await(docRef.get())
             return document.toObject(Cart::class.java) ?: throw Errors.CartNotFound
 
+        }catch (e: FirebaseFirestoreException) {
+            throw Errors.UnKnownError
+        }
+    }
+
+    override fun delete(userId: String) {
+        try {
+            val docRef = db.collection(colCart).document(userId)
+            Tasks.await(docRef.delete())
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }

@@ -8,19 +8,21 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import onedaycat.com.food_fantasy.feature.cart.CartModel
 import onedaycat.com.food_fantasy.store.FoodCartLiveStore
 import onedaycat.com.food_fantasy.store.FoodCartStore
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductFireStore
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
+import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.input.GetProductsInput
+import onedaycat.com.foodfantasyservicelib.service.EcomService
 import onedaycat.com.foodfantasyservicelib.service.ProductService
 import onedaycat.com.foodfantasyservicelib.validate.ProductMemoValidate
 
 class FoodViewModel(
-        private val foodCartLiveStore: FoodCartLiveStore
-): ViewModel() {
-    private val productService = ProductService(ProductFireStore(), ProductMemoValidate())
+        private val foodCartLiveStore: FoodCartLiveStore,
+        private val eComService: EcomService): ViewModel() {
     private var foodList = arrayListOf<FoodModel>()
 
     private val _foodData = MutableLiveData<FoodListModel>()
@@ -33,34 +35,37 @@ class FoodViewModel(
             var productPaging: ProductPaging? = null
             launch(UI) {
                 async(CommonPool) {
-                    productPaging = productService.getProducts(input)!!
+                    productPaging = eComService.productService.getProducts(input)!!
+                    return@async
                 }.await()
 
                 if (foodList.size == 0) {
-                    addFoodModel(productPaging!!)
-                }else {
-                    if (foodList.size == productPaging!!.products.size) {
-
-                        for ((i, food) in foodList.withIndex()) {
-                            if (productPaging!!.products[i].id != food.foodId) {
-                                foodList[i] = food
-                            }
-                        }
-                    }else {
-                        addFoodModel(productPaging!!)
-                    }
+                    _foodData.value = addFoodModel(productPaging!!)
+                    return@launch
                 }
 
-                _foodData.value = FoodListModel(foodList)
+                if (foodList.size == productPaging!!.products.size) {
+
+                    for ((i, food) in foodList.withIndex()) {
+                        if (productPaging!!.products[i].id != food.foodId) {
+                            foodList[i] = food
+                        }
+                    }
+
+                    _foodData.value = addFoodModel(productPaging!!)
+                    return@launch
+                }
+
+
+                addFoodModel(productPaging!!)
+                _foodData.value = addFoodModel(productPaging!!)
             }
         }catch (e: Error) {
-            e.printStackTrace()
-
-            _foodData.value = FoodListModel(foodList)
+            _foodData.value = FoodListModel(arrayListOf())
         }
     }
 
-    private fun addFoodModel(productPaging: ProductPaging) {
+    private fun addFoodModel(productPaging: ProductPaging): FoodListModel{
         for (product in productPaging.products) {
             val foodModel = FoodModel(
                     foodId = product.id!!,
@@ -69,26 +74,48 @@ class FoodViewModel(
                     foodPrice = product.price!!,
                     foodIMG = product.image!!
             )
+
             foodList.add(foodModel)
         }
+
+        return FoodListModel(foodList)
     }
 
-    fun updateFoodCart() {
-        val foodCartStore = foodCartLiveStore.liveData.value
-        if (_foodData.value != null) {
-            for ( food in _foodData.value?.foodList!!) {
-                food.isAddToCart = false
+    fun updateFoodStatus() {
+        val carts = foodCartLiveStore.liveData.value?.cartList
 
-                if (foodCartStore?.cartList?.size!! > 0) {
-                    for (cart in foodCartStore.cartList!!) {
-                        if (food.foodId == cart.cartPId) {
-                            food.isAddToCart = cart.status
-                            break
-                        }
-                    }
+        if (carts?.size == 0) {
+            setStatusWithCartEmpty()
+            return
+        }
+
+        if (carts?.size == _foodData.value?.foodList!!.size) {
+            return
+        }
+
+        setStatus(carts!!)
+    }
+
+    private fun setStatus(carts: ArrayList<CartModel>) {
+        for ( food in _foodData.value?.foodList!!) {
+            food.isAddToCart = false
+
+            for (cart in carts) {
+                if (food.foodId == cart.cartPId) {
+                    food.isAddToCart = cart.status
+                    break
                 }
             }
         }
+    }
 
+    private fun setStatusWithCartEmpty() {
+        if (_foodData.value == null) {
+            return
+        }
+
+        for (food in _foodData.value?.foodList!!) {
+            food.isAddToCart = false
+        }
     }
 }

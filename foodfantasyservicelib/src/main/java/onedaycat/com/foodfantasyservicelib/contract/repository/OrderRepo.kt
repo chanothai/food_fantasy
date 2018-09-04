@@ -3,16 +3,19 @@ package onedaycat.com.foodfantasyservicelib.contract.repository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.State
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 interface OrderRepo {
     fun upsert(order: Order)
-    fun get(id: String): Order
+    fun get(userId: String): Order
+    fun getAll(userId: String): ArrayList<Order>
 }
 
 class OrderFireStore: OrderRepo {
@@ -21,7 +24,7 @@ class OrderFireStore: OrderRepo {
 
     override fun upsert(order: Order) {
         try {
-            val docRef = db.collection(colOrder).document(order.id!!)
+            val docRef = db.collection(colOrder)
 
             val arrPQTY = mutableListOf<HashMap<String, Any>>()
 
@@ -43,44 +46,19 @@ class OrderFireStore: OrderRepo {
             docData["status"] = order.status.toString()
 
 
-            Tasks.await(docRef.set(docData))
+            Tasks.await(docRef.add(docData))
         }catch (e:FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
     }
 
-    override fun get(id: String): Order {
+    override fun get(userId: String): Order {
         try {
-            val docRef = db.collection(colOrder).document(id)
+            val docRef = db.collection(colOrder)
+            val query: Query = docRef.whereEqualTo("userId", userId)
 
-            val docOrder = Tasks.await(docRef.get()) ?: throw Errors.NotOrderOwner
-            val products = docOrder.get("products") as MutableList<HashMap<String, Any>>
-
-            val arrPQTY = mutableListOf<ProductQTY?>()
-            for (product in products) {
-                val price = product["price"] as Long
-                val qty = product["qty"] as Long
-
-                val pQty = ProductQTY(
-                        productId = product["productId"] as String,
-                        price = price.toInt(),
-                        qty = qty.toInt()
-                )
-
-                arrPQTY.add(pQty)
-            }
-
-            val status = docOrder.getString("status")
-            val orderStatus:State.OrderStatus = State.OrderStatus.valueOf(status!!)
-
-            return Order(
-                    docOrder.getString("id"),
-                    docOrder.getString("userId"),
-                    arrPQTY,
-                    docOrder.getLong("totalPrice")!!.toInt(),
-                    docOrder.getString("createDate"),
-                    orderStatus
-            )
+            val docOrder = Tasks.await(query.get()) ?: throw Errors.NotOrderOwner
+            return docOrder.toObjects(Order::class.java)[0]
 
         }catch (e:Exception) {
             throw Errors.UnableGetOrder
@@ -89,4 +67,18 @@ class OrderFireStore: OrderRepo {
         }
     }
 
+    override fun getAll(userId: String): ArrayList<Order> {
+        try {
+            val docRef = db.collection(colOrder)
+            val query: Query = docRef.whereEqualTo("userId", userId)
+
+            val docOrder = Tasks.await(query.get()) ?: throw Errors.NotOrderOwner
+
+            return docOrder.toObjects(Order::class.java) as ArrayList<Order>
+        }catch (e:Exception) {
+            throw Errors.UnableGetOrder
+        }catch (e: FirebaseFirestoreException) {
+            throw Errors.UnKnownError
+        }
+    }
 }

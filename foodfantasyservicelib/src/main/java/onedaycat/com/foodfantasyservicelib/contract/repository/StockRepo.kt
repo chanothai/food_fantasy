@@ -21,7 +21,7 @@ class StockFireStore: StockRepo {
     private val db = FirebaseFirestore.getInstance()
     override fun upsert(product: ProductStock?) {
         try {
-            val docRef = db.collection(colStock).document(product!!.productID)
+            val docRef = db.collection(colStock).document(product!!.productID!!)
             Tasks.await(docRef.set(product))
         }catch (e:FirebaseFirestoreException) {
             throw Errors.UnKnownError
@@ -72,6 +72,7 @@ class StockFireStore: StockRepo {
                     pStock,
                     product.price!!
             )
+
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }

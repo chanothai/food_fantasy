@@ -5,6 +5,7 @@ import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.input.DeleteCartInput
 import onedaycat.com.foodfantasyservicelib.input.GetCartInput
 import onedaycat.com.foodfantasyservicelib.input.RemoveFromCartInput
 import onedaycat.com.foodfantasyservicelib.validate.CartValidate
@@ -21,7 +22,7 @@ class CartService(private val stockRepo: StockRepo,
 
             //get cart if not found cart will create new cart
             cart = cartRepo.getByUserID(input.userID)
-            cart!!.userId = input.userID
+            cart?.userId = input.userID
 
         }catch (e:NotFoundException) {
             cart = Cart(
@@ -34,7 +35,9 @@ class CartService(private val stockRepo: StockRepo,
         val pStock = stockRepo.getWithPrice(input.productID)!!
 
         //create new productQTY
-        val newProductQTY = newProductQTY(pStock.productStock!!.productID, pStock.price, input.qty)
+        val newProductQTY = newProductQTY(
+                pStock.productStock!!.productID!!,
+                pStock.price, input.qty)
 
         //add product qty to cart
         cart!!.addPQTY(newProductQTY, pStock.productStock!!)
@@ -52,7 +55,9 @@ class CartService(private val stockRepo: StockRepo,
 
         val pstock = stockRepo.getWithPrice(input.productID)
 
-        cart!!.remove(newProductQTY(pstock?.productStock!!.productID, pstock.price, input.qty), pstock.productStock!!)
+        cart!!.remove(newProductQTY(
+                pstock?.productStock!!.productID!!,
+                pstock.price, input.qty), pstock.productStock!!)
 
         cartRepo.upsert(cart)
 
@@ -63,5 +68,10 @@ class CartService(private val stockRepo: StockRepo,
         cartValidate.inputGetCart(input)
 
         return cartRepo.getByUserID(input.userID)
+    }
+
+    fun deleteProductCart(input: DeleteCartInput) {
+
+        cartRepo.delete(input.userID)
     }
 }

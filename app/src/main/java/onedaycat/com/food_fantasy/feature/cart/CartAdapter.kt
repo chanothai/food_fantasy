@@ -28,7 +28,7 @@ class CartAdapter(
     }
 
     override fun onBindViewHolder(holder: CartHolder, position: Int) {
-        val priceStr = "${items[position].cartPrice} ฿"
+        val priceStr = "${items[position].cartTotalPrice} ฿"
 
         holder.cartName.text = items[position].cartName
         holder.cartPrice.text = priceStr
@@ -40,14 +40,9 @@ class CartAdapter(
         holder.cartQTY.setText(items[position].cartQTY.toString())
         holder.cartLimitQTY.text = items[position].cartQTYLimit.toString()
 
-        holder.btnClickListenter(items[position], actionCartListener)
-        holder.sumTotalPrice(items[position],items, actionCartListener)
+        holder.cartSumTotalPrice(items[position],items, actionCartListener)
+        holder.btnRemoveItem(items[position], actionCartListener)
         holder.actionDone(items[position], actionCartListener)
-    }
-
-    fun removeItem(cartItem: CartModel) {
-        items.remove(cartItem)
-        notifyDataSetChanged()
     }
 
     fun sumTotalPrice(): String {
@@ -66,10 +61,10 @@ class CartHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     var cartQTY = itemView.cart_qty_item!!
     var cartPrice = itemView.cart_price_item!!
     var cartLimitQTY = itemView.cart_limit_qty
-    var btnDelete = itemView.btn_delete_item!!
+    var btnRemove = itemView.btn_delete_item!!
 
-    fun btnClickListenter(cartItem: CartModel, actionCartListener: OnActionCartListener) {
-        btnDelete.setOnClickListener {
+    fun btnRemoveItem(cartItem: CartModel, actionCartListener: OnActionCartListener) {
+        btnRemove.setOnClickListener {
             actionCartListener.onRemoveCart(cartItem)
         }
     }
@@ -77,7 +72,7 @@ class CartHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun actionDone(cartItem: CartModel, actionCartListener: OnActionCartListener) {
         cartQTY.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                actionCartListener.onActionIME(cartItem)
+                actionCartListener.onDoneAction(cartItem)
 
                 true
             }else {
@@ -86,7 +81,7 @@ class CartHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    fun sumTotalPrice(cartItem: CartModel, cartItems: ArrayList<CartModel>, actionCartListener: OnActionCartListener) {
+    fun cartSumTotalPrice(cartItem: CartModel, cartItems: ArrayList<CartModel>, actionCartListener: OnActionCartListener) {
         cartQTY.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
 
@@ -105,7 +100,7 @@ class CartHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
                     cartItem.cartQTY = qty
                     cartItem.cartTotalPrice = totalPrice
 
-                    val strPrice = totalPrice.toString() + "฿"
+                    val strPrice = totalPrice.toString() + " ฿"
                     cartPrice.text = strPrice
 
                     var allTotalPrice = 0

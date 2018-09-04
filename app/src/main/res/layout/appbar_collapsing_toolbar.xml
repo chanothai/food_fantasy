@@ -17,16 +17,9 @@
             android:layout_height="?android:attr/actionBarSize"
             android:layout_width="wrap_content"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <onedaycat.com.food_fantasy.customview.CustomTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/title_cart"
-                android:textColor="@color/color_font_dark"
-                android:layout_gravity="start"
-                android:gravity="center"
-                android:textSize="@dimen/medium_font"/>
+
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.CollapsingToolbarLayout>

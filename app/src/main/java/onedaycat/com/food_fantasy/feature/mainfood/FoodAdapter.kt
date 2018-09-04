@@ -21,7 +21,7 @@ import onedaycat.com.food_fantasy.R
 class FoodAdapter(
         private val items: FoodListModel,
         private val context: Context,
-        private val clickListener:(FoodModel, View?) -> Unit): RecyclerView.Adapter<FoodViewHolder>() {
+        private val addRemoveCallback: AddRemoveCallback): RecyclerView.Adapter<FoodViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.food_list_item, parent, false)
@@ -34,16 +34,6 @@ class FoodAdapter(
         return items.foodList.size
     }
 
-    fun updateFood(foodModel: FoodModel) {
-        items.foodList.add(foodModel)
-        notifyDataSetChanged()
-    }
-
-    fun clearFood() {
-        items.foodList.clear()
-        notifyDataSetChanged()
-    }
-
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
         val longString:String = items.foodList[position].foodDesc
         val newDesc = "${longString.substring(0, 30)}..."
@@ -52,9 +42,9 @@ class FoodAdapter(
         holder.nameFood.text = items.foodList[position].foodName
         holder.price.text = items.foodList[position].foodPrice.toString()
 
-        holder.bind(items.foodList[position], null, clickListener)
+        holder.setHolderClicked(items.foodList[position],addRemoveCallback)
 
-        holder.setBtnClick(items.foodList[position], holder.btnAdd , clickListener)
+        holder.btnAddCart(items.foodList[position], addRemoveCallback)
 
         Glide.with(context)
                 .load(items.foodList[position].foodIMG)
@@ -76,22 +66,25 @@ class FoodViewHolder(itemView:View): RecyclerView.ViewHolder(itemView) {
     var price = itemView.txt_item_price!!
     var btnAdd = itemView.btn_add!!
 
-    fun bind(foodModel: FoodModel, view: View? , clickListener: (FoodModel, View?) -> Unit) {
+    fun setHolderClicked(foodModel: FoodModel, addRemoveCallback: AddRemoveCallback) {
         itemView.setOnClickListener {
-            clickListener(foodModel, view)
+            addRemoveCallback.goCart(foodModel)
         }
     }
 
-    fun setBtnClick(foodModel: FoodModel, view: View? , clickListener: (FoodModel, View?) -> Unit) {
+    fun btnAddCart(foodModel: FoodModel, addRemoveCallback: AddRemoveCallback) {
         btnAdd.setOnClickListener {
             if (!foodModel.isAddToCart) {
                 foodModel.isAddToCart = true
                 btnAdd.setBackgroundResource(R.drawable.selector_btn_remove_cart)
+
+                addRemoveCallback.addItem(foodModel)
             }else {
                 foodModel.isAddToCart = false
                 btnAdd.setBackgroundResource(R.drawable.selector_btn_add_cart)
+
+                addRemoveCallback.removeItem(foodModel)
             }
-            clickListener(foodModel, view)
         }
     }
 }

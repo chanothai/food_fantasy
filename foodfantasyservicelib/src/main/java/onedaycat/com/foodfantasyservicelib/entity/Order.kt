@@ -1,7 +1,5 @@
 package onedaycat.com.foodfantasyservicelib.entity
 
-import onedaycat.com.foodfantasyservicelib.error.BadRequestException
-import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
 
 object State {
@@ -30,7 +28,7 @@ data class Order(
     fun paid(tx: Transaction) {
         order.validateChangeStatus(tx)
 
-        if (tx.status != TransactionState.CHANGE) throw Errors.TxStatusNotCharged
+        if (tx.status != TransactionState.CHARGE) throw Errors.TxStatusNotCharged
         if (order.status != State.OrderStatus.PENDING) throw Errors.OrderStatusNotPending
 
         order.status = State.OrderStatus.PAID
@@ -71,7 +69,7 @@ data class Order(
         return arrProductId
     }
 
-    fun getProduct(pstockId: String): ProductQTY? {
+    fun getProductQTY(pstockId: String): ProductQTY? {
         if (products.size == 0) {
             throw Errors.ProductNotFound
         }

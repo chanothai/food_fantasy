@@ -51,6 +51,7 @@ class AddToCartInput(
 
 class AddProductStockInput(
         var productID: String,
+        var productName: String,
         var qty: Int
 )
 
@@ -81,4 +82,8 @@ class ChargeInput(
 class RefundInput(
         var userID: String,
         var orderID: String
+)
+
+class DeleteCartInput(
+        var userID: String
 )
