@@ -12,6 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_food_detail_header.view.*
 import kotlinx.android.synthetic.main.food_detail_information_item.view.*
 import kotlinx.android.synthetic.main.food_detail_item.view.*
@@ -21,7 +24,7 @@ import onedaycat.com.food_fantasy.R
 class FoodAdapter(
         private val items: FoodListModel,
         private val context: Context,
-        private val addRemoveCallback: AddRemoveCallback): RecyclerView.Adapter<FoodViewHolder>() {
+        private val itemClickedCallback: ItemClickedCallback): RecyclerView.Adapter<FoodViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.food_list_item, parent, false)
@@ -35,56 +38,38 @@ class FoodAdapter(
     }
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
-        val longString:String = items.foodList[position].foodDesc
-        val newDesc = "${longString.substring(0, 30)}..."
+        holder.foodName.text = items.foodList[position].foodName
 
-        holder.descFood.text = newDesc
-        holder.nameFood.text = items.foodList[position].foodName
-        holder.price.text = items.foodList[position].foodPrice.toString()
-
-        holder.setHolderClicked(items.foodList[position],addRemoveCallback)
-
-        holder.btnAddCart(items.foodList[position], addRemoveCallback)
+        val price = "THB${items.foodList[position].foodPrice}"
+        holder.foodPrice.text = price
 
         Glide.with(context)
                 .load(items.foodList[position].foodIMG)
-                .into(holder.foodImg)
+                .apply(holder.configImage(context))
+                .into(holder.foodIMG)
 
-        if (!items.foodList[position].isAddToCart) {
-            holder.btnAdd.setBackgroundResource(R.drawable.selector_btn_add_cart)
-        }else {
-            holder.btnAdd.setBackgroundResource(R.drawable.selector_btn_remove_cart)
-        }
+        holder.setHolderClicked(itemClickedCallback, items.foodList[position])
 
     }
 }
 
 class FoodViewHolder(itemView:View): RecyclerView.ViewHolder(itemView) {
-    var foodImg = itemView.food_img_item!!
-    var nameFood = itemView.txt_item_name!!
-    var descFood = itemView.txt_item_describe!!
-    var price = itemView.txt_item_price!!
-    var btnAdd = itemView.btn_add!!
+    var foodName = itemView.food_item_name!!
+    var foodIMG = itemView.food_item_img!!
+    var foodPrice = itemView.food_item_price!!
 
-    fun setHolderClicked(foodModel: FoodModel, addRemoveCallback: AddRemoveCallback) {
+    fun setHolderClicked(itemClickedCallback: ItemClickedCallback, foodModel: FoodModel) {
         itemView.setOnClickListener {
-            addRemoveCallback.goCart(foodModel)
+            itemClickedCallback.onClicked(foodModel)
         }
     }
+    fun configImage(context: Context):RequestOptions {
+        val radius = context.resources.getDimensionPixelSize(R.dimen.radius_image)
 
-    fun btnAddCart(foodModel: FoodModel, addRemoveCallback: AddRemoveCallback) {
-        btnAdd.setOnClickListener {
-            if (!foodModel.isAddToCart) {
-                foodModel.isAddToCart = true
-                btnAdd.setBackgroundResource(R.drawable.selector_btn_remove_cart)
-
-                addRemoveCallback.addItem(foodModel)
-            }else {
-                foodModel.isAddToCart = false
-                btnAdd.setBackgroundResource(R.drawable.selector_btn_add_cart)
-
-                addRemoveCallback.removeItem(foodModel)
-            }
+        return RequestOptions().apply {
+            centerCrop()
+            transforms(CenterCrop(), RoundedCorners(radius))
+            placeholder(R.mipmap.ic_launcher)
         }
     }
 }

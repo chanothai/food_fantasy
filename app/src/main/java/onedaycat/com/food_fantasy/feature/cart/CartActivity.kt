@@ -54,7 +54,7 @@ class CartActivity : BaseActivity(), OnActionCartListener{
     private fun initViewModel() {
         cartVM = ViewModelProviders.of(this,
                 viewModelFactory {
-                    CartViewModel(FoodCartLiveStore(CartStore.foodCart), EcomService)}).get(CartViewModel::class.java)
+                    CartViewModel(FoodCartLiveStore(CartStore), EcomService)}).get(CartViewModel::class.java)
 
         foodCartObserver()
     }

@@ -99,7 +99,7 @@ abstract class BaseActivity: AppCompatActivity() {
         return BitmapDrawable(applicationContext.resources, bitmap)
     }
 
-    protected inline fun <VM: ViewModel> viewModelFactory(crossinline f: () -> VM) =
+    inline fun <VM: ViewModel> viewModelFactory(crossinline f: () -> VM) =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T = f() as T
             }

@@ -4,12 +4,12 @@ import android.arch.lifecycle.MutableLiveData
 import onedaycat.com.food_fantasy.mainfood.FoodModel
 
 class FoodCartLiveStore(
-        foodCartStore: FoodCartStore? = null
+        cartStore: CartStore? = null
 ) {
 
-    var liveData = MutableLiveData<FoodCartStore>()
+    var liveData = MutableLiveData<CartStore>()
 
     init {
-        liveData.value = foodCartStore
+        liveData.value = cartStore
     }
 }

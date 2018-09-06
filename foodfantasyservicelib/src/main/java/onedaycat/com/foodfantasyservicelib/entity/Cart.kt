@@ -77,7 +77,7 @@ data class Cart(
 
                 productQty.qty = result
 
-                products.set(i, productQty)
+                products[i] = productQty
 
                 stock.qty += newProductQTY.qty
                 return

@@ -34,9 +34,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/recyclerview_and_swipe_refresh_layout"/>
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fb_shop_to_cart"
         android:layout_width="@dimen/float_button_default_size"

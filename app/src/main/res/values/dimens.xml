@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="radius_image">10dp</dimen>
     <dimen name="small_padding_layout">4dp</dimen>
     <dimen name="medium_padding_layout">8dp</dimen>
     <dimen name="large_padding_layout">16dp</dimen>

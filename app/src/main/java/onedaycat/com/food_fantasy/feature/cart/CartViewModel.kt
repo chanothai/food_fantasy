@@ -41,7 +41,9 @@ class CartViewModel(
         if (foodCartLiveStore.liveData.value != null) {
             launch(UI) {
                 async(CommonPool) {
-                    foodCartStore = getNeedFoodCart(foodCartStore = foodCartLiveStore.liveData.value!!)
+                    with(foodCartLiveStore.liveData.value?.foodCart) {
+                        foodCartStore = getNeedFoodCart(this!!)
+                    }
                     return@async
                 }.await()
 
