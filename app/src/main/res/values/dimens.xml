@@ -19,4 +19,7 @@
     <dimen name="float_button_default_size">56dp</dimen>
     <dimen name="float_button_min_size">40dp</dimen>
 
+    <dimen name="size_btn_small">24dp</dimen>
+    <dimen name="fixed_height_layout_bottom">115dp</dimen>
+
 </resources>

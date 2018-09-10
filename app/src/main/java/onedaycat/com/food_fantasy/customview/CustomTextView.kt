@@ -13,7 +13,7 @@ class CustomTextView @JvmOverloads constructor(
         defStyleAttr: Int = android.R.attr.textViewStyle): AppCompatTextView(context, attrs, defStyleAttr)
 {
     init {
-        typeface = Typeface.createFromAsset(context.assets, "fonts/DK_Nouveau_Crayon.otf")
+        typeface = Typeface.createFromAsset(context.assets, "fonts/SukhumvitSet-Text.ttf")
     }
 }
 
@@ -23,7 +23,7 @@ class CustomButtonView @JvmOverloads constructor(
         defStyleAttr: Int = android.R.attr.buttonStyle): AppCompatButton(context, attrs, defStyleAttr)
 {
     init {
-        typeface = Typeface.createFromAsset(context.assets, "fonts/DK_Nouveau_Crayon.otf")
+        typeface = Typeface.createFromAsset(context.assets, "fonts/SukhumvitSet-Text.ttf")
     }
 }
 

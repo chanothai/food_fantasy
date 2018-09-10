@@ -25,20 +25,24 @@ abstract class BaseActivity: AppCompatActivity() {
 
     private val tagDialogFragment = "dialog_fragment"
     private var loadingDialogFragment: LoadingDialogFragment? = null
+    private lateinit var toolbar: Toolbar
 
     override fun onResume() {
         super.onResume()
 
-        if (getToolbarInstance() != null) {
-            this.getToolbarInstance()?.let {
-                this.initView(it)
-            }
+        this.getToolbarInstance()?.let {
+            this.initView(it)
         }
     }
 
     private fun initView(toolbar: Toolbar) {
-        if (title() != null) toolbar.title_toolbar.text = title()
+        this.toolbar = toolbar
 
+        title()?.let {
+            toolbar.title_toolbar.text = it
+        }
+
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow_white)
         setSupportActionBar(toolbar)
 
         supportActionBar?.let {
@@ -48,6 +52,9 @@ abstract class BaseActivity: AppCompatActivity() {
         }
     }
 
+    fun updateTitleToolbar(title: String) {
+        toolbar.title_toolbar.text = title
+    }
 
     abstract fun isDisplayHomeEnable(): Boolean?
     abstract fun getToolbarInstance(): Toolbar?

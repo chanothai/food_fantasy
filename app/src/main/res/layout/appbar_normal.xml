@@ -26,7 +26,7 @@
                 android:layout_height="match_parent"
                 style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
                 android:layout_centerHorizontal="true"
-                android:text="@string/title_detail"
+                android:text="@string/title_menu_th"
                 android:textColor="@color/color_font_white"
                 android:gravity="center" />
 

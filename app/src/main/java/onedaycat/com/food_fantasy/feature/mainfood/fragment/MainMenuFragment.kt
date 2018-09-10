@@ -44,7 +44,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class MainMenuFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ItemClickedCallback {
     //View
-    private var recyclerView:RecyclerView? = null
     private lateinit var foodViewModel: FoodViewModel
 
     private var foodAdapter: FoodAdapter? = null
@@ -54,8 +53,6 @@ class MainMenuFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ItemC
 
     //fixed data
     private val limit = 10
-    private val userID = "u1"
-    private val beginQTY = 1
     private var badgeCart = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,27 +103,22 @@ class MainMenuFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ItemC
     }
 
     private fun initViewModel() {
-        CartStore.foodCart = FoodCartStore().apply {
-            this.userId = userID
+        (activity as MainActivity).foodViewModel.let {
+            foodViewModel = it
+            foodDataObserver()
+            cartObserver()
         }
-
-        foodViewModel = ViewModelProviders.of(this,
-                (activity as MainActivity).viewModelFactory { FoodViewModel(FoodCartLiveStore(CartStore), EcomService) })
-                .get(FoodViewModel::class.java)
-
-        foodDataObserver()
-        cartObserver()
     }
 
     private fun cartObserver() {
         foodViewModel.cartStore.observe(this, Observer {
-            it?.let {
-                badgeCart = it.counter
+            it?.let {cartStore->
+                badgeCart = cartStore.counter
 
-                it
-            }?.also {
-                CartStore.foodCart = it.foodCart
-                CartStore.counter = it.counter
+                cartStore
+            }?.also {cartStore->
+                CartStore.foodCart = cartStore.foodCart
+                CartStore.counter = cartStore.counter
             }
         })
     }

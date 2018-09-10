@@ -5,25 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:padding="@dimen/large_padding_layout"
-    android:background="@color/color_bg_white">
+    android:paddingTop="@dimen/large_padding_layout"
+    android:background="@color/color_bg_white"
+    app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
-            android:id="@+id/detail_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/small_padding_layout"
-            android:text="@string/test_describe_food"
-            android:textAlignment="textStart"
-            android:textColor="@color/color_font_dark"
-            android:textSize="@dimen/medium_font" />
+        <include layout="@layout/food_detail_information"/>
 
     </android.support.v4.widget.NestedScrollView>
-
 
 </RelativeLayout>

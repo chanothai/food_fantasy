@@ -8,7 +8,7 @@ data class CartModel(
         var cartImg: String? = null,
         var cartQTY: Int = 0,
         var cartQTYLimit: Int = 0,
-        var status: Boolean = false,
+        var isCart: Boolean = false,
         var cartProductAmount: Int = 0
 )
 

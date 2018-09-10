@@ -9,13 +9,12 @@
     tools:context=".mainfood.activity.MainActivity">
 
     <include
-        layout="@layout/appbar_collapsing_toolbar" />
+        layout="@layout/appbar_normal" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/large_padding_layout"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
         <FrameLayout
@@ -34,17 +33,13 @@
             android:background="@color/color_shadow"
             android:layout_above="@+id/bottom_bar"/>
 
-        <android.support.design.widget.BottomNavigationView
+        <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
             android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:itemBackground="@color/color_bg_white"
-            android:layout_gravity="bottom"
-            app:itemIconTint="@color/color_icon_bottom_bar"
-            app:itemTextColor="@color/color_icon_bottom_bar"
-            app:menu="@menu/menu_navigation"
-            android:layout_alignParentBottom="true"
-            />
+            android:layout_alignParentBottom="true">
+
+        </com.aurelhubert.ahbottomnavigation.AHBottomNavigation>
 
     </RelativeLayout>
 

@@ -7,110 +7,114 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.cart_detail_item.view.*
 import onedaycat.com.food_fantasy.R
+import onedaycat.com.food_fantasy.feature.cart.viewHolder.CartTypeViewHolder
+import onedaycat.com.food_fantasy.feature.cart.viewHolder.PaymentTypeViewHolder
+import onedaycat.com.food_fantasy.feature.cart.viewHolder.TitleTypeViewHolder
+
+object Type {
+    var titleType = 0
+    var cartType = 1
+    var payType = 2
+}
 
 class CartAdapter(
         private val items: ArrayList<CartModel>,
         private val context: Context,
-        private val actionCartListener: OnActionCartListener): RecyclerView.Adapter<CartHolder>() {
+        private val onActionCartListener: OnActionCartListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.cart_detail_item, parent, false)
+    private var sizeItem:Int = 0
+    private var cartSize = 0
 
-        return CartHolder(view)
+    private  val topicsPay = arrayListOf(
+            context.resources.getString(R.string.topic_card_number),
+            context.resources.getString(R.string.topic_card_name),
+            context.resources.getString(R.string.topic_card_expired),
+            context.resources.getString(R.string.topic_card_cvv)
+    )
+
+    private val hintsPay = arrayListOf(
+            context.resources.getString(R.string.hint_card_number),
+            context.resources.getString(R.string.hint_card_name),
+            context.resources.getString(R.string.hint_card_expired),
+            context.resources.getString(R.string.hint_card_cvv)
+    )
+
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            position == 0 -> Type.titleType
+            position < (cartSize) -> Type.cartType
+            position == (cartSize) -> Type.titleType
+            position > (cartSize) -> Type.payType
+            else -> -1
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val view: View?
+
+        when(viewType) {
+            Type.titleType -> {
+                view = LayoutInflater.from(context).inflate(R.layout.layout_title_type, parent, false)
+                return TitleTypeViewHolder(view)
+            }
+
+            Type.cartType -> {
+                view = LayoutInflater.from(context).inflate(R.layout.layout_cart_type, parent, false)
+                return CartTypeViewHolder(view)
+            }
+
+            Type.payType -> {
+                view = LayoutInflater.from(context).inflate(R.layout.layout_payment_type, parent, false)
+                return PaymentTypeViewHolder(view)
+            }
+
+            else -> {
+                view = LayoutInflater.from(context).inflate(R.layout.layout_title_type, parent, false)
+                return TitleTypeViewHolder(view)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        cartSize = items.size + 1
+        sizeItem = cartSize + topicsPay.size + 1
+        return sizeItem
     }
 
-    override fun onBindViewHolder(holder: CartHolder, position: Int) {
-        val priceStr = "${items[position].cartTotalPrice} ฿"
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when {
+            position == 0 -> {
+                val titleTypeHolder:TitleTypeViewHolder = (holder as TitleTypeViewHolder)
+                titleTypeHolder.titleName.text = context.resources.getString(R.string.title_list_cart)
+                return
+            }
 
-        holder.cartName.text = items[position].cartName
-        holder.cartPrice.text = priceStr
+            position < cartSize -> {
+                val index = position - 1
+                val cartHolder = (holder as CartTypeViewHolder)
+                cartHolder.cartName.text = items[index].cartName
+                cartHolder.cartQTY.text = items[index].cartQTY.toString()
+                cartHolder.setOnItemClicked(items[index], onActionCartListener)
+                return
+            }
 
-        Glide.with(context)
-                .load(items[position].cartImg)
-                .into(holder.cartImg)
+            position == cartSize -> {
+                val titleTypeHolder:TitleTypeViewHolder = (holder as TitleTypeViewHolder)
+                titleTypeHolder.titleName.text = context.resources.getString(R.string.title_payment_type)
+                return
+            }
 
-        holder.cartQTY.setText(items[position].cartQTY.toString())
-        holder.cartLimitQTY.text = items[position].cartQTYLimit.toString()
+            position > cartSize -> {
+                val index = (position - 2) - items.size
 
-        holder.cartSumTotalPrice(items[position],items, actionCartListener)
-        holder.btnRemoveItem(items[position], actionCartListener)
-        holder.actionDone(items[position], actionCartListener)
-    }
-
-    fun sumTotalPrice(): String {
-        var result = 0
-        for (cart in items) {
-            result += cart.cartPrice * cart.cartQTY
+                val paymentType = (holder as PaymentTypeViewHolder)
+                paymentType.payTopicName.text = topicsPay[index]
+                paymentType.payEditData.hint = hintsPay[index]
+                return
+            }
         }
-
-        return "$result ฿"
     }
+
 }
 
-class CartHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    var cartImg = itemView.cart_img_item!!
-    var cartName = itemView.cart_name_item!!
-    var cartQTY = itemView.cart_qty_item!!
-    var cartPrice = itemView.cart_price_item!!
-    var cartLimitQTY = itemView.cart_limit_qty
-    var btnRemove = itemView.btn_delete_item!!
-
-    fun btnRemoveItem(cartItem: CartModel, actionCartListener: OnActionCartListener) {
-        btnRemove.setOnClickListener {
-            actionCartListener.onRemoveCart(cartItem)
-        }
-    }
-
-    fun actionDone(cartItem: CartModel, actionCartListener: OnActionCartListener) {
-        cartQTY.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                actionCartListener.onDoneAction(cartItem)
-
-                true
-            }else {
-                false
-            }
-        }
-    }
-
-    fun cartSumTotalPrice(cartItem: CartModel, cartItems: ArrayList<CartModel>, actionCartListener: OnActionCartListener) {
-        cartQTY.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (char.toString().isNotEmpty()) {
-                    val qty: Int = char.toString().toInt()
-
-                    val totalPrice = qty * cartItem.cartPrice
-
-                    cartItem.cartQTY = qty
-                    cartItem.cartTotalPrice = totalPrice
-
-                    val strPrice = totalPrice.toString() + " ฿"
-                    cartPrice.text = strPrice
-
-                    var allTotalPrice = 0
-                    for (cart in cartItems) {
-                        allTotalPrice += cart.cartTotalPrice
-                    }
-
-                    actionCartListener.onTextWatcherTotalPrice(allTotalPrice)
-                }
-            }
-        })
-    }
-}

@@ -1,48 +1,43 @@
 package onedaycat.com.food_fantasy.mainfood.activity
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.activity_food_detail_body.*
-import kotlinx.android.synthetic.main.activity_food_detail_header.*
-import kotlinx.android.synthetic.main.appbar_normal.*
+import kotlinx.android.synthetic.main.appbar_header_main_food.*
+import kotlinx.android.synthetic.main.appbar_main_food.*
+import kotlinx.android.synthetic.main.food_detail_information.*
+import kotlinx.android.synthetic.main.layout_food_detail_control.*
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
 import onedaycat.com.food_fantasy.mainfood.FoodModel
+import onedaycat.com.food_fantasy.mainfood.FoodViewModel
+import onedaycat.com.food_fantasy.store.CartStore
+import onedaycat.com.food_fantasy.store.FoodCartLiveStore
+import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
+import onedaycat.com.foodfantasyservicelib.service.EcomService
 
 fun Context.foodDetailActivity(foodModel: FoodModel): Intent {
     return Intent(this, FoodDetailActivity::class.java).apply {
-        putExtra(FOOD_NAME, foodModel.foodName)
-        putExtra(FOOD_DESC, foodModel.foodDesc)
-        putExtra(FOOD_NAME, foodModel.foodName)
-        putExtra(FOOD_PRICE, foodModel.foodPrice)
-        putExtra(FOOD_IMG, foodModel.foodIMG)
-        putExtra(FOOD_STATUS, foodModel.isAddToCart)
+        this.putExtra(FOOD_MODEL, foodModel)
     }
 }
 
-private const val FOOD_NAME = "food_name"
-private const val FOOD_DESC = "food_desc"
-private const val FOOD_PRICE = "food_price"
-private const val FOOD_IMG = "food_IMG"
-private const val FOOD_STATUS = "food_status"
-
+private const val FOOD_MODEL = "food_model"
 
 class FoodDetailActivity : BaseActivity() {
-    private var foodName: String? = null
-    private var foodDesc: String? = null
-    private var foodPrice: Int = 0
-    private var foodImg: String? = null
-    private var foodStatus: Boolean = false
+    private lateinit var foodModel: FoodModel
 
-    override fun getToolbarInstance(): Toolbar? = toolbar
+    private lateinit var foodViewModel: FoodViewModel
+    private lateinit var userId: String
+    private var isAddToCart = false
+
+    override fun getToolbarInstance(): Toolbar? = toolbar_collapse
+
     override fun isDisplayHomeEnable(): Boolean? = true
     override fun title(): String? = null
 
@@ -50,34 +45,98 @@ class FoodDetailActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food_detail)
 
+        bindView()
+        bindBundle()
+        initViewModel()
+
         if (savedInstanceState == null) {
-            bindBundle()
             setView()
+            foodViewModel.initTotalPrice(1, foodModel.foodPrice)
         }
     }
 
-    private fun bindBundle() {
-        foodName = intent.getStringExtra(FOOD_NAME)
-        foodDesc = intent.getStringExtra(FOOD_DESC)
-        foodPrice = intent.getIntExtra(FOOD_PRICE, 0)
-        foodImg = intent.getStringExtra(FOOD_IMG)
-        foodStatus = intent.getBooleanExtra(FOOD_STATUS, false)
+    private fun initViewModel() {
+        with(CartStore) {
+            foodViewModel = ViewModelProviders.of(this@FoodDetailActivity,
+                    viewModelFactory { FoodViewModel(FoodCartLiveStore(CartStore), EcomService) })
+                    .get(FoodViewModel::class.java)
 
-        requireNotNull(foodName) {"No food_name provided in Intent extras"}
-        requireNotNull(foodDesc) {"No food_desc provided in intent extras"}
-        requireNotNull(foodPrice) {"No food_price provided in intent extras"}
-        requireNotNull(foodImg) {"No food_ing provided in intent extras"}
+            foodSumObserver()
+            cartStoreObserver()
+        }
+    }
+
+
+
+    private fun foodSumObserver() {
+        foodViewModel.foodSumModel.observe(this, Observer { it ->
+            it?.let {
+                val priceStr = "${getString(R.string.currency_dollar)}${it.totalPrice}"
+                food_detail_total_price.text = priceStr
+
+                food_detail_qty.text = it.qty.toString()
+            }
+        })
+    }
+
+    private fun cartStoreObserver() {
+        foodViewModel.cartStore.observe(this, Observer {cartStore ->
+
+            cartStore?.let {
+                userId = it.foodCart?.userId!!
+
+                if (isAddToCart) {
+                    CartStore.foodCart = it.foodCart
+                    CartStore.counter = it.counter
+
+                    finish()
+                }
+            }
+
+            dismissDialog()
+        })
+    }
+
+    private fun bindBundle() {
+        intent?.let {
+            foodModel = it.getParcelableExtra(FOOD_MODEL)
+        }
+    }
+
+    private fun bindView() {
+        btn_add_qty.setOnClickListener{
+            foodViewModel.foodDetailSumTotalPrice(true)
+        }
+
+        btn_remove_qty.setOnClickListener{
+            foodViewModel.foodDetailSumTotalPrice(false)
+        }
+
+        btn_add_cart.setOnClickListener{
+            val currentQTY = food_detail_qty.text.toString().toInt()
+
+            val input = AddToCartInput(
+                    userId,
+                    foodModel.foodId,
+                    currentQTY
+            )
+
+            isAddToCart = true
+            showLoadingDialog()
+            foodViewModel.addProductToCart(input, foodModel)
+        }
     }
 
     private fun setView() {
-        val price = "$foodPrice ${resources.getString(R.string.currency_dollar)}"
-        detail_name.text = foodName
-        detail_price.text = price
-        detail_desc.text = foodDesc
+        val price = "${resources.getString(R.string.currency_dollar)}${foodModel.foodPrice}"
+        food_detail_name.text = foodModel.foodName
+        food_detail_price.text = price
+        food_detail_desc.text = foodModel.foodDesc
 
+        food_detail_total_price.text = price
         Glide.with(this)
-                .load(foodImg)
-                .into(detail_img)
+                .load(foodModel.foodIMG)
+                .into(app_bar_image)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -87,35 +146,5 @@ class FoodDetailActivity : BaseActivity() {
         }else {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun MenuItem.getShowAsAction(): Int {
-        val f = this.javaClass.getDeclaredField("mShowAsAction")
-        f.isAccessible = true
-        return f.getInt(this)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.let {
-            if (menu is MenuBuilder) {
-                try {
-                    val field = menu.javaClass.getDeclaredField("mOptionalIconsVisible")
-                    field.isAccessible = true
-                    field.setBoolean(menu, true)
-                }catch (ignored: Exception) {
-                    ignored.printStackTrace()
-                }
-            }
-        }
-
-        for (item in 0 until menu!!.size()) {
-            val menuItem = menu.getItem(item)
-            menuItem.icon.setIconColor(
-                    if (menuItem.getShowAsAction() == 0) Color.BLUE
-                    else Color.GRAY
-            )
-        }
-
-        return super.onPrepareOptionsMenu(menu)
     }
 }

@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_food_detail_header.view.*
-import kotlinx.android.synthetic.main.food_detail_information_item.view.*
+import kotlinx.android.synthetic.main.food_detail_information.view.*
 import kotlinx.android.synthetic.main.food_detail_item.view.*
 import kotlinx.android.synthetic.main.food_img_item.view.*
 import onedaycat.com.food_fantasy.R
