@@ -18,7 +18,7 @@
     <string name="title_menu_detail">รายละเอียด</string>
 
     <string name="title_cart">CART SHOP</string>
-    <string name="title_order">ORDER</string>
+    <string name="title_order_detail_th">รายละเอียดการสั่งซื้อ</string>
     <string name="title_payment">Payment</string>
 
     <string name="test_describe_food">There have been many claims about the origin of the hamburger,
@@ -42,8 +42,8 @@
     <string name="title_list_cart">รายการ</string>
     <string name="title_payment_type">ชำระเงินผ่านบัตรเครดิต</string>
     <string name="txt_btn_confirm">CONFIRM ORDER</string>
-    
-    
+
+
     <string name="topic_card_number">เลขบัตร</string>
     <string name="hint_card_number">บัตร Visa/Master card</string>
     <string name="topic_card_name">ชื่อ</string>
@@ -57,4 +57,8 @@
     <string name="title_cart_th">รายการที่คุณเลือก</string>
     <string name="msg_empty_state">ยังไม่มีสินค้า</string>
     <string name="title_btn_select_menu">เลือกเมนู</string>
+    <string name="title_toolbar_list_order">รายการสั่งซื้อ</string>
+    <string name="msg_order_empty_state">ยังไม่มีประวัติการสั่งซื้อ</string>
+    <string name="msg_left_credit_card">ช่องทางการชำระเงิน</string>
+    <string name="msg_right_credit_card">บัตรเครดิต/เดบิต</string>
 </resources>

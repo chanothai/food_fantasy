@@ -83,34 +83,29 @@ class CartAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when {
-            position == 0 -> {
-                val titleTypeHolder:TitleTypeViewHolder = (holder as TitleTypeViewHolder)
-                titleTypeHolder.titleName.text = context.resources.getString(R.string.title_list_cart)
+        when(holder) {
+            is TitleTypeViewHolder -> {
+                if (cartSize == 0) {
+                    holder.titleName.text = context.getString(R.string.title_list_cart)
+                }else{
+                    holder.titleName.text = context.getString(R.string.title_payment_type)
+                }
+
                 return
             }
 
-            position < cartSize -> {
+            is CartTypeViewHolder-> {
                 val index = position - 1
-                val cartHolder = (holder as CartTypeViewHolder)
-                cartHolder.cartName.text = items[index].cartName
-                cartHolder.cartQTY.text = items[index].cartQTY.toString()
-                cartHolder.setOnItemClicked(items[index], onActionCartListener)
+                holder.cartName.text = items[index].cartName
+                holder.cartQTY.text = items[index].cartQTY.toString()
+                holder.setOnItemClicked(items[index], onActionCartListener)
                 return
             }
 
-            position == cartSize -> {
-                val titleTypeHolder:TitleTypeViewHolder = (holder as TitleTypeViewHolder)
-                titleTypeHolder.titleName.text = context.resources.getString(R.string.title_payment_type)
-                return
-            }
-
-            position > cartSize -> {
+            is PaymentTypeViewHolder -> {
                 val index = (position - 2) - items.size
-
-                val paymentType = (holder as PaymentTypeViewHolder)
-                paymentType.payTopicName.text = topicsPay[index]
-                paymentType.payEditData.hint = hintsPay[index]
+                holder.payTopicName.text = topicsPay[index]
+                holder.payEditData.hint = hintsPay[index]
                 return
             }
         }

@@ -11,10 +11,11 @@ import onedaycat.com.foodfantasyservicelib.entity.Order
 
 class OrderAdapter(
         val context:Context,
-        private val orders: ArrayList<Order>): RecyclerView.Adapter<OrderViewHolder>() {
+        private val orders: ArrayList<OrderModel>,
+        private val orderItemClick: OrderItemClickListener): RecyclerView.Adapter<OrderViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.order_detail_item, parent, false)
-
         return OrderViewHolder(view)
     }
 
@@ -23,22 +24,23 @@ class OrderAdapter(
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-        val orderIdStr = "Order#${orders[position].id}"
+        val orderIdStr = "Order#${orders[position].orderId}"
         holder.orderId.text = orderIdStr
-        holder.orderDate.text = orders[position].createDate
 
-        val totalPriceStr = "${orders[position].totalPrice} ฿"
+        val totalPriceStr = "${context.getString(R.string.currency_dollar)}${orders[position].totalPrice}"
         holder.orderTotalPrice.text = totalPriceStr
 
-        holder.orderStatus.text = orders[position].status.toString()
+        holder.setItemViewClicked(orderItemClick, orders[position])
     }
 }
 
 class OrderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     var orderId = itemView.order_item_id!!
-    var orderDate = itemView.order_item_date!!
-    var orderTotalPrice = itemView.order_total_price!!
-    var orderStatus = itemView.order_item_status!!
+    var orderTotalPrice = itemView.order_item_total!!
 
-
+    fun setItemViewClicked(orderItemClick: OrderItemClickListener, orderModel: OrderModel) {
+        itemView.setOnClickListener {
+            orderItemClick.onClicked(orderModel)
+        }
+    }
 }

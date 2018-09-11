@@ -3,7 +3,7 @@ package onedaycat.com.foodfantasyservicelib.entity
 import onedaycat.com.foodfantasyservicelib.error.Errors
 
 object State {
-    enum class OrderStatus() {
+    enum class OrderStatus {
         PAID,PENDING,REFUNDED
     }
 }

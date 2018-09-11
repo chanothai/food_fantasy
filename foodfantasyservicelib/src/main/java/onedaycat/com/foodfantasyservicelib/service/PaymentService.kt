@@ -61,6 +61,9 @@ class PaymentService(private val orderRepo: OrderRepo,
         //create order into repository
         paymentRepo.savePayment(order, tx, pstocks)
 
+        //delete cart
+        cartRepo.delete(input.userID)
+
         return order
     }
 

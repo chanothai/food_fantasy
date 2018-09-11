@@ -15,7 +15,6 @@ class OrderService(private val orderRepo: OrderRepo,
     }
 
     fun getOrders(input: GetOrderInput): ArrayList<Order> {
-
         return orderRepo.getAll(input.id)
     }
 }

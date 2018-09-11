@@ -17,9 +17,9 @@ class OrderViewModel(
         private val eComService: EcomService
 ): ViewModel() {
 
-    private val _orders = MutableLiveData<ArrayList<Order>>()
+    private val _orders = MutableLiveData<OrderModels>()
 
-    val orders: LiveData<ArrayList<Order>>
+    val orders: LiveData<OrderModels>
     get() = _orders
 
     fun loadOrderHistory(input: GetOrderInput) {
@@ -31,11 +31,40 @@ class OrderViewModel(
                     return@async
                 }.await()
 
-                _orders.value = orders
+                orders?.let {
+                    _orders.value = mapOrderModel(orders!!)
+                    return@launch
+                }
+
                 return@launch
             }
         }catch (e: Error) {
-            _orders.value = arrayListOf()
+            _orders.value = OrderModels()
         }
+    }
+
+    private fun mapOrderModel(orders: ArrayList<Order>): OrderModels {
+        val orderModels = OrderModels()
+        for (order in orders) {
+            val orderModel = OrderModel().apply {
+                orderId = order.id
+                totalPrice = order.totalPrice
+
+                for (product in order.products) {
+                    product?.let {food ->
+                        val orderProduct = OrderProductModel().apply {
+                            productId = food.productId
+                            totalPriceProduct = food.price!! * food.qty
+                        }
+
+                        this.orderProducts.products.add(orderProduct)
+                    }
+                }
+            }
+
+            orderModels.orderModels.add(orderModel)
+        }
+
+        return orderModels
     }
 }

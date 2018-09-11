@@ -8,9 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_cart.*
-import kotlinx.android.synthetic.main.layout_empty_state.*
 import kotlinx.android.synthetic.main.recyclerview_layout.*
 
 import onedaycat.com.food_fantasy.R
@@ -41,6 +39,8 @@ class CartFragment : Fragment(), OnActionCartListener {
     private var param2: String? = null
 
     private lateinit var foodViewModel: FoodViewModel
+    private lateinit var mainActivity: MainActivity
+    private lateinit var carts: ArrayList<CartModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +62,8 @@ class CartFragment : Fragment(), OnActionCartListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        mainActivity = (activity as MainActivity)
 
         initViewModel()
         chooseMenuClicked()
@@ -93,9 +95,10 @@ class CartFragment : Fragment(), OnActionCartListener {
     }
 
     private fun initViewModel() {
-        (activity as MainActivity).foodViewModel.let {
+        mainActivity.foodViewModel.let {
             foodViewModel = it
             totalPriceObserver()
+            cartStoreObserver()
             paymentObserver()
         }
     }
@@ -109,12 +112,29 @@ class CartFragment : Fragment(), OnActionCartListener {
         })
     }
 
+    private fun cartStoreObserver() {
+        foodViewModel.cartStore.observe(this, Observer {cartStore->
+            cartStore?.let {
+                it.foodCart?.cartList?.let {carts->
+                    this.carts = carts
+
+                    return@Observer
+                }
+            }
+        })
+    }
+
     private fun paymentObserver() {
         foodViewModel.pay.observe(this, Observer {order->
-            order?.let {
-                (activity as MainActivity).dismissDialog()
+            order?.let { order ->
+                mainActivity.dismissDialog()
                 foodViewModel.deleteCart()
                 initLayout()
+
+                mainActivity.createBadgeCart(0)
+                mainActivity.bottomBar.currentItem = 0
+
+                order
             }
         })
     }
@@ -122,7 +142,7 @@ class CartFragment : Fragment(), OnActionCartListener {
     private fun chooseMenuClicked() {
         btn_confirm_order.setOnClickListener {
 
-            (activity as MainActivity).showLoadingDialog()
+            mainActivity.showLoadingDialog()
             val creditCard = CreditCard(
                     CreditCardType.CreditCardMasterCard,"123123","1321312","123123",
                     "123123","123123"
@@ -133,6 +153,7 @@ class CartFragment : Fragment(), OnActionCartListener {
             )
 
             foodViewModel.payment(input)
+
         }
     }
 
@@ -142,5 +163,10 @@ class CartFragment : Fragment(), OnActionCartListener {
 
     override fun onRemoveCart(cartModel: CartModel) {
         foodViewModel.updateCartItem(cartModel)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        foodViewModel.deleteOrder()
     }
 }

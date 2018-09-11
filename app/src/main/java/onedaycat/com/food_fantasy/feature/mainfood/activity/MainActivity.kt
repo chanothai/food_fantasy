@@ -13,6 +13,7 @@ import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
 import onedaycat.com.food_fantasy.feature.cart.fragment.CartFragment
 import onedaycat.com.food_fantasy.feature.mainfood.fragment.MainMenuFragment
+import onedaycat.com.food_fantasy.feature.order.OrderFragment
 import onedaycat.com.food_fantasy.mainfood.FoodViewModel
 import onedaycat.com.food_fantasy.store.CartStore
 import onedaycat.com.food_fantasy.store.FoodCartLiveStore
@@ -36,7 +37,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
         initViewModel()
         createBottomBar()
         if (savedInstanceState == null) {
-            openFragment(
+            replacedFragment(
                     MainMenuFragment.newInstance(),
                     "MainMenuFragment")
         }
@@ -75,8 +76,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
         bottomBar.setOnTabSelectedListener(this)
     }
 
-    private fun createBadgeCart(count: Int) {
-        if (count == 0) return
+    fun createBadgeCart(count: Int) {
+        if (count == 0) {
+            bottomBar.setNotification("", 1)
+            return
+        }
 
         AHNotification.Builder().let { builder ->
             builder.setText(count.toString())
@@ -91,7 +95,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
     }
 
 
-    private fun openFragment(fragment: Fragment, tag: String) {
+    private fun replacedFragment(fragment: Fragment, tag: String) {
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.container, fragment, tag)
@@ -101,7 +105,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
         return when (position) {
             0 -> {
-                openFragment(
+                replacedFragment(
                         MainMenuFragment.newInstance(),
                         "MainMenuFragment")
 
@@ -110,12 +114,14 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
             }
 
             1 -> {
-                openFragment(CartFragment.newInstance(), "CartFragment")
+                replacedFragment(CartFragment.newInstance(), "CartFragment")
                 updateTitleToolbar(getString(R.string.title_cart_th))
                 true
             }
 
             2 -> {
+                replacedFragment(OrderFragment.newInstance(), "OrderFragment")
+                updateTitleToolbar(getString(R.string.title_toolbar_list_order))
                 true
             }
 

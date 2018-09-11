@@ -303,4 +303,8 @@ class FoodViewModel(
             _pay.value = Order()
         }
     }
+
+    fun deleteOrder() {
+        _pay.value = null
+    }
 }
