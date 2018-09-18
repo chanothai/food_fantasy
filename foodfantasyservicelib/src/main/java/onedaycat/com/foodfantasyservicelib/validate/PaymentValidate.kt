@@ -16,9 +16,8 @@ class PaymentMemoValidate: PaymentValidate {
         }
 
         if ((input.creditCard.name.isEmpty() || input.creditCard.name.isBlank())
-                || (input.creditCard.ccv.isEmpty() || input.creditCard.ccv.isBlank())
-                || (input.creditCard.expiredData.isEmpty() || input.creditCard.expiredData.isBlank())
-                || (input.creditCard.expireYear.isEmpty() || input.creditCard.expireYear.isBlank())) {
+                || (input.creditCard.cvv.isEmpty() || input.creditCard.cvv.isBlank())
+                || (input.creditCard.expiredData.isEmpty() || input.creditCard.expiredData.isBlank())) {
 
             throw Errors.InvalidInput
         }

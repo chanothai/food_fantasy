@@ -17,6 +17,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.appbar_normal.view.*
 import kotlinx.android.synthetic.main.badge_icon_layout.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.dialog.LoadingDialogFragment
 
@@ -110,5 +113,4 @@ abstract class BaseActivity: AppCompatActivity() {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T = f() as T
             }
-
 }

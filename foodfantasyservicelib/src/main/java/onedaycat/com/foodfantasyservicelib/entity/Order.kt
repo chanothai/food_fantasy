@@ -11,7 +11,7 @@ object State {
 data class Order(
         var id: String? = null,
         var userId: String? = null,
-        var products: MutableList<ProductQTY?> = mutableListOf(),
+        var products: MutableList<ProductQTY> = mutableListOf(),
         var totalPrice: Int = 0,
         var createDate: String? = null,
         var status: State.OrderStatus? = null)
@@ -63,7 +63,7 @@ data class Order(
         }
 
         for (product in order.products) {
-            arrProductId.add(product!!.productId!!)
+            arrProductId.add(product.productId!!)
         }
 
         return arrProductId
@@ -74,7 +74,7 @@ data class Order(
             throw Errors.ProductNotFound
         }
         for ((i, pstock) in products.withIndex()) {
-            if (pstockId == pstock!!.productId) {
+            if (pstockId == pstock.productId) {
                 return order.products[i]
             }
         }

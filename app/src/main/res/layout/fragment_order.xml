@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.order.OrderFragment"
+    tools:context=".ui.order.fragment.OrderFragment"
     android:background="@color/color_bg_title">
 
     <include

@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.State
+import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,6 +32,7 @@ class OrderFireStore: OrderRepo {
             for (product in order.products) {
                 val docPQTY = HashMap<String, Any>()
                 docPQTY["productId"] = product!!.productId!!
+                docPQTY["productName"] = product.productName
                 docPQTY["price"] = product.price!!
                 docPQTY["qty"] = product.qty
 
@@ -47,6 +49,8 @@ class OrderFireStore: OrderRepo {
 
 
             Tasks.await(docRef.add(docData))
+        }catch (e: Error) {
+            throw e
         }catch (e:FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
@@ -69,14 +73,14 @@ class OrderFireStore: OrderRepo {
 
     override fun getAll(userId: String): ArrayList<Order> {
         try {
-            val docRef = db.collection(colOrder)
+            val docRef = db.collection(colOrder).orderBy("createDate", Query.Direction.DESCENDING)
             val query: Query = docRef.whereEqualTo("userId", userId)
 
-            val docOrder = Tasks.await(query.get()) ?: throw Errors.NotOrderOwner
+            val docOrder = Tasks.await(query.get()) ?: throw Errors.UnableGetOrder
 
             return docOrder.toObjects(Order::class.java) as ArrayList<Order>
         }catch (e:Exception) {
-            throw Errors.UnableGetOrder
+            throw e
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }

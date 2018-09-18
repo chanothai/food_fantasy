@@ -24,7 +24,7 @@
         <activity
             android:name=".mainfood.activity.FoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.order.OrderDetailActivity"/>
+        <activity android:name=".ui.order.OrderDetailActivity"/>
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 package onedaycat.com.food_fantasy.store
 
-import onedaycat.com.food_fantasy.feature.cart.CartModel
+import onedaycat.com.food_fantasy.ui.cart.CartModel
 
 object CartStore {
     var foodCart: FoodCartStore? = null

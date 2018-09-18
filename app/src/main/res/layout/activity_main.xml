@@ -21,7 +21,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/shadow_line">
+            android:layout_above="@+id/bottom_bar">
 
         </FrameLayout>
 
@@ -30,7 +30,7 @@
             android:id="@+id/shadow_line"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:background="@color/color_shadow"
+            android:background="@drawable/shadow_layout"
             android:layout_above="@+id/bottom_bar"/>
 
         <com.aurelhubert.ahbottomnavigation.AHBottomNavigation

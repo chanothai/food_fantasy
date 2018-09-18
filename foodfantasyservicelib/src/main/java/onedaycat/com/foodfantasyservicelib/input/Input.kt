@@ -1,13 +1,14 @@
 package onedaycat.com.foodfantasyservicelib.input
 
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
+import onedaycat.com.foodfantasyservicelib.entity.Cart
 
 enum class CreditCardType {
     CreditCardVisa {
         var CreditCardType = "VISA"
     },
     CreditCardMasterCard {
-        var CreditCardType = "MASTER_CARD"
+        var CreditCardType = "MASTERCARD"
     }
 }
 
@@ -46,7 +47,12 @@ class GetProductStocksInput(
 class AddToCartInput(
         var userID: String,
         var productID: String,
+        var productName: String,
         var qty: Int
+)
+
+class AddCartsToCartInput(
+        var cart: Cart
 )
 
 class AddProductStockInput(
@@ -76,6 +82,7 @@ class GetOrderInput(
 
 class ChargeInput(
         var userID: String,
+        var cart: Cart,
         var creditCard: CreditCard
 )
 

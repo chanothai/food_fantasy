@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/large_padding_layout"
     android:background="@color/color_bg_white"
-    tools:context=".feature.cart.fragment.CartFragment">
+    tools:context=".ui.cart.fragment.CartFragment">
 
     <include
         android:id="@+id/container_empty_state"

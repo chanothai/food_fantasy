@@ -4,7 +4,7 @@ import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCar
 import onedaycat.com.foodfantasyservicelib.contract.repository.*
 import onedaycat.com.foodfantasyservicelib.validate.*
 
-object EcomService {
+class EcomService {
     var paymentService = PaymentService(
             OrderFireStore(),
             CreditCardMemoPayment(),
@@ -25,7 +25,7 @@ object EcomService {
             CartMemoValidate()
     )
 
-    val stockService = StockService(StockFireStore(), StockMemoValidate())
+    var stockService = StockService(StockFireStore(), StockMemoValidate())
 
-    val productService = ProductService(ProductFireStore(), ProductMemoValidate())
+    var productService = ProductService(ProductFireStore(), ProductMemoValidate())
 }

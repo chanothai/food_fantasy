@@ -11,22 +11,25 @@ data class ProductStockWithPrice(
 
 data class ProductStock(
         var productID: String? = null,
+        var productName: String = "",
         var qty: Int = 0) {
 
     private var productStock: ProductStock? = this
 
-    fun createProductStock(productID: String, qty: Int): ProductStock? {
+    fun createProductStock(productID: String,productName: String, qty: Int): ProductStock? {
         productStock = ProductStock(
                 productID,
+                productName,
                 qty
         )
 
         return productStock
     }
 
-    fun newProductStock(productID: String, qty: Int): ProductStock? {
+    fun newProductStock(productID: String,productName: String, qty: Int): ProductStock? {
         productStock = ProductStock(
                 productID,
+                productName,
                 qty
         )
 
@@ -47,8 +50,9 @@ data class ProductStock(
         productStock!!.qty -= qty
 
         return ProductStock(
-                productStock!!.productID,
-                productStock!!.qty
+                productStock?.productID,
+                productStock?.productName!!,
+                productStock?.qty!!
         )
     }
 

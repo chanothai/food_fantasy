@@ -5,7 +5,7 @@ import onedaycat.com.foodfantasyservicelib.error.Errors
 
 data class Cart(
         var userId: String? = null,
-        var products: MutableList<ProductQTY?> = mutableListOf())
+        var products: MutableList<ProductQTY> = mutableListOf())
 {
     private var cart = this
 
@@ -21,17 +21,7 @@ data class Cart(
             throw Errors.ProductNotMatched
         }
 
-        var qty = productQTY.qty
-
-        if (products.size > 0) {
-            //Sum qty
-            for (value in products) {
-                if (value!!.productId == productQTY.productId) {
-                    qty += value.qty
-                    productQTY.qty = qty
-                }
-            }
-        }
+        val qty = productQTY.qty
 
         if (!stock.has(qty)) {
             throw Errors.ProductOutOfStock
@@ -47,8 +37,8 @@ data class Cart(
         }
 
         for ((i, value) in products.withIndex()) {
-            if (value!!.productId == productQTY.productId) {
-                products.set(i, productQTY)
+            if (value.productId == productQTY.productId) {
+                products[i] = productQTY
                 return
             }
         }
@@ -62,7 +52,7 @@ data class Cart(
         }
 
         for ((i, productQty) in products.withIndex()) {
-            if (newProductQTY.productId == productQty!!.productId) {
+            if (newProductQTY.productId == productQty.productId) {
                 val result = productQty.qty - newProductQTY.qty
 
                 if (result < 0) {
@@ -94,7 +84,7 @@ data class Cart(
         }
 
         for (product in cart.products) {
-            arrProductId.add(product!!.productId!!)
+            arrProductId.add(product.productId!!)
         }
 
         return arrProductId
@@ -106,7 +96,7 @@ data class Cart(
         }
 
         for (pQTY in cart.products) {
-            if (productId == pQTY!!.productId) {
+            if (productId == pQTY.productId) {
                 return pQTY
             }
         }
@@ -114,7 +104,7 @@ data class Cart(
         return null
     }
 
-    fun toProductQTYList(): MutableList<ProductQTY?> {
+    fun toProductQTYList(): MutableList<ProductQTY> {
         if (cart.products.size == 0) {
             throw Errors.ProductNotFound
         }
@@ -125,7 +115,7 @@ data class Cart(
     fun totalPrice(): Int {
         var sumTotalPrice = 0
         for (product in cart.products) {
-            sumTotalPrice += (product!!.price!! * product.qty)
+            sumTotalPrice += (product.price!! * product.qty)
         }
 
         return sumTotalPrice

@@ -24,7 +24,7 @@ class StockService(
             productStock!!.deposit(input.qty)
 
         }catch (e: NotFoundException) {
-            productStock = ProductStock().createProductStock(input.productID, 0)
+            productStock = ProductStock(input.productID, input.productName, 0)
         }
 
         stockRepo.upsert(productStock)

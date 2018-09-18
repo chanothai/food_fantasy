@@ -24,16 +24,13 @@ class PaymentService(private val orderRepo: OrderRepo,
     fun charge(input: ChargeInput): Order? {
         paymentValidate.inputCharge(input)
 
-        //get cart of user
-        val cart = cartRepo.getByUserID(input.userID)
-
         //get all product stock
-        val pstocks = stockRepo.getByIDs(cart!!.productIDs())
+        val pstocks = stockRepo.getByIDs(input.cart.productIDs())
 
         //withdraw product stock into stock
         for (pstock in pstocks) {
             //get product qty every product in cart
-            val pQTY = cart.getPQTY(pstock!!.productID!!)
+            val pQTY = input.cart.getPQTY(pstock!!.productID!!)
 
             if (pQTY != null) {
                 pstock.withDraw(pQTY.qty)
@@ -45,8 +42,8 @@ class PaymentService(private val orderRepo: OrderRepo,
         val order = Order(
                 id = IdGen.NewId(),
                 userId = input.userID,
-                products = cart.toProductQTYList(),
-                totalPrice = cart.totalPrice(),
+                products = input.cart.toProductQTYList(),
+                totalPrice = input.cart.totalPrice(),
                 createDate = Clock.NowUTC(),
                 status = State.OrderStatus.PENDING
         )
