@@ -9,6 +9,6 @@ class FoodCartLiveStore (
     var liveData = MutableLiveData<CartStore>()
 
     init {
-        liveData.value = cartStore
+        liveData.postValue(cartStore)
     }
 }

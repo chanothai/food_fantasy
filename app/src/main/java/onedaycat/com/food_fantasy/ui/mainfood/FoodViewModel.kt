@@ -119,24 +119,16 @@ class FoodViewModel(
         }
     }
 
-    fun loadCart(input: GetCartInput) {
-        var msgError = ""
-        var cart: Cart? = null
-        launch(UI) {
-            async(CommonPool) {
-                try {
-                    cart = eComService.cartService.getCartWithUserID(input)
-                }catch (e: onedaycat.com.foodfantasyservicelib.error.Error) {
-                    return@async
-                }
-
-                return@async
-            }.await()
+    suspend fun loadCart(input: GetCartInput) {
+        try {
+            var cart: Cart? = null
+            asyncTask { cart = eComService.cartService.getCartWithUserID(input) }.await()
 
             cart?.let {
                 addCartToStore(it)
-                return@launch
             }
+        }catch (e:onedaycat.com.foodfantasyservicelib.error.Error) {
+            _msgError.value = e.message
         }
     }
 

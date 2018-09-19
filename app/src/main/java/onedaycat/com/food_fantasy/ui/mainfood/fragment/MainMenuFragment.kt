@@ -148,7 +148,9 @@ class MainMenuFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ItemC
                 )
 
                 if (this.foodCart?.cartList?.size!! == 0) {
-                    foodViewModel.loadCart(input)
+                    launch(UI) {
+                        foodViewModel.loadCart(input)
+                    }
                 }
             }
         })
