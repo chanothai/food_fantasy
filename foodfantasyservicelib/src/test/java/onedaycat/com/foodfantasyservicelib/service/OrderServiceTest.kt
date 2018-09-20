@@ -52,8 +52,8 @@ class OrderServiceTest {
 
     @Test
     fun `get order success`() {
-        expOrder.addProduct(newProductQTY(products[0].id!!, 100, 1), products[0])
-        expOrder.addProduct(newProductQTY(products[1].id!!, 200, 2), products[1])
+        expOrder.addProduct(newProductQTY(products[0].id!!, "Apple",100, 1), products[0])
+        expOrder.addProduct(newProductQTY(products[1].id!!, "Apple",200, 2), products[1])
 
         doNothing().`when`(orderValidate).inputGetOrder(input)
         `when`(orderRepo.get(input.id)).thenReturn(expOrder)

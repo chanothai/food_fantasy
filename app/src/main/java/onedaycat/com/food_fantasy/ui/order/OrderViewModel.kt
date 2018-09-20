@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
@@ -21,24 +22,24 @@ class OrderViewModel(
     val orders: LiveData<OrdersModel>
     get() = _orders
 
-    fun loadOrderHistory(input: GetOrderInput) {
+    private val _msgError = MutableLiveData<String>()
+    val msgError: LiveData<String>
+    get() = _msgError
+
+    private fun <T> asyncTask(function: () -> T): Deferred<T> {
+        return async(CommonPool) { function() }
+    }
+
+    suspend fun loadOrderHistory(input: GetOrderInput) {
         try {
             var orders: ArrayList<Order>? = null
-            launch(UI) {
-                async(CommonPool) {
-                    orders = eComService.orderService.getOrders(input)
-                    return@async
-                }.await()
+            asyncTask { orders = eComService.orderService.getOrders(input) }.await()
 
-                orders?.let {
-                    _orders.postValue(mapOrderModel(orders!!))
-                    return@launch
-                }
-
-                return@launch
+            orders?.let {
+                _orders.postValue(mapOrderModel(orders!!))
             }
         }catch (e: Error) {
-            _orders.postValue(OrdersModel())
+            _msgError.postValue(e.message)
         }
     }
 

@@ -38,7 +38,7 @@ class PaymentFireStore: PaymentRepo {
         val arrPQTY = mutableListOf<HashMap<String, Any>>()
         for (product in order.products) {
             val docPQTY = HashMap<String, Any>()
-            docPQTY["productId"] = product!!.productId!!
+            docPQTY["productId"] = product.productId!!
             docPQTY["price"] = product.price!!
             docPQTY["qty"] = product.qty
 

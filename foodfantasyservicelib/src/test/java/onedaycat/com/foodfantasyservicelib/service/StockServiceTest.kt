@@ -34,6 +34,7 @@ class StockServiceTest {
 
         inputAddStock = AddProductStockInput(
                 "111",
+                "Apple",
                 10
         )
 
@@ -44,15 +45,16 @@ class StockServiceTest {
 
         stock = ProductStock(
                 "111",
+                "Apple",
                 0
         )
 
-        expPStock = stock!!.newProductStock("111", 20)!!
+        expPStock = stock!!.newProductStock("111", "Apple",20)!!
     }
 
     @Test
     fun `Add product stock success`() {
-        val psGet = expPStock.newProductStock("111", 10)
+        val psGet = expPStock.newProductStock("111", "Apple",10)
 
         doNothing().`when`(stockValidate).inputPStock(inputAddStock)
         `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
@@ -89,7 +91,7 @@ class StockServiceTest {
 
     @Test(expected = InternalError::class)
     fun `Add product stock but save or update failed`() {
-        val psGet = expPStock.newProductStock("111", 10)
+        val psGet = expPStock.newProductStock("111", "Apple",10)
 
         doNothing().`when`(stockValidate).inputPStock(inputAddStock)
         `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
@@ -100,10 +102,11 @@ class StockServiceTest {
 
     @Test
     fun `Sub product stock success`() {
-        val psGet = expPStock.newProductStock("111", 10)
+        val psGet = expPStock.newProductStock("111", "Apple",10)
 
         val expPStock = ProductStock(
                 "111",
+                "Apple",
                 5
         )
 
@@ -137,7 +140,7 @@ class StockServiceTest {
 
     @Test(expected = InternalError::class)
     fun `Sub product stock but save or update failed`() {
-        val psGet = expPStock.newProductStock("111", 10)
+        val psGet = expPStock.newProductStock("111", "Apple", 10)
         doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
         `when`(stockRepo.get(inputSubStock.productID)).thenReturn(psGet)
         `when`(stockRepo.upsert(psGet)).thenThrow(Errors.UnableSaveProductStock)
@@ -147,7 +150,7 @@ class StockServiceTest {
 
     @Test(expected = BadRequestException::class)
     fun `Sub product stock failed`() {
-        val psGet = expPStock.newProductStock("111", 2)
+        val psGet = expPStock.newProductStock("111", "Apple",2)
 
         doNothing().`when`(stockValidate).inputSubStock(inputSubStock)
         `when`(stockRepo.get(inputSubStock.productID)).thenReturn(psGet)

@@ -23,8 +23,8 @@ class PaymentRepoTest {
                 "r1",
                 "u1",
                 mutableListOf(
-                        ProductQTY("1111", 100,1),
-                        ProductQTY("1112", 200,2)),
+                        ProductQTY("1111", "Apple",100,1),
+                        ProductQTY("1112", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.PAID)
@@ -38,8 +38,8 @@ class PaymentRepoTest {
         )
 
         expPStocks = mutableListOf(
-                ProductStock("1111", 50),
-                ProductStock("1112", 50)
+                ProductStock("1111", "Apple",50),
+                ProductStock("1112", "Apple",50)
         )
     }
 

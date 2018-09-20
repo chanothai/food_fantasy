@@ -45,17 +45,11 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "onedaycat.com.food_fantasy"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'com.github.tmurakami.dexopener.DexOpenerAndroidJUnitRunner'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/java'
-        test.java.srcDirs += 'src/test/java'
-        androidTest.java.srcDirs += 'src/androidTest/java'
     }
 
     buildTypes {

@@ -21,16 +21,13 @@ import onedaycat.com.food_fantasy.mainfood.activity.MainActivity
 import onedaycat.com.food_fantasy.store.CartStore
 import onedaycat.com.food_fantasy.store.FoodCartStore
 import onedaycat.com.food_fantasy.ui.cart.fragment.CartFragment
-import onedaycat.com.food_fantasy.ui.mainfood.fragment.MainMenuFragment
 import onedaycat.com.food_fantasy.ui.order.*
 import onedaycat.com.food_fantasy.ui.order.fragment.OrderFragment
-import onedaycat.com.food_fantasy.util.IdlingResourceHelper
 import onedaycat.com.food_fantasy.util.ViewModelUtil
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import org.hamcrest.Matchers.not
 import org.junit.*
-import org.junit.Assert.assertFalse
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 
@@ -40,7 +37,6 @@ class FoodUITest {
     @get:Rule
     var mActivityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java, false, false)
 
-    private var mIdlingResource: IdlingResource? = null
     private val itemElementText = "Pork Tenderloin with Mushrooms and Onions"
 
     private lateinit var foodViewModel: FoodViewModel
@@ -56,11 +52,6 @@ class FoodUITest {
 
     @Before
     fun registerIdlingResource() {
-        mIdlingResource = IdlingResourceHelper.mIdlingResource.let {
-            IdlingRegistry.getInstance().register(it)
-            it
-        }
-
         foodViewModel = mock(FoodViewModel::class.java)
         orderViewModel = mock(OrderViewModel::class.java)
 
@@ -237,13 +228,5 @@ class FoodUITest {
 
         onView(ViewMatchers.withId(R.id.recyclerView)).check(matches(isDisplayed()))
     }
-
-    @After
-    fun unRegisterIdlingResource() {
-        mIdlingResource?.let {
-            IdlingRegistry.getInstance().unregister(it)
-        }
-    }
-
 
 }

@@ -16,31 +16,18 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.layout_empty_state.*
 import kotlinx.android.synthetic.main.recyclerview_and_swipe_refresh_layout.*
 import kotlinx.android.synthetic.main.recyclerview_and_swipe_refresh_layout.view.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.mainfood.activity.MainActivity
 import onedaycat.com.food_fantasy.store.CartStore
 import onedaycat.com.food_fantasy.ui.order.*
-import onedaycat.com.food_fantasy.util.IdlingResourceHelper
+import onedaycat.com.food_fantasy.util.ViewModelUtil
 import onedaycat.com.foodfantasyservicelib.input.GetOrderInput
 import onedaycat.com.foodfantasyservicelib.service.EcomService
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OrderFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class OrderFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemClickListener {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     private lateinit var mainActivity: MainActivity
     private lateinit var orderViewModel: OrderViewModel
 
@@ -96,13 +83,12 @@ class OrderFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIte
                     CartStore.foodCart?.userId!!
             )
 
-            orderViewModel.loadOrderHistory(input)
-        }?.run {
-            //The IdlingResource is null in production.
-            IdlingResourceHelper.mIdlingResource?.let {
-                it.setIdleState(false)
-                it
+            input
+        }?.also {input->
+            launch(UI) {
+                orderViewModel.loadOrderHistory(input)
             }
+
         }
     }
 
@@ -118,7 +104,7 @@ class OrderFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIte
 
 
         orderViewModel = ViewModelProviders.of(this,
-                mainActivity.viewModelFactory { OrderViewModel(EcomService()) }).get(OrderViewModel::class.java)
+                ViewModelUtil.createViewModelFor(OrderViewModel(EcomService()))).get(OrderViewModel::class.java)
 
         orderObserver()
     }
@@ -127,11 +113,6 @@ class OrderFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIte
         orderViewModel.orders.observe(this, Observer { order ->
             order?.orderModels?.let {orders->
                 swipe_container.isRefreshing = false
-
-                IdlingResourceHelper.mIdlingResource?.let { idle->
-                    idle.setIdleState(true)
-                    idle
-                }
 
                 if (orders.size > 0) {
                     orderAdapter?.let {adapter->

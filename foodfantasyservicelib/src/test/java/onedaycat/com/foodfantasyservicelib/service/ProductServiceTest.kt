@@ -183,9 +183,7 @@ class ProductServiceTest {
                         Product("id1", "name1", 100000, "desc1", "img1", "1", "2"),
                         Product("id2", "name2", 200000, "desc2", "img2", "3", "4"),
                         Product("id3", "name3", 300000, "desc3", "img3", "5", "6")
-                ),
-                next = "111",
-                prev = "222"
+                )
         )
 
         val expProductPaging = productPaging

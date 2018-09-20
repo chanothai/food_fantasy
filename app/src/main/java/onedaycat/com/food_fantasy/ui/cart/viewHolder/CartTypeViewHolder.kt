@@ -18,7 +18,7 @@ class CartTypeViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         btnAddQTY.setOnClickListener {view->
 
             cartModel.let {
-                it.isCart = true
+                it.hasFood = true
                 it.cartQTY += 1
                 cartQTY.text = "${cartModel.cartQTY}"
 
@@ -30,7 +30,7 @@ class CartTypeViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
         btnRemoveQTY.setOnClickListener { view ->
             cartModel.let {
-                it.isCart = false
+                it.hasFood = false
                 if (it.cartQTY == 1) {
                     return@setOnClickListener
                 }

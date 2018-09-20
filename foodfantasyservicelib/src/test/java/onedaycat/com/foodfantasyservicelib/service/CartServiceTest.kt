@@ -1,5 +1,6 @@
 package onedaycat.com.foodfantasyservicelib.service
 
+import onedaycat.com.foodfantasyservicelib.contract.repository.CartFireStore
 import onedaycat.com.foodfantasyservicelib.entity.*
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
 import onedaycat.com.foodfantasyservicelib.contract.repository.StockRepo
@@ -15,18 +16,15 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 
 class CartServiceTest {
-    @Mock
     private lateinit var cartService: CartService
     private lateinit var cartValidate: CartValidate
     private lateinit var cartRepo: CartRepo
     private lateinit var stockRepo: StockRepo
 
-    @Mock
     private lateinit var input: AddToCartInput
     private lateinit var inputRemove: RemoveFromCartInput
     private lateinit var inputCart: GetCartInput
 
-    @Mock
     private lateinit var expCart: Cart
     private lateinit var stock:ProductStock
     private lateinit var stockWithPrice: ProductStockWithPrice
@@ -38,7 +36,7 @@ class CartServiceTest {
         stockRepo = mock(StockRepo::class.java)
         cartService = CartService(stockRepo, cartRepo, cartValidate)
 
-        stock = ProductStock().createProductStock("111", 50)!!
+        stock = ProductStock().createProductStock("111", "Apple",50)!!
         stockWithPrice = ProductStockWithPrice(
                 stock,
                 100
@@ -47,6 +45,7 @@ class CartServiceTest {
         input = AddToCartInput(
                 "u1",
                 "111",
+                "Apple",
                 10
         )
 
@@ -63,7 +62,7 @@ class CartServiceTest {
         expCart = Cart(
                 userId = input.userID,
                 products = mutableListOf(
-                        ProductQTY("111", 100, 15)
+                        ProductQTY("111", "Apple",100, 10)
                 )
         )
     }
@@ -71,7 +70,7 @@ class CartServiceTest {
     @Test
     fun `Add to cart success`() {
         val newCart = Cart(input.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY(input.productID, 100,5), stock)
+        newCart.addPQTY(newProductQTY(input.productID, "Apple",100,10), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(newCart)
@@ -106,7 +105,7 @@ class CartServiceTest {
     @Test(expected = InternalError::class)
     fun `get stock failed`() {
         val newCart = Cart(input.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
+        newCart.addPQTY(newProductQTY(input.productID, "Apple",100, 5), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(newCart)
@@ -115,25 +114,10 @@ class CartServiceTest {
         cartService.addProductCart(input)
     }
 
-    @Test(expected = BadRequestException::class)
-    fun `Add cart failed`() {
-        val stock = stock.newProductStock("111", 10)!!
-        val stockWithPrice = ProductStockWithPrice(stock, 100)
-
-        val newCart = Cart(input.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY(input.productID, 100, 5), stockWithPrice.productStock!!)
-
-        doNothing().`when`(cartValidate).inputCart(input)
-        `when`(cartRepo.getByUserID(input.userID)).thenReturn(newCart)
-        `when`(stockRepo.getWithPrice(input.productID)).thenReturn(stockWithPrice)
-
-        cartService.addProductCart(input)
-    }
-
     @Test(expected = InternalError::class)
     fun `Save cart failed`() {
         val newCart = Cart(input.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY(input.productID, 100, 5), stock)
+        newCart.addPQTY(newProductQTY(input.productID, "Apple",100, 5), stock)
 
         doNothing().`when`(cartValidate).inputCart(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(newCart)
@@ -147,11 +131,15 @@ class CartServiceTest {
     @Test
     fun `remove cart success`() {
         val newCart = Cart(inputRemove.userID,mutableListOf())
-        newCart.addPQTY(newProductQTY("111", 100, 5), stock)
-        newCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
+        newCart.addPQTY(newProductQTY("111", "Apple",100, 5), stock)
+        newCart.addPQTY(
+                newProductQTY("222", "Apple",100, 5),
+                stock.newProductStock("222", "Apple",50)!!)
 
         val expCart = Cart(inputRemove.userID,mutableListOf())
-        expCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
+        expCart.addPQTY(newProductQTY(
+                "222", "Apple",100, 5),
+                stock.newProductStock("222", "Apple",50)!!)
 
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
         `when`(cartRepo.getByUserID(inputRemove.userID)).thenReturn(newCart)
@@ -206,11 +194,13 @@ class CartServiceTest {
     @Test(expected = InternalError::class)
     fun `remove cart but save or upadte failed`() {
         val newCart = Cart(inputRemove.userID, mutableListOf())
-        newCart.addPQTY(newProductQTY("111", 100, 5), stock)
-        newCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
+        newCart.addPQTY(newProductQTY("111", "Apple",100, 5), stock)
+        newCart.addPQTY(newProductQTY("222", "Apple",100, 5),
+                stock.newProductStock("222", "Apple",50)!!)
 
         expCart = Cart(inputRemove.userID, mutableListOf())
-        expCart.addPQTY(newProductQTY("222", 100, 5), stock.newProductStock("222", 50)!!)
+        expCart.addPQTY(newProductQTY("222", "Apple",100, 5),
+                stock.newProductStock("222", "Apple",50)!!)
 
         doNothing().`when`(cartValidate).inputRemoveCart(inputRemove)
         `when`(cartRepo.getByUserID(inputRemove.userID)).thenReturn(newCart)
@@ -224,7 +214,7 @@ class CartServiceTest {
     @Test
     fun `get cart success`() {
         expCart = Cart(inputRemove.userID, mutableListOf())
-        expCart.addPQTY(newProductQTY("111", 100,5), stock)
+        expCart.addPQTY(newProductQTY("111", "Apple",100,5), stock)
 
         doNothing().`when`(cartValidate).inputGetCart(inputCart)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)

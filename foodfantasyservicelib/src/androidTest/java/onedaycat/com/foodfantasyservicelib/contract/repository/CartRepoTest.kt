@@ -21,8 +21,8 @@ class CartRepoTest {
         expCart = Cart(
                 "u1",
                 mutableListOf(
-                        newProductQTY("111", 100, 20),
-                        newProductQTY("112", 200, 10)
+                        newProductQTY("111", "Apple",100, 20),
+                        newProductQTY("112", "Apple",200, 10)
                 )
         )
     }

@@ -27,8 +27,8 @@ class OrderRepoTest {
                 "r1",
                 "u1",
                 mutableListOf(
-                        newProductQTY("111", 100, 10),
-                        newProductQTY("222", 200, 20)
+                        newProductQTY("111", "Apple",100, 10),
+                        newProductQTY("222", "Apple",200, 20)
                 ),
                 300,
                 now,

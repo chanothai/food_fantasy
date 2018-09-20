@@ -52,10 +52,6 @@ class ProductService(
     fun getProducts(input: GetProductsInput): ProductPaging? {
         productValidate.inputLimitPaging(input)
 
-        var products: ProductPaging? = null
-
-        products = productRepo.getAllWithPaging(input.limit)
-
-        return products
+        return productRepo.getAllWithPaging(input.limit)
     }
 }

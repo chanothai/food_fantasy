@@ -12,7 +12,7 @@ class CartService(private val stockRepo: StockRepo,
                   private val cartRepo: CartRepo,
                   private val cartValidate: CartValidate) {
 
-    fun addProducrCarts(input: AddCartsToCartInput): Cart{
+    fun addProductCarts(input: AddCartsToCartInput): Cart{
         return input.cart.let {cart->
             cart.products.let {
                 val pStocks = stockRepo.getAllWithPrice(cart.products)
@@ -45,40 +45,44 @@ class CartService(private val stockRepo: StockRepo,
         }
     }
 
-    fun addProductCart(input: AddToCartInput): Cart? {
+    fun addProductCart(input: AddToCartInput): Cart {
         var cart: Cart?
 
-        try {
-            cartValidate.inputCart(input)
+        cartValidate.inputCart(input)
 
-            //get cart if not found cart will create new cart
-            cart = cartRepo.getByUserID(input.userID)
-            cart?.userId = input.userID
+        //get cart if not found cart will create new cart
+        cart = cartRepo.getByUserID(input.userID)
 
-        }catch (e:NotFoundException) {
+        with(cart) {
+            this?.let {
+                it.userId = input.userID
+                return@with
+            }
+
             cart = Cart(
                     input.userID,
                     mutableListOf()
             )
         }
 
-        //get stock
-        val pStock = stockRepo.getWithPrice(input.productID)
+        return cart?.let {
+            //get stock
+            val pStock = stockRepo.getWithPrice(input.productID)
 
-        //create new productQTY
-        val newProductQTY = newProductQTY(
-                pStock.productStock!!.productID!!,
-                pStock.productStock?.productName!!,
-                pStock.price,
-                input.qty)
+            //create new productQTY
+            val newProductQTY = newProductQTY(
+                    pStock.productStock!!.productID!!,
+                    pStock.productStock?.productName!!,
+                    pStock.price,
+                    input.qty)
 
-        //add product qty to cart
-        cart!!.addPQTY(newProductQTY, pStock.productStock!!)
+            //add product qty to cart
+            it.addPQTY(newProductQTY, pStock.productStock!!)
 
-        //Save or Update Cart
-        cartRepo.upsert(cart)
-
-        return cart
+            //Save or Update Cart
+            cartRepo.upsert(it)
+            it
+        }!!
     }
 
     fun removeFromeCart(input: RemoveFromCartInput): Cart? {
@@ -89,7 +93,7 @@ class CartService(private val stockRepo: StockRepo,
         val pstock = stockRepo.getWithPrice(input.productID)
 
         cart?.remove(newProductQTY(
-                pstock?.productStock?.productID!!,
+                pstock.productStock?.productID!!,
                 pstock.productStock?.productName!!,
                 pstock.price,
                 input.qty),

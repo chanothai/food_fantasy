@@ -15,8 +15,8 @@ class LoadingDialogFragment: DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dialog.window.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog.setCanceledOnTouchOutside(false)
         isCancelable = false
 

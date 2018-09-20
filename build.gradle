@@ -2,7 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.2.61'
-    ext.jacoco_version = '0.8.2'
+    ext.jacoco_version = '0.8.1'
     ext.lifecycle_version = '1.1.1'
     ext.support_version = '28.0.0-rc02'
     ext.coroutine_version = '0.25.0'

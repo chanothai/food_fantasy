@@ -6,7 +6,7 @@ data class CartModel(
         var cartPrice: Int = 0,
         var cartTotalPrice: Int = 0,
         var cartQTY: Int = 0,
-        var isCart: Boolean = false
+        var hasFood: Boolean = false
 )
 
 

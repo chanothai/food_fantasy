@@ -23,7 +23,6 @@ import onedaycat.com.food_fantasy.mainfood.FoodViewModel
 import onedaycat.com.food_fantasy.mainfood.activity.MainActivity
 import onedaycat.com.food_fantasy.mainfood.activity.foodDetailActivity
 import onedaycat.com.food_fantasy.store.CartStore
-import onedaycat.com.food_fantasy.util.IdlingResourceHelper
 import onedaycat.com.foodfantasyservicelib.input.GetCartInput
 import onedaycat.com.foodfantasyservicelib.input.GetProductsInput
 

@@ -71,13 +71,13 @@ class PaymentServiceTest {
 
         input = ChargeInput(
                 "u1",
+                cart,
                 CreditCard(
                         CreditCardType.CreditCardVisa,
                         "name",
                         "11231312312313",
                         "443",
-                        "01/02",
-                        "02/03"
+                        "01/02"
                 )
         )
 
@@ -87,20 +87,22 @@ class PaymentServiceTest {
         )
 
         expCart = cart.newCart(input.userID)
-        expCart.addPQTY(newProductQTY("111", 100, 1), stock.newProductStock("111", 50)!!)
-        expCart.addPQTY(newProductQTY("222", 200, 2), stock.newProductStock("222", 50)!!)
+        expCart.addPQTY(newProductQTY("111", "Apple",100, 1),
+                stock.newProductStock("111", "Apple",50)!!)
+        expCart.addPQTY(newProductQTY("222", "Apple",200, 2),
+                stock.newProductStock("222", "Apple",50)!!)
 
         pstocks = mutableListOf(
-                ProductStock("111", 50),
-                ProductStock("222", 50)
+                ProductStock("111", "Apple",50),
+                ProductStock("222", "Apple",50)
         )
 
         orderForCharge = Order(
                 id,
                 input.userID,
                 mutableListOf(
-                        ProductQTY("111", 100,1),
-                        ProductQTY("222", 200,2)),
+                        ProductQTY("111", "Apple",100,1),
+                        ProductQTY("222", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.PENDING
@@ -110,8 +112,8 @@ class PaymentServiceTest {
                 id,
                 input.userID,
                 mutableListOf(
-                        ProductQTY("111", 100,1),
-                        ProductQTY("222", 200,2)),
+                        ProductQTY("111", "Apple",100,1),
+                        ProductQTY("222", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.PAID)
@@ -121,8 +123,8 @@ class PaymentServiceTest {
                 id,
                 input.userID,
                 mutableListOf(
-                        ProductQTY("111", 100,1),
-                        ProductQTY("222", 200,2)),
+                        ProductQTY("111", "Apple",100,1),
+                        ProductQTY("222", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.PAID
@@ -132,8 +134,8 @@ class PaymentServiceTest {
                 id,
                 input.userID,
                 mutableListOf(
-                        ProductQTY("111", 100,1),
-                        ProductQTY("222", 200,2)),
+                        ProductQTY("111", "Apple",100,1),
+                        ProductQTY("222", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.REFUNDED)
@@ -194,8 +196,8 @@ class PaymentServiceTest {
     @Test(expected = BadRequestException::class)
     fun `payment get product stock but out of stock`() {
         val pstocks:MutableList<ProductStock?> = mutableListOf(
-                ProductStock("111", 0),
-                ProductStock("222", 50)
+                ProductStock("111", "Apple",0),
+                ProductStock("222", "Apple",50)
         )
 
         doNothing().`when`(paymentValidate).inputCharge(input)
@@ -272,8 +274,8 @@ class PaymentServiceTest {
                 "xxxx",
                 "u2",
                 mutableListOf(
-                        ProductQTY("111", 100,1),
-                        ProductQTY("222", 200,2)),
+                        ProductQTY("111", "Apple",100,1),
+                        ProductQTY("222", "Apple",200,2)),
                 300,
                 now,
                 State.OrderStatus.PAID)

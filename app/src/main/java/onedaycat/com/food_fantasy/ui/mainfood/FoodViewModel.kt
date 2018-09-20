@@ -3,34 +3,29 @@ package onedaycat.com.food_fantasy.mainfood
 import android.arch.lifecycle.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import onedaycat.com.food_fantasy.ui.cart.CartModel
 import onedaycat.com.food_fantasy.store.CartStore
-import onedaycat.com.food_fantasy.store.FoodCartLiveStore
+import onedaycat.com.food_fantasy.store.FoodCartLiveStores
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
 import onedaycat.com.foodfantasyservicelib.contract.repository.ProductPaging
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.entity.Order
+import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.input.*
 import onedaycat.com.foodfantasyservicelib.service.EcomService
 
-class FoodViewModel(
-        private val foodCartLiveStore: FoodCartLiveStore,
-        private val eComService: EcomService
+class FoodViewModel(private val eComService: EcomService
 ) : ViewModel() {
     private var foodList = arrayListOf<FoodModel>()
 
-    var _totalPrice = MutableLiveData<Int>()
+    private var _totalPrice = MutableLiveData<Int>()
     val totalPrice: LiveData<Int>
         get() = _totalPrice
 
-    val cartStore: LiveData<CartStore> = Transformations.map(foodCartLiveStore.liveData) { cartStore ->
-        cartStore
-    }
+    val cartStore: LiveData<CartStore> = FoodCartLiveStores.liveData
 
-    val _foodData = MutableLiveData<FoodListModel>()
+    private val _foodData = MutableLiveData<FoodListModel>()
     val foodData: LiveData<FoodListModel>
         get() = _foodData
 
@@ -41,6 +36,14 @@ class FoodViewModel(
     private val _msgError = MutableLiveData<String>()
     val msgError: LiveData<String>
         get() = _msgError
+
+    private val _cartLiveData = MutableLiveData<Cart>()
+    val cartLiveData: LiveData<Cart>
+        get() = _cartLiveData
+
+    private val _foodSumModel = MutableLiveData<FoodSumModel>()
+    val foodSumModel: LiveData<FoodSumModel>
+        get() = _foodSumModel
 
 
     private fun <T> asyncTask(function: () -> T): Deferred<T> {
@@ -115,7 +118,7 @@ class FoodViewModel(
                 cartStore
             }
 
-            foodCartLiveStore.liveData.postValue(cartStore)
+            FoodCartLiveStores.liveData.postValue(cartStore)
         }
     }
 
@@ -132,41 +135,30 @@ class FoodViewModel(
         }
     }
 
-    private val _cartLiveData = MutableLiveData<Cart>()
-    val cartLiveData: LiveData<Cart>
-    get() = _cartLiveData
-
-    fun addAllProductCart(input: AddCartsToCartInput) {
+    suspend fun addAllProductCart(input: AddCartsToCartInput) {
         try {
             var cart:Cart? = null
-            launch(UI) {
-                async(CommonPool) {
-                    cart = eComService.cartService.addProducrCarts(input)
-                    return@async
-                }.await()
+            asyncTask { cart = eComService.cartService.addProductCarts(input) }.await()
 
-                cart?.let {
-                    _cartLiveData.value = cart
-                }
+            cart?.let {
+                _cartLiveData.value = cart
             }
+
         }catch (e:onedaycat.com.foodfantasyservicelib.error.Error) {
-            _msgError.value = e.toString()
+            _msgError.value = e.message
         }
     }
 
-    fun addProductToCart(input: AddToCartInput, foodModel: FoodModel) {
+    suspend fun addProductToCart(input: AddToCartInput) {
         try {
             var cart: Cart? = null
-            launch(UI) {
-                async(CommonPool) {
-                    cart = eComService.cartService.addProductCart(input)
-                    return@async
-                }.await()
+            asyncTask {
+                cart = eComService.cartService.addProductCart(input)
+            }.await()
 
-                addCartToStore(cart)
-            }
+            addCartToStore(cart)
         } catch (e: Error) {
-            _msgError.value = e.toString()
+            _msgError.value = e.message
         }
     }
 
@@ -174,12 +166,8 @@ class FoodViewModel(
         cartStore.value?.foodCart?.cartList = arrayListOf()
         cartStore.value?.counter = 0
 
-        foodCartLiveStore.liveData.value = cartStore.value
+        FoodCartLiveStores.liveData.value = cartStore.value
     }
-
-    private val _foodSumModel = MutableLiveData<FoodSumModel>()
-    val foodSumModel: LiveData<FoodSumModel>
-    get() = _foodSumModel
 
     fun initTotalPrice(foodModel: FoodModel) {
         var qty = 1
@@ -226,7 +214,7 @@ class FoodViewModel(
     }
 
     fun cartSumTotalPrice() {
-        foodCartLiveStore.liveData.value = cartStore.value?.let {cartStore->
+        FoodCartLiveStores.liveData.value = cartStore.value?.let {cartStore->
             cartStore.foodCart?.cartList?.let {carts->
                 var totalPrice = 0
                 for (cart in carts) {
@@ -245,14 +233,14 @@ class FoodViewModel(
     }
 
     fun updateCartItem(cart: CartModel) {
-        foodCartLiveStore.liveData.value = cartStore.value?.let {cartStore->
+        FoodCartLiveStores.liveData.value = cartStore.value?.let { cartStore->
             cartStore.foodCart?.cartList?.let {carts->
                 val index = carts.indexOfFirst {
                     it.cartPId == cart.cartPId
                 }
 
                 if (index != -1) {
-                    if (cart.isCart) {
+                    if (cart.hasFood) {
                         cartStore.counter += 1
                         carts[index].cartTotalPrice = cart.cartTotalPrice + cart.cartPrice
 
@@ -285,20 +273,16 @@ class FoodViewModel(
         }
     }
 
-    fun payment(input: ChargeInput) {
+    suspend fun payment(input: ChargeInput) {
         try {
             var order: Order? = null
-            launch(UI) {
-                async(CommonPool) {
-                    order = eComService.paymentService.charge(input)
-                    return@async
-                }.await()
 
-                _pay.value = order
-                return@launch
-            }
+            asyncTask { order = eComService.paymentService.charge(input) }.await()
+
+            _pay.value = order
+
         }catch (e: onedaycat.com.foodfantasyservicelib.error.Error) {
-            _msgError.value = e.toString()
+            _msgError.value = e.message
         }
     }
 
@@ -323,7 +307,7 @@ class FoodViewModel(
             when(position){
                 0 -> cardNumber = text
                 1 -> name = text
-                2 -> expiredData = text
+                2 -> expiredDate = text
                 3 -> cvv = text
             }
         }

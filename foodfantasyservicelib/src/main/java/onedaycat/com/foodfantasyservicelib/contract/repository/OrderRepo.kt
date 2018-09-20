@@ -31,7 +31,7 @@ class OrderFireStore: OrderRepo {
 
             for (product in order.products) {
                 val docPQTY = HashMap<String, Any>()
-                docPQTY["productId"] = product!!.productId!!
+                docPQTY["productId"] = product.productId!!
                 docPQTY["productName"] = product.productName
                 docPQTY["price"] = product.price!!
                 docPQTY["qty"] = product.qty

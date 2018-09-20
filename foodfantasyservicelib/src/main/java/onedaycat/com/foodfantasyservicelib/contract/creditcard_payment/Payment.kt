@@ -15,7 +15,7 @@ data class CreditCard(
         var name: String,
         var cardNumber: String,
         var cvv: String,
-        var expiredData: String)
+        var expiredDate: String)
 
 interface CreditCardPayment {
     fun charge(order: Order, creditCard: CreditCard): Transaction?

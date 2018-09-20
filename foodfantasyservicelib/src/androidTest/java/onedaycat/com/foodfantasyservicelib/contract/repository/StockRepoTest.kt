@@ -25,6 +25,7 @@ class StockRepoTest {
         expPStockPrice = ProductStockWithPrice(
                 ProductStock(
                         "1111",
+                        "Apple",
                         300
                 ),
                 100
@@ -32,6 +33,7 @@ class StockRepoTest {
 
         expPStock = ProductStock(
                 "1111",
+                "Apple",
                 300
         )
     }

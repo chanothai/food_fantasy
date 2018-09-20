@@ -14,7 +14,6 @@ import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
 import onedaycat.com.food_fantasy.mainfood.FoodViewModel
 import onedaycat.com.food_fantasy.store.CartStore
-import onedaycat.com.food_fantasy.store.FoodCartLiveStore
 import onedaycat.com.food_fantasy.store.FoodCartStore
 import onedaycat.com.food_fantasy.ui.cart.fragment.CartFragment
 import onedaycat.com.food_fantasy.ui.mainfood.fragment.MainMenuFragment
@@ -66,7 +65,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener {
             }
 
             foodViewModel = ViewModelProviders.of(this@MainActivity,
-                    viewModelFactory { FoodViewModel(FoodCartLiveStore(this), EcomService()) })
+                    ViewModelUtil.createViewModelFor(FoodViewModel(EcomService())))
                     .get(FoodViewModel::class.java)
         }
     }

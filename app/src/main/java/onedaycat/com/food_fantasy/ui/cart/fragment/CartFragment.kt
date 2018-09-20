@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_cart.*
 import kotlinx.android.synthetic.main.recyclerview_layout.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.ui.cart.CartAdapter
@@ -100,7 +102,11 @@ class CartFragment : Fragment(), OnActionCartListener {
                             creditCard = credit
                     )
 
-                    foodViewModel.payment(input)
+                    input
+                }?.also {input->
+                    launch(UI) {
+                        foodViewModel.payment(input)
+                    }
                 }
                 
                 foodViewModel.createErrorMessage("Please put your credit card")
@@ -191,7 +197,8 @@ class CartFragment : Fragment(), OnActionCartListener {
             val input = AddCartsToCartInput(
                     cart
             )
-            foodViewModel.addAllProductCart(input)
+
+            launch(UI) { foodViewModel.addAllProductCart(input) }
         }
     }
 

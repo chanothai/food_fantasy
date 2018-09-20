@@ -12,13 +12,14 @@ import kotlinx.android.synthetic.main.appbar_header_main_food.*
 import kotlinx.android.synthetic.main.appbar_main_food.*
 import kotlinx.android.synthetic.main.food_detail_information.*
 import kotlinx.android.synthetic.main.layout_food_detail_control.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import onedaycat.com.food_fantasy.R
 import onedaycat.com.food_fantasy.common.BaseActivity
 import onedaycat.com.food_fantasy.mainfood.FoodModel
 import onedaycat.com.food_fantasy.mainfood.FoodViewModel
 import onedaycat.com.food_fantasy.store.CartStore
-import onedaycat.com.food_fantasy.store.FoodCartLiveStore
-import onedaycat.com.food_fantasy.util.IdlingResourceHelper
+import onedaycat.com.food_fantasy.util.ViewModelUtil
 import onedaycat.com.foodfantasyservicelib.input.AddToCartInput
 import onedaycat.com.foodfantasyservicelib.service.EcomService
 
@@ -56,24 +57,13 @@ class FoodDetailActivity : BaseActivity() {
     }
 
     private fun initViewModel() {
-        with(CartStore) {
-            foodViewModel = ViewModelProviders.of(this@FoodDetailActivity,
-                    viewModelFactory { FoodViewModel(FoodCartLiveStore(CartStore), EcomService()) })
-                    .get(FoodViewModel::class.java)
+        foodViewModel = ViewModelProviders.of(this@FoodDetailActivity,
+                ViewModelUtil.createViewModelFor(FoodViewModel(EcomService())))
+                .get(FoodViewModel::class.java)
 
-            foodSumObserver()
-            cartStoreObserver()
-        }
-
-        with(IdlingResourceHelper) {
-            mIdlingResource?.let {
-                it.setIdleState(false)
-                it
-            }
-        }
+        foodSumObserver()
+        cartStoreObserver()
     }
-
-
 
     private fun foodSumObserver() {
         foodViewModel.foodSumModel.observe(this, Observer { it ->
@@ -107,11 +97,6 @@ class FoodDetailActivity : BaseActivity() {
             }
 
             dismissDialog()
-
-            IdlingResourceHelper.mIdlingResource?.let {
-                it.setIdleState(true)
-                it
-            }
         })
     }
 
@@ -142,7 +127,8 @@ class FoodDetailActivity : BaseActivity() {
 
             isAddToCart = true
             showLoadingDialog()
-            foodViewModel.addProductToCart(input, foodModel)
+
+            launch(UI) { foodViewModel.addProductToCart(input) }
         }
     }
 
