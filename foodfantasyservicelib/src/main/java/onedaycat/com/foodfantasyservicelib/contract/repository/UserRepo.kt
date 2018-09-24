@@ -4,6 +4,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import onedaycat.com.foodfantasyservicelib.entity.User
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import android.util.Log
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -68,6 +74,5 @@ class UserFireStore : UserRepo {
             throw Errors.UnKnownError
         }
     }
-
 }
 

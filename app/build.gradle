@@ -115,6 +115,17 @@ dependencies {
 
     //Bottom bar
     implementation 'com.aurelhubert:ahbottomnavigation:2.1.0'
+
+    implementation 'com.amazonaws:aws-android-sdk-core:2.7.0'
+
+    // Mobile Client for initializing the SDK
+    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.7.0@aar') { transitive = true }
+
+    // Cognito UserPools for SignIn
+    implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.7.0@aar') { transitive = true }
+
+    // Sign in UI Library
+    implementation('com.amazonaws:aws-android-sdk-auth-ui:2.7.0@aar') { transitive = true }
 }
 
 apply plugin: 'com.google.gms.google-services'

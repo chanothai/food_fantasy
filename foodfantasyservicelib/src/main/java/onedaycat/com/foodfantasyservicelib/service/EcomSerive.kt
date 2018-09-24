@@ -1,5 +1,6 @@
 package onedaycat.com.foodfantasyservicelib.service
 
+import onedaycat.com.foodfantasyservicelib.contract.cognito.UserCognitoRepo
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCardMemoPayment
 import onedaycat.com.foodfantasyservicelib.contract.repository.*
 import onedaycat.com.foodfantasyservicelib.validate.*
@@ -28,4 +29,6 @@ class EcomService {
     var stockService = StockService(StockFireStore(), StockMemoValidate())
 
     var productService = ProductService(ProductFireStore(), ProductMemoValidate())
+
+    var userService = UserService(UserCognitoRepo(), UserMemoryValidate())
 }

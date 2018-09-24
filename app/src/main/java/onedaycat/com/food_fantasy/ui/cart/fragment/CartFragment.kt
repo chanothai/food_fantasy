@@ -87,7 +87,7 @@ class CartFragment : Fragment(), OnActionCartListener {
             totalPriceObserver()
             cartStoreObserver()
             paymentObserver()
-            errorObserver()
+//            errorObserver()
             cartLiveDataObserver()
         }
     }

@@ -1,5 +1,8 @@
 package onedaycat.com.foodfantasyservicelib.service
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import onedaycat.com.foodfantasyservicelib.entity.User
 import onedaycat.com.foodfantasyservicelib.error.*
 import onedaycat.com.foodfantasyservicelib.contract.repository.UserRepo
@@ -14,6 +17,7 @@ class UserService(
         private val userValidate: UserValidate) {
 
     private var newUser: User? = null
+
     fun createUser(input: CreateUserInput): User? {
         try {
             userValidate.inputUser(input)

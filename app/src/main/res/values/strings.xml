@@ -61,4 +61,8 @@
     <string name="msg_order_empty_state">ยังไม่มีประวัติการสั่งซื้อ</string>
     <string name="msg_left_credit_card">ช่องทางการชำระเงิน</string>
     <string name="msg_right_credit_card">บัตรเครดิต/เดบิต</string>
+    <string name="txt_btn_signin">SIGN IN</string>
+    <string name="txt_btn_signup">SIGN UP</string>
+    <string name="txt_username">username</string>
+    <string name="txt_password">password</string>
 </resources>

@@ -21,10 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".mainfood.activity.FoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.order.OrderDetailActivity"/>
-    </application>
+        <activity android:name=".ui.order.OrderDetailActivity" />
 
+        <activity android:name=".ui.signin.SignInActivity">
+        </activity>
+    </application>
 </manifest>

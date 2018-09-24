@@ -23,7 +23,7 @@ class CartFireStore: CartRepo {
 
     override fun upsert(cart: Cart?) {
         try {
-            val docRef = db.collection(colCart).document(cart!!.userId!!)
+            val docRef = db.collection(colCart).document(cart?.userId!!)
 
             Tasks.await(docRef.set(cart))
         }catch (e:FirebaseFirestoreException) {
@@ -45,7 +45,13 @@ class CartFireStore: CartRepo {
     override fun delete(userId: String) {
         try {
             val docRef = db.collection(colCart).document(userId)
-            Tasks.await(docRef.delete())
+
+            val cart = Cart().apply {
+                this.products = arrayListOf()
+                this.userId = userId
+            }
+
+            Tasks.await(docRef.set(cart))
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
