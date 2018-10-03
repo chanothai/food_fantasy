@@ -49,12 +49,18 @@ class StockServiceTest {
                 0
         )
 
-        expPStock = stock!!.newProductStock("111", "Apple",20)!!
+        expPStock = stock?.newProductStock("111", "Apple",20)!!
     }
 
     @Test
     fun `Add product stock success`() {
         val psGet = expPStock.newProductStock("111", "Apple",10)
+
+        val expStock = ProductStock(
+                "111",
+                "Apple",
+                30
+        )
 
         doNothing().`when`(stockValidate).inputPStock(inputAddStock)
         `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
@@ -62,11 +68,11 @@ class StockServiceTest {
 
         val pstock = stockService.addProductStock(inputAddStock)
 
-        Assert.assertEquals(expPStock, pstock)
+        Assert.assertEquals(expStock, pstock)
 
         verify(stockValidate).inputPStock(inputAddStock)
         verify(stockRepo).get(inputAddStock.productID)
-        verify(stockRepo).upsert(expPStock)
+        verify(stockRepo).upsert(pstock)
     }
 
     @Test(expected = InvalidInputException::class)
@@ -91,18 +97,18 @@ class StockServiceTest {
 
     @Test(expected = InternalError::class)
     fun `Add product stock but save or update failed`() {
-        val psGet = expPStock.newProductStock("111", "Apple",10)
+        val psGet = ProductStock("111", "Apple",10)
 
         doNothing().`when`(stockValidate).inputPStock(inputAddStock)
         `when`(stockRepo.get(inputAddStock.productID)).thenReturn(psGet)
-        `when`(stockRepo.upsert(expPStock)).thenThrow(Errors.UnableSaveProductStock)
+        `when`(stockRepo.upsert(psGet)).thenThrow(Errors.UnableSaveProductStock)
 
         stockService.addProductStock(inputAddStock)
     }
 
     @Test
     fun `Sub product stock success`() {
-        val psGet = expPStock.newProductStock("111", "Apple",10)
+        val psGet = ProductStock("111", "Apple",10)
 
         val expPStock = ProductStock(
                 "111",

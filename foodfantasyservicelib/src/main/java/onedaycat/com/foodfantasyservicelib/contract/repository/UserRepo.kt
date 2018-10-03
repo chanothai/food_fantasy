@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import onedaycat.com.food_fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 
 
@@ -24,13 +25,17 @@ interface UserRepo {
     fun get(userId: String): User?
 }
 
-class UserFireStore : UserRepo {
+class UserFireStore(
+        private val oauth: OauthAdapter
+) : UserRepo {
     private var user: User? = null
     private val collectionUser: String = "users"
     private val db = FirebaseFirestore.getInstance()
 
     override fun create(user: User) {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(collectionUser).document(user.email)
             Tasks.await(docRef.set(user))
         }catch (e: Exception) {
@@ -42,6 +47,8 @@ class UserFireStore : UserRepo {
 
     override fun getByEmail(email: String): User? {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(collectionUser).document(email)
             val document = Tasks.await(docRef.get())
 
@@ -58,6 +65,8 @@ class UserFireStore : UserRepo {
 
     override fun get(userId: String): User? {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(collectionUser)
             val query: Query = docRef.whereEqualTo("id", userId)
             val document = Tasks.await(query.get())

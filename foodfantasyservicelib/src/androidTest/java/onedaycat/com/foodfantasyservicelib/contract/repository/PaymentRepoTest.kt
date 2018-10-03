@@ -1,8 +1,13 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
+import com.amazonaws.regions.Regions
+import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.*
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
+import onedaycat.com.foodfantasyservicelib.util.cognito.CognitoFoodFantasyServiceLib
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +21,14 @@ class PaymentRepoTest {
 
     @Before
     fun setup(){
-        paymentRepo = PaymentFireStore()
+        CognitoFoodFantasyServiceLib.cognitoUserPool = CognitoUserPool(
+                InstrumentationRegistry.getContext(),
+                "ap-southeast-1_M7jwwdfSy",
+                "6qualkk2qcjqokgsujkgm5c2sq",
+                null,
+                Regions.AP_SOUTHEAST_1)
+
+        paymentRepo = PaymentFireStore(OauthCognito())
 
         val now = Clock.NowUTC()
         expOrder = Order(

@@ -3,6 +3,8 @@ package onedaycat.com.foodfantasyservicelib.contract.repository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import onedaycat.com.food_fantasy.oauth.OauthAdapter
+import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.entity.Transaction
@@ -12,12 +14,16 @@ interface PaymentRepo {
     fun savePayment(order: Order, transaction: Transaction, productStocks: MutableList<ProductStock?>)
 }
 
-class PaymentFireStore: PaymentRepo {
+class PaymentFireStore(
+        private val oauthAdapter: OauthAdapter
+): PaymentRepo {
     private val colPayment = "Payments"
     private val db = FirebaseFirestore.getInstance()
 
     override fun savePayment(order: Order, transaction: Transaction, productStocks: MutableList<ProductStock?>) {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colPayment).document()
 
             val docPayment = HashMap<String, Any>()

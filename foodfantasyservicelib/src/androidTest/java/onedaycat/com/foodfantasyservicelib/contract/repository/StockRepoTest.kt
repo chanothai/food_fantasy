@@ -1,12 +1,17 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
+import com.amazonaws.regions.Regions
 import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
+import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.entity.ProductStockWithPrice
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
+import onedaycat.com.foodfantasyservicelib.util.cognito.CognitoFoodFantasyServiceLib
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +25,15 @@ class StockRepoTest {
 
     @Before
     fun setup() {
-        stockRepo = StockFireStore()
+
+        CognitoFoodFantasyServiceLib.cognitoUserPool = CognitoUserPool(
+                InstrumentationRegistry.getContext(),
+                "ap-southeast-1_M7jwwdfSy",
+                "6qualkk2qcjqokgsujkgm5c2sq",
+                null,
+                Regions.AP_SOUTHEAST_1)
+
+        stockRepo = StockFireStore(OauthCognito())
 
         expPStockPrice = ProductStockWithPrice(
                 ProductStock(
@@ -47,7 +60,7 @@ class StockRepoTest {
     fun getStockProduct() {
         val id = "1111"
         val pstock = stockRepo.get(id)
-        assertEquals(expPStock, pstock)
+        assertEquals(id, pstock?.productID)
     }
 
     @Test(expected = NotFoundException::class)
@@ -60,7 +73,7 @@ class StockRepoTest {
     fun getStockProductWithPrice() {
         val id = "1111"
         val pstock = stockRepo.getWithPrice(id)
-        assertEquals(expPStockPrice, pstock)
+        assertEquals(id, pstock.productStock?.productID)
     }
 
     @Test(expected = NotFoundException::class)

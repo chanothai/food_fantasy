@@ -13,18 +13,10 @@ data class Product(
 data class ProductQTY(
         var productId: String? = null,
         var productName: String = "",
-        var price: Int? = 0,
+        var price: Int = 0,
         var qty: Int = 0)
 
-//fun newProductQTYWithProduct(product: Product, qty: Int): ProductQTY {
-//    return ProductQTY(
-//            productId = product.id,
-//            price = product.price,
-//            qty = qty
-//    )
-//}
-//NewProductQTY create ProductQTY
-fun newProductQTY(productId: String, productName: String, price: Int?, qty: Int): ProductQTY {
+fun newProductQTY(productId: String, productName: String, price: Int, qty: Int): ProductQTY {
     return ProductQTY(
             productId = productId,
             productName = productName,

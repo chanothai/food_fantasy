@@ -3,6 +3,7 @@ package onedaycat.com.food_fantasy.oauth
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationDetails
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler
@@ -16,7 +17,6 @@ class OauthCognito: OauthAdapter {
 
     override fun validateToken(): Token {
         var token: Token? = null
-
 
         val authenticationHandler = object : AuthenticationHandler {
             override fun onSuccess(userSession: CognitoUserSession?, newDevice: CognitoDevice?) {
@@ -39,7 +39,14 @@ class OauthCognito: OauthAdapter {
             }
 
             override fun getAuthenticationDetails(authenticationContinuation: AuthenticationContinuation?, userId: String?) {
+                userId?.let {
+                    return
+                }
 
+                val authDetail = AuthenticationDetails("chanothai@onedaycat.com", "password", null)
+
+                authenticationContinuation?.setAuthenticationDetails(authDetail)
+                authenticationContinuation?.continueTask()
             }
 
             override fun authenticationChallenge(continuation: ChallengeContinuation?) {

@@ -3,6 +3,7 @@ package onedaycat.com.foodfantasyservicelib.contract.repository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import onedaycat.com.food_fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
@@ -17,12 +18,15 @@ interface StockRepo {
     fun getAllWithPrice(pQTYs: MutableList<ProductQTY>): MutableList<ProductStockWithPrice>
 }
 
-class StockFireStore: StockRepo {
+class StockFireStore(
+        private val oauth: OauthAdapter): StockRepo {
     private val colStock = "Stocks"
     private val colProduct = "Products"
     private val db = FirebaseFirestore.getInstance()
     override fun upsert(product: ProductStock?) {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(colStock).document(product!!.productID!!)
             Tasks.await(docRef.set(product))
         }catch (e:FirebaseFirestoreException) {
@@ -32,6 +36,8 @@ class StockFireStore: StockRepo {
 
     override fun get(productId: String): ProductStock? {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(colStock).document(productId)
             return Tasks.await(docRef.get()).toObject(ProductStock::class.java) ?: throw Errors.ProductStockNotFound
         }catch (e:FirebaseFirestoreException) {
@@ -41,6 +47,8 @@ class StockFireStore: StockRepo {
 
     override fun getByIDs(productIDs: MutableList<String>): MutableList<ProductStock?> {
         try {
+            oauth.validateToken()
+
             val pStocks = mutableListOf<ProductStock?>()
 
             for (id in productIDs) {
@@ -63,6 +71,8 @@ class StockFireStore: StockRepo {
 
     override fun getWithPrice(productId: String): ProductStockWithPrice {
         try {
+            oauth.validateToken()
+
             val docRefStock = db.collection(colStock).document(productId)
             val pStock = Tasks.await(docRefStock.get()).toObject(ProductStock::class.java)
                     ?: throw Errors.ProductStockNotFound
@@ -82,6 +92,8 @@ class StockFireStore: StockRepo {
 
     override fun getAllWithPrice(pQTYs: MutableList<ProductQTY>): MutableList<ProductStockWithPrice> {
         try {
+            oauth.validateToken()
+
             val docRef = db.collection(colStock)
             val pstocks = Tasks.await(docRef.get()).toObjects(ProductStock::class.java)
 

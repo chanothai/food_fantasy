@@ -1,14 +1,31 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationDetails
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler
+import com.amazonaws.regions.Regions
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
+import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Product
+import onedaycat.com.foodfantasyservicelib.entity.UserCognito
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
+import onedaycat.com.foodfantasyservicelib.util.cognito.CognitoFoodFantasyServiceLib
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Exception
 
 @RunWith(AndroidJUnit4::class)
 class ProductRepoTest {
@@ -17,10 +34,18 @@ class ProductRepoTest {
 
     @Before
     fun setup() {
-        productRepo = ProductFireStore()
+        CognitoFoodFantasyServiceLib.cognitoUserPool = CognitoUserPool(
+                InstrumentationRegistry.getContext(),
+                "ap-southeast-1_M7jwwdfSy",
+                "6qualkk2qcjqokgsujkgm5c2sq",
+                null,
+                Regions.AP_SOUTHEAST_1)
+
+        productRepo = ProductFireStore(OauthCognito())
 
         val id = IdGen.NewId()
         val now = Clock.NowUTC()
+
         expProduct = Product(
                 "1114",
                 "Banana",
@@ -46,7 +71,7 @@ class ProductRepoTest {
         productRepo.remove(id)
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test(expected = Exception::class)
     fun removeProductFailed() {
         val id = "12312312313"
         productRepo.remove(id)
@@ -57,8 +82,7 @@ class ProductRepoTest {
         val id = "1113"
         val product = productRepo.get(id)
 
-        expProduct.id = id
-        assertEquals(expProduct.name, product!!.name)
+        assertEquals(id, product!!.id)
     }
 
     @Test(expected = NotFoundException::class)

@@ -21,7 +21,7 @@ class StockService(
             stockValidate.inputPStock(input)
 
             productStock = stockRepo.get(input.productID)
-            productStock!!.deposit(input.qty)
+            productStock?.deposit(input.qty)
 
         }catch (e: NotFoundException) {
             productStock = ProductStock(input.productID, input.productName, 0)
@@ -37,7 +37,7 @@ class StockService(
 
         productStock= stockRepo.get(input.productID)
 
-        val pStock = productStock!!.withDraw(input.qty)
+        val pStock = productStock?.withDraw(input.qty)
 
         stockRepo.upsert(pStock)
 

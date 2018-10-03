@@ -27,14 +27,16 @@ class PaymentService(private val orderRepo: OrderRepo,
         //get all product stock
         val pstocks = stockRepo.getByIDs(input.cart.productIDs())
 
-        //withdraw product stock into stock
-        for (pstock in pstocks) {
-            //get product qty every product in cart
-            val pQTY = input.cart.getPQTY(pstock!!.productID!!)
+        pstocks.let {ps->
+            //withdraw product stock into stock
+            for (pstock in ps) {
+                //get product qty every product in cart
+                val pQTY = input.cart.getPQTY(pstock?.productID!!)
 
-            if (pQTY != null) {
-                pstock.withDraw(pQTY.qty)
-                stockRepo.upsert(pstock)
+                if (pQTY != null) {
+                    pstock.withDraw(pQTY.qty)
+                    stockRepo.upsert(pstock)
+                }
             }
         }
 
@@ -52,14 +54,17 @@ class PaymentService(private val orderRepo: OrderRepo,
         val tx = ccPayment.charge(order, input.creditCard)
 
         //update order status to paid
-        order.paid(tx!!)
-        orderRepo.upsert(order)
-
-        //create order into repository
-        paymentRepo.savePayment(order, tx, pstocks)
-
-        //delete cart
-        cartRepo.delete(input.userID)
+        tx?.let {
+            order.paid(tx)
+            orderRepo.upsert(order)
+            it
+        }?.also {
+            //create order into repository
+            paymentRepo.savePayment(order, tx, pstocks)
+        }?.run {
+            //delete cart
+            cartRepo.delete(input.userID)
+        }
 
         return order
     }

@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import onedaycat.com.food_fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.State
@@ -19,12 +20,16 @@ interface OrderRepo {
     fun getAll(userId: String): ArrayList<Order>
 }
 
-class OrderFireStore: OrderRepo {
+class OrderFireStore(
+        private val oauthAdapter: OauthAdapter
+): OrderRepo {
     private val colOrder: String = "Orders"
     private val db = FirebaseFirestore.getInstance()
 
     override fun upsert(order: Order) {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colOrder)
 
             val arrPQTY = mutableListOf<HashMap<String, Any>>()
@@ -58,6 +63,8 @@ class OrderFireStore: OrderRepo {
 
     override fun get(userId: String): Order {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colOrder)
             val query: Query = docRef.whereEqualTo("userId", userId)
 
@@ -73,6 +80,8 @@ class OrderFireStore: OrderRepo {
 
     override fun getAll(userId: String): ArrayList<Order> {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colOrder).orderBy("createDate", Query.Direction.DESCENDING)
             val query: Query = docRef.whereEqualTo("userId", userId)
 

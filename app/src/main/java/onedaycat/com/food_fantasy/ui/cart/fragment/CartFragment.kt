@@ -110,7 +110,7 @@ class CartFragment : Fragment(), OnActionCartListener {
                 }
                 
                 foodViewModel.createErrorMessage("Please put your credit card")
-                mainActivity.dismissDialog()
+
             }
         })
     }
@@ -187,6 +187,8 @@ class CartFragment : Fragment(), OnActionCartListener {
 
                 order
             }
+
+            mainActivity.dismissDialog()
         })
     }
 

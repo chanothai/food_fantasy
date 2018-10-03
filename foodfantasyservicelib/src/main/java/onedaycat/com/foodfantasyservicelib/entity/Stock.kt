@@ -2,6 +2,7 @@ package onedaycat.com.foodfantasyservicelib.entity
 
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
+import kotlin.math.acos
 
 
 data class ProductStockWithPrice(
@@ -26,7 +27,7 @@ data class ProductStock(
         return productStock
     }
 
-    fun newProductStock(productID: String,productName: String, qty: Int): ProductStock? {
+    fun newProductStock(productID: String,productName: String, qty: Int): ProductStock {
         productStock = ProductStock(
                 productID,
                 productName,
@@ -35,33 +36,48 @@ data class ProductStock(
 
         deposit(qty)
 
-        return productStock
+        productStock?.let {
+            return it
+        }
+
+        throw Errors.ProductStockNotFound
     }
 
     fun deposit(qty: Int) {
-        productStock!!.qty += qty
+        productStock?.let {
+            it.qty += qty
+        }
     }
 
-    fun withDraw(qty: Int): ProductStock? {
-        if ((productStock!!.qty - qty) < 0) {
-            throw Errors.ProductOutOfStock
+    fun withDraw(qty: Int): ProductStock {
+        productStock?.let {ps->
+            if ((ps.qty - qty) < 0) {
+                throw Errors.ProductOutOfStock
+            }
+
+            ps.qty -= qty
+            ps
+        }?.also {ps->
+            return ProductStock(
+                    ps.productID,
+                    ps.productName,
+                    ps.qty
+            )
         }
 
-        productStock!!.qty -= qty
-
-        return ProductStock(
-                productStock?.productID,
-                productStock?.productName!!,
-                productStock?.qty!!
-        )
+        throw Errors.ProductStockNotFound
     }
 
     fun has(qty: Int): Boolean {
-        val currentStockQTY = productStock!!.qty
-        if (currentStockQTY > qty) {
-            return true
+        productStock?.let {
+            val currentStockQTY = it.qty
+            if (currentStockQTY > qty) {
+                return true
+            }
+
+            return false
         }
 
-        return false
+        throw Errors.ProductStockNotFound
     }
 }

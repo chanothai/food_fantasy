@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import onedaycat.com.food_fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.error.Errors
@@ -17,12 +18,16 @@ interface CartRepo {
     fun delete(userId: String)
 }
 
-class CartFireStore: CartRepo {
+class CartFireStore(
+        private val oauthAdapter: OauthAdapter
+): CartRepo {
     private val colCart: String = "Carts"
     private val db = FirebaseFirestore.getInstance()
 
     override fun upsert(cart: Cart?) {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colCart).document(cart?.userId!!)
 
             Tasks.await(docRef.set(cart))
@@ -33,6 +38,8 @@ class CartFireStore: CartRepo {
 
     override fun getByUserID(userId: String): Cart? {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colCart).document(userId)
             val document = Tasks.await(docRef.get())
             return document.toObject(Cart::class.java) ?: throw Errors.CartNotFound
@@ -44,6 +51,8 @@ class CartFireStore: CartRepo {
 
     override fun delete(userId: String) {
         try {
+            oauthAdapter.validateToken()
+
             val docRef = db.collection(colCart).document(userId)
 
             val cart = Cart().apply {

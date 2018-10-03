@@ -9,6 +9,8 @@ import onedaycat.com.food_fantasy.oauth.OauthAdapter
 import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
+import onedaycat.com.foodfantasyservicelib.error.InternalError
+import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 import kotlin.coroutines.experimental.CoroutineContext
 
 data class ProductPaging(
@@ -36,8 +38,10 @@ class ProductFireStore(
             Tasks.await(docRef.set(product))
 
         }catch (e: Exception) {
-            throw Errors.UnableCreateProduct
-
+            when (e) {
+                is NotFoundException -> throw e
+                else -> throw Errors.UnableCreateProduct
+            }
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
 
@@ -53,11 +57,13 @@ class ProductFireStore(
 
             Tasks.await(docRemove.delete())
         }catch (e: Exception) {
-            throw Errors.ProductNotFound
-
+            when (e) {
+                is NotFoundException -> throw e
+                is InternalError -> throw e
+                else -> throw e
+            }
         }catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
-
         }
     }
 

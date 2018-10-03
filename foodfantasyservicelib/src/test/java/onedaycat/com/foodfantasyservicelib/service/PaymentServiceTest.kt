@@ -1,6 +1,5 @@
 package onedaycat.com.foodfantasyservicelib.service
 
-import junit.framework.Assert
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCard
 import onedaycat.com.foodfantasyservicelib.contract.creditcard_payment.CreditCardPayment
 import onedaycat.com.foodfantasyservicelib.contract.repository.CartRepo
@@ -19,13 +18,14 @@ import onedaycat.com.foodfantasyservicelib.input.RefundInput
 import onedaycat.com.foodfantasyservicelib.util.clock.Clock
 import onedaycat.com.foodfantasyservicelib.util.idgen.IdGen
 import onedaycat.com.foodfantasyservicelib.validate.PaymentValidate
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
+import java.lang.Exception
 
 class PaymentServiceTest {
-    @Mock
     private lateinit var paymentRepo: PaymentRepo
     private lateinit var orderRepo: OrderRepo
     private lateinit var ccPayment: CreditCardPayment
@@ -34,7 +34,6 @@ class PaymentServiceTest {
     private lateinit var paymentService: PaymentService
     private lateinit var paymentValidate: PaymentValidate
 
-    @Mock
     private lateinit var input: ChargeInput
     private lateinit var inputRefund: RefundInput
     private lateinit var tx: Transaction
@@ -69,15 +68,23 @@ class PaymentServiceTest {
         val id = IdGen.NewId()
         val now = Clock.NowUTC()
 
+        cart = Cart().apply {
+            this.products = mutableListOf(
+                    ProductQTY("111", "Apple",100,1),
+                    ProductQTY("222", "Apple",200,1))
+
+            this.userId = "u1"
+        }
+
         input = ChargeInput(
                 "u1",
                 cart,
                 CreditCard(
-                        CreditCardType.CreditCardVisa,
-                        "name",
-                        "11231312312313",
-                        "443",
-                        "01/02"
+                        CreditCardType.CreditCardMasterCard,
+                        "chanothai",
+                        "0000000000000",
+                        "123",
+                        "01/21"
                 )
         )
 
@@ -89,7 +96,7 @@ class PaymentServiceTest {
         expCart = cart.newCart(input.userID)
         expCart.addPQTY(newProductQTY("111", "Apple",100, 1),
                 stock.newProductStock("111", "Apple",50)!!)
-        expCart.addPQTY(newProductQTY("222", "Apple",200, 2),
+        expCart.addPQTY(newProductQTY("222", "Apple",200, 1),
                 stock.newProductStock("222", "Apple",50)!!)
 
         pstocks = mutableListOf(
@@ -100,9 +107,7 @@ class PaymentServiceTest {
         orderForCharge = Order(
                 id,
                 input.userID,
-                mutableListOf(
-                        ProductQTY("111", "Apple",100,1),
-                        ProductQTY("222", "Apple",200,2)),
+                input.cart.products,
                 300,
                 now,
                 State.OrderStatus.PENDING
@@ -113,7 +118,7 @@ class PaymentServiceTest {
                 input.userID,
                 mutableListOf(
                         ProductQTY("111", "Apple",100,1),
-                        ProductQTY("222", "Apple",200,2)),
+                        ProductQTY("222", "Apple",200,1)),
                 300,
                 now,
                 State.OrderStatus.PAID)
@@ -122,9 +127,7 @@ class PaymentServiceTest {
         expOrder = Order(
                 id,
                 input.userID,
-                mutableListOf(
-                        ProductQTY("111", "Apple",100,1),
-                        ProductQTY("222", "Apple",200,2)),
+                input.cart.products,
                 300,
                 now,
                 State.OrderStatus.PAID
@@ -135,7 +138,7 @@ class PaymentServiceTest {
                 input.userID,
                 mutableListOf(
                         ProductQTY("111", "Apple",100,1),
-                        ProductQTY("222", "Apple",200,2)),
+                        ProductQTY("222", "Apple",200,1)),
                 300,
                 now,
                 State.OrderStatus.REFUNDED)
@@ -144,7 +147,7 @@ class PaymentServiceTest {
                 "tx1",
                 id,
                 TransactionState.CHARGE,
-                500,
+                300,
                 now
         )
 
@@ -152,7 +155,7 @@ class PaymentServiceTest {
                 "tx1",
                 id,
                 TransactionState.REFUNDED,
-                500,
+                300,
                 now)
 
         IdGen.setFreezeID(id)
@@ -162,7 +165,7 @@ class PaymentServiceTest {
     @Test
     fun `payment success`() {
         doNothing().`when`(paymentValidate).inputCharge(input)
-        `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)
+        doNothing().`when`(cartRepo).delete(input.userID)
         `when`(pstockRepo.getByIDs(expCart.productIDs())).thenReturn(pstocks)
         `when`(ccPayment.charge(orderForCharge, input.creditCard)).thenReturn(tx)
         doNothing().`when`(paymentRepo).savePayment(expOrder, tx, pstocks)
@@ -172,7 +175,7 @@ class PaymentServiceTest {
         Assert.assertEquals(expOrder, order)
 
         verify(paymentValidate).inputCharge(input)
-        verify(cartRepo).getByUserID(input.userID)
+        verify(cartRepo).delete(input.userID)
         verify(pstockRepo).getByIDs(expCart.productIDs())
         verify(ccPayment).charge(expOrder, input.creditCard)
         verify(paymentRepo).savePayment(expOrder, tx, pstocks)
@@ -185,15 +188,7 @@ class PaymentServiceTest {
         paymentService.charge(input)
     }
 
-    @Test(expected = NotFoundException::class)
-    fun `payment but get cart failed`() {
-        doNothing().`when`(paymentValidate).inputCharge(input)
-        `when`(cartRepo.getByUserID(input.userID)).thenThrow(Errors.CartNotFound)
-
-        paymentService.charge(input)
-    }
-
-    @Test(expected = BadRequestException::class)
+    @Test(expected = Exception::class)
     fun `payment get product stock but out of stock`() {
         val pstocks:MutableList<ProductStock?> = mutableListOf(
                 ProductStock("111", "Apple",0),
@@ -207,7 +202,7 @@ class PaymentServiceTest {
         paymentService.charge(input)
     }
 
-    @Test(expected = InternalError::class)
+    @Test(expected = Exception::class)
     fun `payment but credit card failed`() {
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)
@@ -217,7 +212,7 @@ class PaymentServiceTest {
         paymentService.charge(input)
     }
 
-    @Test(expected = InternalError::class)
+    @Test(expected = Exception::class)
     fun `payment but save failed`(){
         doNothing().`when`(paymentValidate).inputCharge(input)
         `when`(cartRepo.getByUserID(input.userID)).thenReturn(expCart)

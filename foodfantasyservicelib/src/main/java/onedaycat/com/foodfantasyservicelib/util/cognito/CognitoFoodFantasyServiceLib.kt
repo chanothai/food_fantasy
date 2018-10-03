@@ -8,6 +8,7 @@ import com.amazonaws.regions.Regions
 class CognitoFoodFantasyServiceLib {
 
     companion object {
+        @JvmStatic
         var cognitoUserPool: CognitoUserPool? = null
         get() {
             return field?.let {

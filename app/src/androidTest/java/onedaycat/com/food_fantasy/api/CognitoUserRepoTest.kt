@@ -35,7 +35,12 @@ class CognitoUserRepoTest {
                 time
         )
 
-        cognitoUserRepo.create(user)
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.create(user)
+                return@async
+            }.await()
+        }
     }
 
     @Test(expected = Exception::class)
@@ -51,7 +56,12 @@ class CognitoUserRepoTest {
                 time
         )
 
-        cognitoUserRepo.create(user)
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.create(user)
+                return@async
+            }.await()
+        }
     }
 
     @Test
@@ -66,7 +76,12 @@ class CognitoUserRepoTest {
                 ""
         )
 
-        cognitoUserRepo.authenticate(user)
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.authenticate(user)
+                return@async
+            }.await()
+        }
     }
 
     @Test(expected = Exception::class)
@@ -92,14 +107,25 @@ class CognitoUserRepoTest {
     @Test
     fun checkUsername_ForgotPassword_Success() {
         val username = "omo.chanothai@gmail.com"
-        cognitoUserRepo.change(username)
+
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.change(username)
+                return@async
+            }.await()
+        }
     }
 
     @Test(expected = Exception::class)
     fun checkUsername_ForgotPassword_Failed() {
         val username = "ball@gmail.com"
 
-        cognitoUserRepo.change(username)
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.change(username)
+                return@async
+            }.await()
+        }
     }
 
     @Test(expected = Exception::class)
@@ -112,6 +138,11 @@ class CognitoUserRepoTest {
             this.code = "123"
         }
 
-        cognitoUserRepo.confirm(userAuth)
+        runBlocking {
+            async(CommonPool) {
+                cognitoUserRepo.confirm(userAuth)
+                return@async
+            }.await()
+        }
     }
 }

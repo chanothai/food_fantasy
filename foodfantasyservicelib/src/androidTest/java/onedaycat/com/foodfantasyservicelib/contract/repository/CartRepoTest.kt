@@ -1,9 +1,14 @@
 package onedaycat.com.foodfantasyservicelib.contract.repository
 
+import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
+import com.amazonaws.regions.Regions
+import onedaycat.com.food_fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.entity.newProductQTY
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
+import onedaycat.com.foodfantasyservicelib.util.cognito.CognitoFoodFantasyServiceLib
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -17,12 +22,19 @@ class CartRepoTest {
 
     @Before
     fun setup(){
-        cartRepo = CartFireStore()
+        CognitoFoodFantasyServiceLib.cognitoUserPool = CognitoUserPool(
+                InstrumentationRegistry.getContext(),
+                "ap-southeast-1_M7jwwdfSy",
+                "6qualkk2qcjqokgsujkgm5c2sq",
+                null,
+                Regions.AP_SOUTHEAST_1)
+
+        cartRepo = CartFireStore(OauthCognito())
         expCart = Cart(
                 "u1",
                 mutableListOf(
-                        newProductQTY("111", "Apple",100, 20),
-                        newProductQTY("112", "Apple",200, 10)
+                        newProductQTY("111", "Apple",100, 2),
+                        newProductQTY("112", "Apple",200, 1)
                 )
         )
     }

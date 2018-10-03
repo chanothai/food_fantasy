@@ -8,28 +8,28 @@ import onedaycat.com.foodfantasyservicelib.validate.*
 
 class EcomService {
     var paymentService = PaymentService(
-            OrderFireStore(),
+            OrderFireStore(OauthCognito()),
             CreditCardMemoPayment(),
-            StockFireStore(),
-            CartFireStore(),
-            PaymentFireStore(),
+            StockFireStore(OauthCognito()),
+            CartFireStore(OauthCognito()),
+            PaymentFireStore(OauthCognito()),
             PaymentMemoValidate()
     )
 
     var orderService = OrderService(
-            OrderFireStore(),
+            OrderFireStore(OauthCognito()),
             OrderMemoValidate()
     )
 
     var cartService = CartService(
-            StockFireStore(),
-            CartFireStore(),
+            StockFireStore(OauthCognito()),
+            CartFireStore(OauthCognito()),
             CartMemoValidate()
     )
 
-    var stockService = StockService(StockFireStore(), StockMemoValidate())
+    var stockService = StockService(StockFireStore(OauthCognito()), StockMemoValidate())
 
     var productService = ProductService(ProductFireStore(OauthCognito()), ProductMemoValidate())
 
-    var userService = UserService(UserFireStore(), UserMemoryValidate())
+    var userService = UserService(UserFireStore(OauthCognito()), UserMemoryValidate())
 }

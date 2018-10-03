@@ -28,7 +28,6 @@ data class Cart(
         }
     }
 
-    //Compare product qty
     fun addPQTY(productQTY: ProductQTY, stock: ProductStock) {
         checkStock(productQTY, stock)
 
@@ -115,7 +114,7 @@ data class Cart(
     fun totalPrice(): Int {
         var sumTotalPrice = 0
         for (product in cart.products) {
-            sumTotalPrice += (product.price!! * product.qty)
+            sumTotalPrice += (product.price * product.qty)
         }
 
         return sumTotalPrice
