@@ -1,4 +1,4 @@
-package onedaycat.com.food_fantasy.oauth
+package onedaycat.com.food.fantasy.oauth
 
 import onedaycat.com.foodfantasyservicelib.entity.Token
 

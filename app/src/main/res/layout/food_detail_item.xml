@@ -23,7 +23,7 @@
 
     </RelativeLayout>
 
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:id="@+id/food_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:text="@string/name_food_test"
         />
 
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:id="@+id/food_item_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

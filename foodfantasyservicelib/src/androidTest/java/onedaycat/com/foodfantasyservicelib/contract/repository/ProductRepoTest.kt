@@ -15,7 +15,7 @@ import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import onedaycat.com.food_fantasy.oauth.OauthCognito
+import onedaycat.com.food.fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.entity.UserCognito
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException

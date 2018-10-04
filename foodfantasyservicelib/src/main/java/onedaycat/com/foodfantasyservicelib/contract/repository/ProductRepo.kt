@@ -5,8 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import onedaycat.com.food_fantasy.oauth.OauthAdapter
-import onedaycat.com.food_fantasy.oauth.OauthCognito
+import onedaycat.com.food.fantasy.oauth.OauthAdapter
+import onedaycat.com.food.fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.error.Errors
 import onedaycat.com.foodfantasyservicelib.error.InternalError
@@ -20,13 +20,13 @@ data class ProductPaging(
 interface ProductRepo {
     fun create(product: Product?)
     fun remove(id: String)
-    fun getAllWithPaging(limit: Int):ProductPaging?
+    fun getAllWithPaging(limit: Int): ProductPaging?
     fun get(id: String): Product?
 }
 
 class ProductFireStore(
         private val oauth: OauthAdapter
-): ProductRepo {
+) : ProductRepo {
     private val colProduct: String = "Products"
     private val db = FirebaseFirestore.getInstance()
 
@@ -37,12 +37,12 @@ class ProductFireStore(
             val docRef = db.collection(colProduct).document(product!!.id!!)
             Tasks.await(docRef.set(product))
 
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             when (e) {
                 is NotFoundException -> throw e
                 else -> throw Errors.UnableCreateProduct
             }
-        }catch (e: FirebaseFirestoreException) {
+        } catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
 
         }
@@ -52,17 +52,17 @@ class ProductFireStore(
         try {
             oauth.validateToken()
             val document = queryProduct(id)
-            val product:Product = document.toObjects(Product::class.java)[0]
+            val product: Product = document.toObjects(Product::class.java)[0]
             val docRemove = db.collection(colProduct).document(product.id!!)
 
             Tasks.await(docRemove.delete())
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             when (e) {
                 is NotFoundException -> throw e
                 is InternalError -> throw e
                 else -> throw e
             }
-        }catch (e: FirebaseFirestoreException) {
+        } catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
     }
@@ -77,9 +77,9 @@ class ProductFireStore(
             return ProductPaging(
                     products
             )
-        }catch (e:Exception) {
+        } catch (e: Exception) {
             throw Errors.ProductNotFound
-        }catch (e:FirebaseFirestoreException) {
+        } catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
         }
     }
@@ -90,10 +90,10 @@ class ProductFireStore(
             val document = queryProduct(id)
             return document.toObjects(Product::class.java)[0]
 
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             throw Errors.ProductNotFound
 
-        }catch (e: FirebaseFirestoreException) {
+        } catch (e: FirebaseFirestoreException) {
             throw Errors.UnKnownError
 
         }

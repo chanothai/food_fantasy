@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/medium_font"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/large_padding_layout"
-    tools:context=".ui.mainfood.fragment.MainMenuFragment">
+    tools:context="onedaycat.com.food.fantasy.fantasy.ui.mainfood.fragment.MainMenuFragment">
 
     <include
         layout="@layout/recyclerview_and_swipe_refresh_layout"/>

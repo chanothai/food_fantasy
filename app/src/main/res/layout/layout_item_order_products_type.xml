@@ -16,7 +16,7 @@
         android:paddingBottom="@dimen/medium_padding_layout"
         android:orientation="horizontal">
         
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/order_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:textSize="@dimen/small_font"
             android:padding="@dimen/small_padding_layout"
             android:text="@string/name_food_test"/>
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/order_item_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

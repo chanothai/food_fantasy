@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool
 import com.amazonaws.regions.Regions
-import onedaycat.com.food_fantasy.oauth.OauthCognito
+import onedaycat.com.food.fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Cart
 import onedaycat.com.foodfantasyservicelib.entity.newProductQTY
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException

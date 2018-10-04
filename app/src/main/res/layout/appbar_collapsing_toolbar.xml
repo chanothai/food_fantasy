@@ -20,7 +20,7 @@
             app:contentInsetStart="0dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <onedaycat.com.food_fantasy.customview.CustomTextView
+            <onedaycat.com.food.fantasy.customview.CustomTextView
                 android:id="@+id/title_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

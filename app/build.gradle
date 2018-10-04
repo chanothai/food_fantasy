@@ -44,7 +44,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "onedaycat.com.food_fantasy"
+        applicationId "onedaycat.com.food.fantasy"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1

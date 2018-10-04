@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:padding="@dimen/small_padding_layout">
 
-            <onedaycat.com.food_fantasy.customview.CustomTextView
+            <onedaycat.com.food.fantasy.customview.CustomTextView
                 android:id="@+id/title_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

@@ -83,7 +83,7 @@ data class Cart(
         }
 
         for (product in cart.products) {
-            arrProductId.add(product.productId!!)
+            arrProductId.add(product.productId)
         }
 
         return arrProductId

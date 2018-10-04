@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/product_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             android:text="product_name"
             android:padding="@dimen/small_padding_layout"/>
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/product_item_qty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:text="product_qty"
             android:padding="@dimen/small_padding_layout"/>
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/product_item_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

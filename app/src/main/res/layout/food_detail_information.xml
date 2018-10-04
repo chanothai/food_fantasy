@@ -12,7 +12,7 @@
         android:paddingStart="@dimen/large_padding_layout"
         android:paddingEnd="@dimen/large_padding_layout">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/food_detail_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:text="@string/name_food_test"
             />
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/food_detail_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:layout_height="36dp"
         android:background="@color/color_bg_solf_gray">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_menu_th"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/large_padding_layout">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/food_detail_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

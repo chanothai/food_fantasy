@@ -3,8 +3,8 @@ package onedaycat.com.foodfantasyservicelib.contract.repository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import onedaycat.com.food_fantasy.oauth.OauthAdapter
-import onedaycat.com.food_fantasy.oauth.OauthCognito
+import onedaycat.com.food.fantasy.oauth.OauthAdapter
+import onedaycat.com.food.fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.entity.Transaction

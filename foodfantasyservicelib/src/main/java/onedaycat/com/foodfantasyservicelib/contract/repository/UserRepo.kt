@@ -15,7 +15,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import onedaycat.com.food_fantasy.oauth.OauthAdapter
+import onedaycat.com.food.fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException
 
 

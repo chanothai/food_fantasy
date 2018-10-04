@@ -10,7 +10,7 @@
     android:paddingBottom="@dimen/medium_padding_layout"
     android:background="@color/color_bg_white">
 
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -19,7 +19,7 @@
         android:padding="@dimen/small_padding_layout"
         android:text="@string/msg_left_credit_card"/>
 
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"

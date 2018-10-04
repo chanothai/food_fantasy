@@ -1,17 +1,17 @@
 package onedaycat.com.foodfantasyservicelib.entity
 
 data class Product(
-        var id: String? = null,
-        var name:String? = null,
-        var price: Int? = null,
-        var desc: String? = null,
-        var image: String? = null,
-        var createDate: String? = null,
-        var updateDate: String? = null)
+        var id: String = "",
+        var name:String = "",
+        var price: Int = 0,
+        var desc: String = "",
+        var image: String = "",
+        var createDate: String = "",
+        var updateDate: String = "")
 
 //ProductQTY Product and qty
 data class ProductQTY(
-        var productId: String? = null,
+        var productId: String = "",
         var productName: String = "",
         var price: Int = 0,
         var qty: Int = 0)

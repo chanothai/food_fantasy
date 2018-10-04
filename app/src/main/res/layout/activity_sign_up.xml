@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.signup.SignUpActivity">
+    tools:context="onedaycat.com.food.fantasy.fantasy.ui.signup.SignUpActivity">
 
 
     <LinearLayout
@@ -52,7 +52,7 @@
             android:hint="@string/hint_gender"
             android:inputType="textPersonName" />
 
-        <onedaycat.com.food_fantasy.customview.CustomButtonView
+        <onedaycat.com.food.fantasy.customview.CustomButtonView
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

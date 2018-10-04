@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:171810081991:android:30651239a27a7472",
         "android_client_info": {
-          "package_name": "onedaycat.com.food_fantasy"
+          "package_name": "onedaycat.com.food.fantasy"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "171810081991-va97oussjh6k3pk8ri4b4m763fvpac76.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "onedaycat.com.food_fantasy",
+            "package_name": "onedaycat.com.food.fantasy",
             "certificate_hash": "c990430df7453f0831ab0c0001be30d0ffc707c4"
           }
         },

@@ -3,7 +3,7 @@ package onedaycat.com.foodfantasyservicelib.contract.repository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import onedaycat.com.food_fantasy.oauth.OauthAdapter
+import onedaycat.com.food.fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.entity.Product
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
@@ -105,7 +105,7 @@ class StockFireStore(
                 }
 
                 listPStockWithPrice.add(ProductStockWithPrice().apply {
-                    this.price = pQTYs[i].price!!
+                    this.price = pQTYs[i].price
                     this.productStock = pstocks[index]
                 })
             }

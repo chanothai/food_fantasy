@@ -4,7 +4,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import onedaycat.com.food_fantasy.oauth.OauthAdapter
+import onedaycat.com.food.fantasy.oauth.OauthAdapter
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.entity.ProductQTY
 import onedaycat.com.foodfantasyservicelib.entity.State
@@ -38,7 +38,7 @@ class OrderFireStore(
                 val docPQTY = HashMap<String, Any>()
                 docPQTY["productId"] = product.productId!!
                 docPQTY["productName"] = product.productName
-                docPQTY["price"] = product.price!!
+                docPQTY["price"] = product.price
                 docPQTY["qty"] = product.qty
 
                 arrPQTY.add(docPQTY)

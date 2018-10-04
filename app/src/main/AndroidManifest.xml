@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="onedaycat.com.food_fantasy">
+    package="onedaycat.com.food.fantasy">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".common.MainApplication"
+        android:name="onedaycat.com.food.fantasy.common.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,11 +20,11 @@
         <activity
             android:name=".mainfood.activity.FoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.order.OrderDetailActivity" />
-        <activity android:name=".ui.signin.SignInActivity"/>
-        <activity android:name=".ui.signup.SignUpActivity" />
-        <activity android:name=".ui.forgotpassword.ForgotPasswordActivity" />
-        <activity android:name=".ui.splashscreen.SplashScreen">
+        <activity android:name="onedaycat.com.food.fantasy.ui.order.OrderDetailActivity" />
+        <activity android:name="onedaycat.com.food.fantasy.ui.signin.SignInActivity"/>
+        <activity android:name="onedaycat.com.food.fantasy.ui.signup.SignUpActivity" />
+        <activity android:name="onedaycat.com.food.fantasy.ui.forgotpassword.ForgotPasswordActivity" />
+        <activity android:name="onedaycat.com.food.fantasy.ui.splashscreen.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

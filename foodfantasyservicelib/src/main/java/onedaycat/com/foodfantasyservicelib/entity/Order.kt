@@ -52,7 +52,7 @@ data class Order(
 
         order.products.add(pQTY)
 
-        val sum = pQTY.qty.times(product.price!!)
+        val sum = pQTY.qty.times(product.price)
         order.totalPrice = sum
     }
 
@@ -63,7 +63,7 @@ data class Order(
         }
 
         for (product in order.products) {
-            arrProductId.add(product.productId!!)
+            arrProductId.add(product.productId)
         }
 
         return arrProductId

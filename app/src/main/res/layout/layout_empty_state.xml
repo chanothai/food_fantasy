@@ -22,7 +22,7 @@
             android:src="@drawable/ic_food"
             android:tint="@color/color_icon_show_empty_state" />
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/msg_empty_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

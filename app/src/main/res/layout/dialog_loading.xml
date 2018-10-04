@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         />
     
-    <onedaycat.com.food_fantasy.customview.CustomTextView
+    <onedaycat.com.food.fantasy.customview.CustomTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/color_bg_white"

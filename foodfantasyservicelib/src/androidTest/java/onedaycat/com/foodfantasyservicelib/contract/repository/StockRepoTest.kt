@@ -7,7 +7,7 @@ import com.amazonaws.regions.Regions
 import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
-import onedaycat.com.food_fantasy.oauth.OauthCognito
+import onedaycat.com.food.fantasy.oauth.OauthCognito
 import onedaycat.com.foodfantasyservicelib.entity.ProductStock
 import onedaycat.com.foodfantasyservicelib.entity.ProductStockWithPrice
 import onedaycat.com.foodfantasyservicelib.error.NotFoundException

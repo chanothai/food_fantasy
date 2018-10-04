@@ -27,7 +27,7 @@
         android:orientation="vertical"
         android:layout_weight="0.6">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/cart_name_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -107,7 +107,7 @@
         android:layout_weight="0.8"
         android:padding="@dimen/small_padding_layout">
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/cart_price_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

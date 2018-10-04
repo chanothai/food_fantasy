@@ -1,4 +1,4 @@
-package onedaycat.com.food_fantasy.oauth
+package onedaycat.com.food.fantasy.oauth
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession

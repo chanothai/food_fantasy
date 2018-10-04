@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.signin.SignInActivity">
+    tools:context="onedaycat.com.food.fantasy.fantasy.ui.signin.SignInActivity">
 
 
     <LinearLayout
@@ -40,14 +40,14 @@
             android:layout_marginTop="@dimen/bottom_navigation_notification_height"
             android:orientation="horizontal">
 
-            <onedaycat.com.food_fantasy.customview.CustomButtonView
+            <onedaycat.com.food.fantasy.customview.CustomButtonView
                 android:id="@+id/w_btn_signin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/txt_btn_signin" />
 
-            <onedaycat.com.food_fantasy.customview.CustomButtonView
+            <onedaycat.com.food.fantasy.customview.CustomButtonView
                 android:id="@+id/w_btn_signup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
 
         </LinearLayout>
 
-        <onedaycat.com.food_fantasy.customview.CustomTextView
+        <onedaycat.com.food.fantasy.customview.CustomTextView
             android:id="@+id/s_forgot_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
