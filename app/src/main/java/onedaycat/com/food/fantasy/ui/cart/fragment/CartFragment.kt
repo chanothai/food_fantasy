@@ -147,7 +147,7 @@ class CartFragment : Fragment(), OnActionCartListener {
         for (value in carts) {
             pQTYs.add(ProductQTY().apply {
                 this.productId = value.cartPId
-                this.productName = value.cartName!!
+                this.productName = value.cartName
                 this.price = value.cartPrice
                 this.qty = value.cartQTY
             })
