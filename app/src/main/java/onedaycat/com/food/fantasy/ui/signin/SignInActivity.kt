@@ -6,7 +6,10 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.android.synthetic.main.activity_sign_in.w_username as username
+import kotlinx.android.synthetic.main.activity_sign_in.w_password as password
+import kotlinx.android.synthetic.main.activity_sign_in.s_forgot_password as forgotPass
+import kotlinx.android.synthetic.main.activity_sign_in.w_btn_signin as btnSignIn
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import onedaycat.com.food.fantasy.R
@@ -35,7 +38,6 @@ class SignInActivity : AppCompatActivity() {
     }
 
 
-
     private fun initViewModel() {
         signInViewModel = ViewModelProviders.of(this, ViewModelUtil.createViewModelFor(
                 SignInViewModel(CognitoService())
@@ -46,7 +48,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun userCognitoObserver() {
-        signInViewModel.userCognitoLiveData.observe(this, Observer {token->
+        signInViewModel.userCogNiToLiveData.observe(this, Observer { token ->
             token?.let {
                 SharedPreferenceHelper.setString(
                         SharedPreferenceHelper.usernameKey, it.username)
@@ -61,7 +63,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun msgErrorObserver() {
-        signInViewModel.msgErrorLiveData.observe(this, Observer { msg->
+        signInViewModel.msgErrorLiveData.observe(this, Observer { msg ->
             msg?.let {
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             }
@@ -69,16 +71,16 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun clickForgotPassword() {
-        s_forgot_password.setOnClickListener {
+        forgotPass.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
     }
 
     private fun clickSignIn() {
-        w_btn_signin.setOnClickListener {
+        btnSignIn.setOnClickListener {
             val input = GetUserAuthenInput(
-                    w_username.text.toString(),
-                    w_password.text.toString()
+                    username.text.toString(),
+                    password.text.toString()
             )
 
             launch(UI) {
@@ -88,8 +90,22 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun clickSignUp() {
-        w_btn_signup.setOnClickListener {
+        btnSignIn.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.apply {
+            this.putString("UserName", username.text.toString())
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.let {
+            password.setText(it.getString("UserName"))
         }
     }
 }

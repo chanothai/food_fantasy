@@ -12,16 +12,16 @@ import onedaycat.com.foodfantasyservicelib.input.GetUserAuthenInput
 import java.lang.Exception
 
 class SignInViewModel(
-        private val cognitoService: CognitoService
+        private val cogNiToService: CognitoService
 ): ViewModel() {
 
-    private val _msgError = MutableLiveData<String>()
+    private val mMsgError = MutableLiveData<String>()
     val msgErrorLiveData: LiveData<String>
-    get() = _msgError
+    get() = mMsgError
 
-    private val _userCognito = MutableLiveData<UserCognito>()
-    val userCognitoLiveData: LiveData<UserCognito>
-    get() = _userCognito
+    private val mUserCogNiTo = MutableLiveData<UserCognito>()
+    val userCogNiToLiveData: LiveData<UserCognito>
+    get() = mUserCogNiTo
 
     private fun <T> asyncTask(function: () -> T): Deferred<T> {
         return async(CommonPool) { function() }
@@ -31,14 +31,14 @@ class SignInViewModel(
         try {
             var userCognito: UserCognito? = null
             asyncTask {
-                userCognito = cognitoService.userAuthService.signIn(input)
+                userCognito = cogNiToService.userAuthService.signIn(input)
             }.await()
 
             userCognito?.let {
-                _userCognito.postValue(it)
+                mUserCogNiTo.postValue(it)
             }
         }catch (e: Exception) {
-            _msgError.postValue(e.message)
+            mMsgError.postValue(e.message)
         }
     }
 }

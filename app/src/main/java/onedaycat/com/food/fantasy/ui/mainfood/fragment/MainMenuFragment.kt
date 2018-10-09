@@ -112,11 +112,11 @@ class MainMenuFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, ItemC
 
     private fun cartObserver() {
         foodViewModel.cartStore.observe(this, Observer {
-            it?.let {cartStore->
+            it?.let { cartStore ->
                 badgeCart = cartStore.counter
 
                 cartStore
-            }?.also {cartStore->
+            }?.also { cartStore ->
                 CartStore.foodCart = cartStore.foodCart
                 CartStore.counter = cartStore.counter
 

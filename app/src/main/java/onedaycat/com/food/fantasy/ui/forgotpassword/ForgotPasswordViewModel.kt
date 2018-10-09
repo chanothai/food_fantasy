@@ -13,20 +13,20 @@ import onedaycat.com.foodfantasyservicelib.input.GetUsernameInput
 import java.lang.Exception
 
 class ForgotPasswordViewModel(
-        private val cognitoService: CognitoService
+        private val cogNiToService: CognitoService
 ): ViewModel() {
 
-    private val _usernameLiveData = MutableLiveData<String>()
+    private val mUsernameLiveData = MutableLiveData<String>()
     val usernameLiveData: LiveData<String>
-    get() = _usernameLiveData
+    get() = mUsernameLiveData
 
-    private val _msgErrorLiveData = MutableLiveData<String>()
+    private val mMsgErrorLiveData = MutableLiveData<String>()
     val msgErrorLiveData: LiveData<String>
-    get() = _msgErrorLiveData
+    get() = mMsgErrorLiveData
 
-    private val _userAuthLiveData = MutableLiveData<UserAuth>()
+    private val mUserAuthLiveData = MutableLiveData<UserAuth>()
     val userAuthLiveData: LiveData<UserAuth>
-    get() = _userAuthLiveData
+    get() = mUserAuthLiveData
 
     private fun <T> asyncTask(function: () -> T): Deferred<T> {
         return async(CommonPool) { function() }
@@ -36,12 +36,12 @@ class ForgotPasswordViewModel(
         try {
             var username: String? = null
             asyncTask {
-                username = cognitoService.userAuthService.forgotPassword(input)
+                username = cogNiToService.userAuthService.forgotPassword(input)
             }.await()
 
-            _usernameLiveData.postValue(username)
+            mUsernameLiveData.postValue(username)
         }catch (e: Exception) {
-            _msgErrorLiveData.postValue(e.message)
+            mMsgErrorLiveData.postValue(e.message)
         }
     }
 
@@ -49,13 +49,13 @@ class ForgotPasswordViewModel(
         try {
             var userAuth: UserAuth? = null
             asyncTask {
-                userAuth = cognitoService.userAuthService.changePassword(input)
+                userAuth = cogNiToService.userAuthService.changePassword(input)
             }.await()
 
-            _userAuthLiveData.postValue(userAuth)
+            mUserAuthLiveData.postValue(userAuth)
 
         }catch (e: Exception) {
-            _msgErrorLiveData.postValue(e.message)
+            mMsgErrorLiveData.postValue(e.message)
         }
     }
 }

@@ -11,16 +11,16 @@ import onedaycat.com.foodfantasyservicelib.entity.User
 import onedaycat.com.foodfantasyservicelib.input.CreateUserInput
 
 class SignUpViewModel(
-        private val cognitoService: CognitoService
+        private val cogNiToService: CognitoService
 ): ViewModel() {
 
-    private val _msgError = MutableLiveData<String>()
+    private val mMsgError = MutableLiveData<String>()
     val msgErrorLiveData:LiveData<String>
-    get() = _msgError
+    get() = mMsgError
 
-    private val _userLiveData = MutableLiveData<User>()
+    private val mUserLiveData = MutableLiveData<User>()
     val userLiveData: LiveData<User>
-    get() = _userLiveData
+    get() = mUserLiveData
 
     private fun <T> asyncTask(function: () -> T): Deferred<T> {
         return async(CommonPool) { function() }
@@ -30,14 +30,14 @@ class SignUpViewModel(
         try {
             var user: User? = null
             asyncTask {
-                user = cognitoService.userAuthService.signUp(input)
+                user = cogNiToService.userAuthService.signUp(input)
             }.await()
 
             user?.let {
-                _userLiveData.postValue(user)
+                mUserLiveData.postValue(user)
             }
         }catch (e: Exception) {
-            _msgError.postValue(e.message)
+            mMsgError.postValue(e.message)
         }
     }
 }

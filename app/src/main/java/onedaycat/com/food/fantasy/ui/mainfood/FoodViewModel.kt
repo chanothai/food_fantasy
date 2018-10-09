@@ -79,11 +79,11 @@ class FoodViewModel(private val eComService: EcomService
     private fun addFoodModel(productPaging: ProductPaging): FoodListModel {
         for (product in productPaging.products) {
             val foodModel = FoodModel(
-                    foodId = product.id!!,
-                    foodName = product.name!!,
-                    foodDesc = product.desc!!,
-                    foodPrice = product.price!!,
-                    foodIMG = product.image!!
+                    foodId = product.id,
+                    foodName = product.name,
+                    foodDesc = product.desc,
+                    foodPrice = product.price,
+                    foodIMG = product.image
             )
 
             foodList.add(foodModel)

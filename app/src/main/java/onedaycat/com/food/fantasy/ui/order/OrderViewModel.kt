@@ -5,9 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import onedaycat.com.foodfantasyservicelib.entity.Order
 import onedaycat.com.foodfantasyservicelib.error.Error
 import onedaycat.com.foodfantasyservicelib.input.GetOrderInput
@@ -17,14 +15,14 @@ class OrderViewModel(
         private val eComService: EcomService
 ): ViewModel() {
 
-    private val _orders = MutableLiveData<OrdersModel>()
+    private val mOrders = MutableLiveData<OrdersModel>()
 
     val orders: LiveData<OrdersModel>
-    get() = _orders
+    get() = mOrders
 
-    private val _msgError = MutableLiveData<String>()
+    private val mMsgError = MutableLiveData<String>()
     val msgError: LiveData<String>
-    get() = _msgError
+    get() = mMsgError
 
     private fun <T> asyncTask(function: () -> T): Deferred<T> {
         return async(CommonPool) { function() }
@@ -36,10 +34,10 @@ class OrderViewModel(
             asyncTask { orders = eComService.orderService.getOrders(input) }.await()
 
             orders?.let {
-                _orders.postValue(mapOrderModel(orders!!))
+                mOrders.postValue(mapOrderModel(it))
             }
         }catch (e: Error) {
-            _msgError.postValue(e.message)
+            mMsgError.postValue(e.message)
         }
     }
 
@@ -54,7 +52,7 @@ class OrderViewModel(
                     product.let {food ->
                         val orderProduct = OrderProductModel().apply {
                             productName = food.productName
-                            totalPriceProduct = food.price!! * food.qty
+                            totalPriceProduct = food.price * food.qty
                         }
 
                         this.orderProducts.products.add(orderProduct)
